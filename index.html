@@ -1,0 +1,2921 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Evolution of AI at Booking.com - QCon Presentation</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* Booking.com Brand Colors */
+            --navy: #003580;
+            --blue: #0071c2;
+            --blue-light: #b3d7ff;
+            --green: #008009;
+            --teal: #00a699;
+            --olive: #5a6700;
+            --yellow: #feba02;
+            --yellow-light: #ffe08a;
+            --brown: #924e00;
+            --orange: #f26a1b;
+            --orange-light: #ffb580;
+            --red-dark: #6b0000;
+            --red: #cc0000;
+            --pink: #ffb6c1;
+            --pink-light: #ffd9df;
+            --black: #000000;
+            --gray-800: #333333;
+            --gray-600: #6b6b6b;
+            --gray-400: #949494;
+            --gray-200: #e0e0e0;
+            --gray-100: #f5f5f5;
+            --purple: #70449c;
+            
+            /* Card gradients */
+            --gradient-navy: linear-gradient(135deg, #1e3a5f 0%, #2c5282 100%);
+            --gradient-purple: linear-gradient(135deg, #7c3aed 0%, #a855f7 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: white;
+            color: var(--gray-800);
+            overflow: hidden;
+            height: 100vh;
+            width: 100vw;
+        }
+
+        .presentation {
+            width: 100vw;
+            height: 100vh;
+            position: relative;
+        }
+
+        /* Scaling container for large displays */
+        .scale-wrapper {
+            width: 1920px;
+            height: 1080px;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform-origin: center center;
+        }
+
+        .slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: none;
+            padding: 60px 80px;
+            flex-direction: column;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+
+        .slide.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        /* Navigation */
+        .nav-counter {
+            display: block;
+            position: fixed;
+            bottom: 24px;
+            right: 40px;
+            font-size: 16px;
+            font-weight: 500;
+            color: var(--gray-600);
+            z-index: 1000;
+            padding: 8px 12px;
+        }
+
+        .nav-chapter {
+            position: fixed;
+            top: 24px;
+            left: 40px;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--blue);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            z-index: 1000;
+        }
+
+        .chapter-nav {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 6px;
+            z-index: 1000;
+            max-width: 90vw;
+            padding: 0 20px;
+        }
+
+        .chapter-btn {
+            padding: 8px 14px;
+            border: none;
+            background: var(--gray-200);
+            color: var(--gray-600);
+            font-size: 11px;
+            font-weight: 600;
+            border-radius: 18px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+        }
+
+        .chapter-btn:hover {
+            background: var(--gray-200);
+        }
+
+        .chapter-btn.active {
+            background: var(--navy);
+            color: white;
+        }
+
+        /* Typography */
+        h1 {
+            font-size: 72px;
+            font-weight: 800;
+            line-height: 1.1;
+            margin-bottom: 24px;
+        }
+
+        h2 {
+            font-size: 56px;
+            font-weight: 700;
+            line-height: 1.2;
+            margin-bottom: 32px;
+        }
+
+        h3 {
+            font-size: 42px;
+            font-weight: 600;
+            line-height: 1.3;
+            margin-bottom: 24px;
+        }
+
+        .subtitle {
+            font-size: 28px;
+            font-weight: 400;
+            color: var(--gray-600);
+            margin-bottom: 16px;
+        }
+
+        .big-number {
+            font-size: 160px;
+            font-weight: 900;
+            line-height: 1;
+        }
+
+        .huge-number {
+            font-size: 12vw;
+            font-weight: 900;
+            line-height: 1;
+        }
+
+        .stat-label {
+            font-size: 32px;
+            font-weight: 500;
+            color: var(--gray-600);
+            margin-top: 16px;
+        }
+
+        /* Layout helpers */
+        .flex-center {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            text-align: center;
+            height: 100%;
+        }
+
+        .flex-row {
+            display: flex;
+            align-items: center;
+            gap: 60px;
+        }
+
+        .flex-col {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            align-items: center;
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 40px;
+        }
+
+        .grid-4 {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 30px;
+        }
+
+        /* Cards */
+        .card {
+            background: var(--gray-100);
+            border-radius: 16px;
+            padding: 32px;
+            text-align: center;
+        }
+
+        .card-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+        }
+
+        .card h4 {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: var(--gray-800);
+        }
+
+        .card p {
+            font-size: 16px;
+            color: var(--gray-600);
+            line-height: 1.5;
+        }
+
+        /* Color utilities */
+        .text-blue { color: var(--blue); }
+        .text-teal { color: var(--teal); }
+        .text-green { color: var(--green); }
+        .text-orange { color: var(--orange); }
+        .text-red { color: var(--red); }
+        .text-purple { color: var(--purple); }
+        .text-navy { color: var(--navy); }
+        .text-gray { color: var(--gray-600); }
+
+        .bg-navy { background: var(--navy); color: white; }
+        .bg-blue { background: var(--blue); color: white; }
+        .bg-gradient {
+            background: linear-gradient(135deg, var(--navy) 0%, var(--blue) 100%);
+            color: white;
+        }
+
+        /* Special elements */
+        .timeline-year {
+            display: inline-block;
+            padding: 12px 32px;
+            background: var(--navy);
+            color: white;
+            font-size: 48px;
+            font-weight: 800;
+            border-radius: 12px;
+            margin-bottom: 32px;
+        }
+
+        .highlight-box {
+            background: linear-gradient(135deg, var(--blue) 0%, var(--teal) 100%);
+            color: white;
+            padding: 40px;
+            border-radius: 20px;
+            text-align: center;
+        }
+
+        .quote {
+            font-size: 36px;
+            font-style: italic;
+            color: var(--gray-800);
+            border-left: 6px solid var(--blue);
+            padding-left: 32px;
+            margin: 40px 0;
+        }
+
+        .tag {
+            display: inline-block;
+            padding: 8px 20px;
+            background: var(--gray-200);
+            border-radius: 30px;
+            font-size: 16px;
+            font-weight: 600;
+            margin: 4px;
+        }
+
+        .tag.blue { background: var(--blue); color: white; }
+        .tag.green { background: var(--green); color: white; }
+        .tag.orange { background: var(--orange); color: white; }
+        .tag.purple { background: var(--purple); color: white; }
+
+        /* Architecture diagram */
+        .arch-stack {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            width: 100%;
+            max-width: 800px;
+        }
+
+        .arch-layer {
+            padding: 24px 40px;
+            border-radius: 12px;
+            font-size: 20px;
+            font-weight: 600;
+            text-align: center;
+            color: white;
+        }
+
+        .arch-layer.app { background: var(--green); }
+        .arch-layer.ml { background: var(--blue); }
+        .arch-layer.data { background: var(--navy); }
+
+        /* Stats row */
+        .stats-row {
+            display: flex;
+            justify-content: space-around;
+            width: 100%;
+            margin-top: 40px;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 72px;
+            font-weight: 800;
+        }
+
+        .stat-text {
+            font-size: 20px;
+            color: var(--gray-600);
+            margin-top: 8px;
+        }
+
+        /* MySQL evolution */
+        .evolution-item {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+            padding: 20px;
+            background: var(--gray-100);
+            border-radius: 12px;
+            margin-bottom: 16px;
+        }
+
+        .evolution-year {
+            font-size: 24px;
+            font-weight: 800;
+            color: var(--blue);
+            min-width: 80px;
+        }
+
+        .evolution-stat {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--navy);
+        }
+
+        .evolution-detail {
+            font-size: 18px;
+            color: var(--gray-600);
+        }
+
+        /* List styles */
+        .feature-list {
+            list-style: none;
+        }
+
+        .feature-list li {
+            font-size: 28px;
+            padding: 16px 0;
+            border-bottom: 1px solid var(--gray-200);
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .feature-list li:last-child {
+            border-bottom: none;
+        }
+
+        .check-icon {
+            width: 32px;
+            height: 32px;
+            background: var(--green);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+
+        .x-icon {
+            width: 32px;
+            height: 32px;
+            background: var(--red);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+
+        /* Principles grid */
+        .principle-card {
+            background: white;
+            border: 3px solid var(--gray-200);
+            border-radius: 16px;
+            padding: 28px;
+            transition: all 0.3s ease;
+        }
+
+        .principle-card:hover {
+            border-color: var(--blue);
+            transform: translateY(-4px);
+        }
+
+        .principle-number {
+            font-size: 48px;
+            font-weight: 900;
+            color: var(--blue);
+            margin-bottom: 12px;
+        }
+
+        .principle-title {
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .principle-desc {
+            font-size: 16px;
+            color: var(--gray-600);
+        }
+
+        /* Progress bar */
+        .progress-container {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: var(--gray-200);
+            z-index: 1000;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--blue), var(--teal));
+            transition: width 0.3s ease;
+        }
+
+        /* Fragment indicator */
+        .fragment-indicator {
+            position: fixed;
+            bottom: 80px;
+            right: 40px;
+            display: flex;
+            gap: 6px;
+            z-index: 1000;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .fragment-indicator.visible {
+            opacity: 1;
+        }
+
+        .fragment-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--gray-200);
+            transition: background 0.3s ease;
+        }
+
+        .fragment-dot.filled {
+            background: var(--blue);
+        }
+
+        /* Fragment animations */
+        .fragment {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.5s ease, transform 0.5s ease;
+            pointer-events: none;
+        }
+
+        .fragment.visible {
+            opacity: 1;
+            transform: translateY(0);
+            pointer-events: auto;
+        }
+
+        .highlight-on-click {
+            transition: background 0.3s ease, padding 0.3s ease;
+            border-radius: 6px;
+        }
+
+        .fragment.highlight-on-click {
+            opacity: 1;
+            transform: none;
+        }
+
+        .fragment.highlight-on-click.visible {
+            background: var(--yellow-light);
+            padding: 0.3vw 0.6vw;
+            margin: -0.3vw -0.6vw;
+        }
+
+        .fragment.hidden-until-visible {
+            visibility: hidden;
+            opacity: 0;
+            position: absolute;
+            width: 0;
+            overflow: hidden;
+            margin: 0;
+            padding: 0;
+        }
+
+        .fragment.hidden-until-visible.visible {
+            visibility: visible;
+            opacity: 1;
+            position: relative;
+            width: auto;
+            overflow: visible;
+        }
+
+        /* Smooth reflow for sibling elements */
+        .slide-container > * {
+            transition: transform 0.5s ease, margin 0.5s ease;
+        }
+
+        .fragment.fade-in {
+            transform: none;
+        }
+
+        .fragment.scale-in {
+            transform: scale(0.8);
+        }
+
+        .fragment.scale-in.visible {
+            transform: scale(1);
+        }
+
+        .fragment.slide-left {
+            transform: translateX(-30px);
+        }
+
+        .fragment.slide-left.visible {
+            transform: translateX(0);
+        }
+
+        .fragment.slide-right {
+            transform: translateX(30px);
+        }
+
+        .fragment.slide-right.visible {
+            transform: translateX(0);
+        }
+
+        /* Timeline styles */
+        .timeline-container {
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+            width: 100%;
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        .timeline-era {
+            display: flex;
+            align-items: flex-start;
+            position: relative;
+            padding-left: 210px;
+            padding-bottom: 24px;
+            min-height: 100px;
+        }
+
+        .timeline-era::before {
+            content: '';
+            position: absolute;
+            left: 180px;
+            top: 12px;
+            bottom: 0;
+            width: 3px;
+            background: var(--gray-200);
+        }
+
+        .timeline-era:last-child::before {
+            display: none;
+        }
+
+        .timeline-era-year {
+            position: absolute;
+            left: 0;
+            top: 0;
+            font-size: 1.4vw;
+            font-weight: 800;
+            color: var(--navy);
+            width: 160px;
+            text-align: right;
+            white-space: nowrap;
+        }
+
+        .timeline-era-dot {
+            position: absolute;
+            left: 172px;
+            top: 6px;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--blue);
+            border: 4px solid white;
+            box-shadow: 0 0 0 3px var(--blue);
+            z-index: 1;
+        }
+
+        .timeline-era-dot.orange { background: var(--orange); box-shadow: 0 0 0 3px var(--orange); }
+        .timeline-era-dot.yellow { background: var(--yellow); box-shadow: 0 0 0 3px var(--yellow); }
+        .timeline-era-dot.blue { background: var(--blue); box-shadow: 0 0 0 3px var(--blue); }
+        .timeline-era-dot.purple { background: var(--purple); box-shadow: 0 0 0 3px var(--purple); }
+        .timeline-era-dot.green { background: var(--green); box-shadow: 0 0 0 3px var(--green); }
+        .timeline-era-dot.teal { background: var(--teal); box-shadow: 0 0 0 3px var(--teal); }
+        .timeline-era-dot.navy { background: var(--navy); box-shadow: 0 0 0 3px var(--navy); }
+        .timeline-era-dot.red { background: var(--red); box-shadow: 0 0 0 3px var(--red); }
+        .timeline-era-dot.pink { background: #ec4899; box-shadow: 0 0 0 3px #ec4899; }
+        .timeline-era-dot.gray { background: #6b7280; box-shadow: 0 0 0 3px #6b7280; }
+
+        .timeline-era-content {
+            background: var(--gray-100);
+            border-radius: 12px;
+            padding: 16px 24px;
+            flex: 1;
+        }
+
+        .timeline-era.compact {
+            min-height: auto;
+            padding-bottom: 12px;
+        }
+
+        .timeline-era.compact .timeline-era-content {
+            padding: 10px 20px;
+            flex: 0 1 auto;
+        }
+
+        .timeline-era.compact .timeline-era-title {
+            margin-bottom: 0;
+        }
+
+        .timeline-era-title {
+            font-size: 1.4vw;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--gray-800);
+        }
+
+        .timeline-era-tech {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .timeline-tech-tag {
+            padding: 6px 14px;
+            background: white;
+            border-radius: 20px;
+            font-size: 0.9vw;
+            font-weight: 500;
+            color: var(--gray-600);
+            border: 1px solid var(--gray-200);
+        }
+
+        .timeline-tech-tag.highlight {
+            background: var(--navy);
+            color: white;
+            border-color: var(--navy);
+        }
+
+        /* Horizontal Timeline styles */
+        .h-timeline-container {
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
+            width: 100%;
+            padding: 0 20px;
+            position: relative;
+        }
+
+        .h-timeline-line {
+            position: absolute;
+            top: 10px;
+            left: 80px;
+            right: 80px;
+            height: 4px;
+            background: var(--gray-200);
+            z-index: 0;
+        }
+
+        .h-timeline-era {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            flex: 1;
+            max-width: 200px;
+            position: relative;
+            z-index: 1;
+            padding-top: 0;
+        }
+        
+        /* Gap text between timeline nodes */
+        .h-timeline-gap {
+            position: relative;
+            flex: 0.5;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            z-index: 1;
+            max-width: 150px;
+        }
+        
+        .h-timeline-gap-text {
+            background: rgba(255, 255, 255, 0.9);
+            border: 1px solid var(--gray-300);
+            border-radius: 8px;
+            padding: 8px 12px;
+            font-size: 14px;
+            color: var(--gray-700);
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-top: 22px;
+            line-height: 1.3;
+            max-width: 100%;
+            position: relative;
+        }
+        
+        .h-timeline-gap-text:before {
+            content: '';
+            position: absolute;
+            top: -8px;
+            left: 50%;
+            margin-left: -8px;
+            width: 16px;
+            height: 16px;
+            background: white;
+            border-left: 1px solid var(--gray-300);
+            border-top: 1px solid var(--gray-300);
+            transform: rotate(45deg);
+            box-shadow: -2px -2px 2px rgba(0,0,0,0.02);
+        }
+
+        .h-timeline-dot {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: var(--blue);
+            border: 4px solid white;
+            box-shadow: 0 0 0 3px var(--blue);
+            margin-bottom: 16px;
+            flex-shrink: 0;
+            position: relative;
+        }
+
+        .h-timeline-dot.orange { background: var(--orange); box-shadow: 0 0 0 3px var(--orange); }
+        .h-timeline-dot.yellow { background: var(--yellow); box-shadow: 0 0 0 3px var(--yellow); }
+        .h-timeline-dot.blue { background: var(--blue); box-shadow: 0 0 0 3px var(--blue); }
+        .h-timeline-dot.purple { background: var(--purple); box-shadow: 0 0 0 3px var(--purple); }
+        .h-timeline-dot.green { background: var(--green); box-shadow: 0 0 0 3px var(--green); }
+        .h-timeline-dot.teal { background: var(--teal); box-shadow: 0 0 0 3px var(--teal); }
+        .h-timeline-dot.gray { background: var(--gray-600); box-shadow: 0 0 0 3px var(--gray-600); }
+        .h-timeline-dot.red { background: var(--red); box-shadow: 0 0 0 3px var(--red); }
+
+        .h-timeline-year {
+            font-size: 28px;
+            font-weight: 800;
+            color: var(--navy);
+            margin-bottom: 10px;
+            text-align: center;
+            white-space: nowrap;
+        }
+
+        .h-timeline-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--gray-800);
+            text-align: center;
+            margin-bottom: 10px;
+            line-height: 1.3;
+        }
+
+        .h-timeline-subtitle {
+            font-size: 14px;
+            color: var(--gray-500);
+            text-align: center;
+            line-height: 1.4;
+        }
+
+        .h-timeline-tech {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            align-items: center;
+        }
+
+        .h-timeline-tag {
+            padding: 6px 14px;
+            background: var(--gray-100);
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--gray-600);
+            text-align: center;
+            white-space: nowrap;
+        }
+
+        .h-timeline-tag.highlight {
+            background: var(--navy);
+            color: white;
+        }
+
+        .h-timeline-era.flipped .h-timeline-subtitle {
+            order: -3;
+            margin-top: -10vh;
+            margin-bottom: 0.5vh;
+        }
+
+        .h-timeline-era.flipped .h-timeline-title {
+            order: -2;
+            margin-bottom: 0.5vh;
+        }
+
+        .h-timeline-era.flipped .h-timeline-year {
+            order: -1;
+            margin-top: 0;
+            margin-bottom: 1.2vh;
+        }
+
+        /* Slide specific styles */
+        .title-slide {
+            background: linear-gradient(135deg, var(--navy) 0%, #2c5282 100%);
+            color: white;
+        }
+
+        .title-slide h1 {
+            font-size: 64px;
+            max-width: 900px;
+        }
+
+        .title-slide .subtitle {
+            color: rgba(255,255,255,0.8);
+            font-size: 24px;
+        }
+
+        .title-slide .highlight-text {
+            color: var(--yellow);
+        }
+
+        .section-slide {
+            background: var(--navy);
+            color: white;
+        }
+
+        .section-slide h2 {
+            font-size: 72px;
+        }
+
+        /* Timeline visualization */
+        .timeline-visual {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+            margin: 40px 0;
+        }
+
+        .timeline-dot {
+            width: 20px;
+            height: 20px;
+            background: var(--blue);
+            border-radius: 50%;
+        }
+
+        .timeline-line {
+            flex: 1;
+            height: 4px;
+            background: var(--gray-200);
+        }
+
+        /* Icon boxes */
+        .icon-box {
+            width: 80px;
+            height: 80px;
+            background: var(--blue);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+            margin-bottom: 20px;
+        }
+
+        /* Emphasis text */
+        .emphasis {
+            background: linear-gradient(120deg, var(--yellow) 0%, var(--orange) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* Comparison boxes */
+        .compare-box {
+            background: var(--gray-100);
+            border-radius: 20px;
+            padding: 40px;
+            text-align: center;
+        }
+
+        .compare-box.highlight {
+            background: var(--blue);
+            color: white;
+        }
+
+        .compare-label {
+            font-size: 18px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 16px;
+            opacity: 0.7;
+        }
+
+        .compare-value {
+            font-size: 56px;
+            font-weight: 800;
+        }
+
+        /* Arrow */
+        .arrow {
+            font-size: 48px;
+            color: var(--gray-400);
+        }
+
+        /* Benefits visual */
+        .benefit-circle {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            margin: 0 auto 20px;
+        }
+
+        .benefit-circle.validate { background: var(--green); }
+        .benefit-circle.iterate { background: var(--blue); }
+        .benefit-circle.culture { background: var(--purple); }
+    </style>
+</head>
+<body>
+    <div class="presentation">
+        <!-- Fixed UI elements (outside scale-wrapper) -->
+        <div class="nav-counter">
+            <span id="currentSlide">1</span>/<span id="totalSlides">45</span>
+        </div>
+        <div class="nav-chapter" id="chapterName">Introduction</div>
+        <div class="progress-container">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+        <div class="fragment-indicator" id="fragmentIndicator"></div>
+
+        <!-- Scaled content wrapper -->
+        <div class="scale-wrapper">
+
+        <!-- CHAPTER 1: Introduction -->
+
+        <div class="slide title-slide active" data-chapter="Introduction" id="title">
+            <div class="flex-center ">
+                <h1>The Evolution of AI at Booking.com</h1>
+                <p class="subtitle" style="margin-top: 24px;"><span class="highlight-text">Architectures You've Always Wondered About</span></p>
+                <p class="subtitle" style="font-size: 20px;">QCon London 2026</p>
+            </div>
+        </div>
+
+        <div class="slide" data-chapter="Introduction" id="navigation-help">
+            <div class="flex-center">
+                <h2 style="text-align: center; margin-bottom: 3vh; color: var(--gray-600);">Navigation Tips</h2>
+                <div style="text-align: center; max-width: 60vw;">
+                    <p style="font-size: 1.4vw; color: var(--gray-500); margin-bottom: 2vh;">
+                        Many slides have <span style="color: var(--blue); font-weight: 600;">transitions/fragments</span> that reveal content step-by-step
+                    </p>
+                    <div style="background: var(--gray-100); padding: 2vw; border-radius: 1vw; border-left: 4px solid var(--blue);">
+                        <p style="font-size: 1.3vw; color: var(--gray-700); margin-bottom: 1vh;">
+                            <strong>To skip transitions:</strong> Use <kbd style="background: var(--gray-200); padding: 0.3vw 0.6vw; border-radius: 4px; font-family: monospace;">Shift</kbd> + <kbd style="background: var(--gray-200); padding: 0.3vw 0.6vw; border-radius: 4px; font-family: monospace;">←</kbd> / <kbd style="background: var(--gray-200); padding: 0.3vw 0.6vw; border-radius: 4px; font-family: monospace;">→</kbd>
+                        </p>
+                        <p style="font-size: 1.3vw; color: var(--gray-700);">
+                            <strong>Normal navigation:</strong> Use <kbd style="background: var(--gray-200); padding: 0.3vw 0.6vw; border-radius: 4px; font-family: monospace;">←</kbd> / <kbd style="background: var(--gray-200); padding: 0.3vw 0.6vw; border-radius: 4px; font-family: monospace;">→</kbd> arrow keys
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="slide" data-chapter="Introduction" id="scale">
+            <div class="flex-center fragment">
+                <p class="stat-label" style="margin-bottom: 16px;">Today, Booking.com impacts</p>
+                <div class="big-number text-navy">Billions</div>
+                <p class="stat-label">of travel decisions every day</p>
+            </div>
+        </div>
+
+        <!-- Bio Slide -->
+        <!-- <div class="slide" data-chapter="Introduction" id="bio" style="position: relative;">
+            <div class="flex-center">
+                <div style="display: flex; align-items: center; gap: 60px; padding: 40px;">
+                    <div style="flex-shrink: 0;">
+                        <div style="width: 280px; height: 280px; border-radius: 50%; background: linear-gradient(135deg, var(--booking-blue), var(--navy)); display: flex; align-items: center; justify-content: center; box-shadow: 0 8px 32px rgba(0,53,128,0.3);">
+                            <img src="attachments/headshot.jpg" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;"> 
+                        </div>
+                    </div>
+                    <div style="text-align: left;">
+                        <h2 style="font-size: 48px; margin-bottom: 12px;"><span style="color: var(--navy);">Jabez Eliezer </span> Manuel</h2>
+                        <p style="font-size: 28px; color: var(--booking-blue); font-weight: 600; margin-bottom: 8px;">Senior Principal Engineer <span style="color: var(--gray-600);">@ Booking.com</span></p>
+                        <p style="font-size: 22px; color: var(--gray-600); margin-bottom: 24px;">Leading the engineering efforts of AI Application Platform</p>
+                    </div>
+                </div>
+            </div>
+            <div style="position: absolute; bottom: 120px; right: 40px; display: flex; flex-direction: column; align-items: center; gap: 8px;">
+                <img src="attachments/qr-linkedin.png" alt="LinkedIn QR Code" style="width: 120px; height: 120px; border-radius: 8px; border: 3px solid #0077b5;">
+                <span style="font-size: 14px; color: var(--gray-600);">Scan to connect</span>
+            </div>
+        </div> -->
+
+        <div class="slide" data-chapter="Introduction" id="plan">
+            <div class="flex-center fragment">
+                <h2>The AI Platform Stack</h2>
+                <p style="color: var(--gray-500); font-size: 1.3vw; margin-bottom: 2vh;">A logical grouping of platforms and capabilities</p>
+                <div style="text-align: center; max-width: 70vw;">
+                    <div style="display: flex; flex-direction: column; gap: 1.5vh;">
+                        <div style="background: #c8e6c9; padding: 1.5vw 4vw; border-radius: 0.8vw;">
+                            <p style="font-size: 1.5vw; font-weight: 600; color: var(--gray-800);">Domain Intelligence</p>
+                        </div>
+                        <div style="background: #ffe0b2; padding: 1.5vw 4vw; border-radius: 0.8vw;">
+                            <p style="font-size: 1.5vw; font-weight: 600; color: var(--gray-800);">ML Engineering</p>
+                        </div>
+                        <div style="background: #ffccbc; padding: 1.5vw 4vw; border-radius: 0.8vw; box-shadow: 0 0.5vw 2vw rgba(0,0,0,0.15);">
+                            <p style="font-size: 1.5vw; font-weight: 600; color: var(--gray-800);">Data Management</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- CHAPTER 2: 2005 Context -->
+
+        <div class="slide section-slide" data-chapter="2005" id="year-2005">
+            <div class="flex-center">
+                <p class="fragment" style="color: rgba(255,255,255,0.8); font-size: 3vw; letter-spacing: 0.4vw; text-transform: uppercase;">Let's rewind 20 years</p>
+            </div>
+        </div>
+
+        <div class="slide" data-chapter="2005" id="world-2005">
+            <div class="fragment">
+                <h2 style="text-align: center;">The World in 2005</h2>
+                <div class="slide-container" style="display: flex; gap: 3vw; margin-top: 4vh; align-items: flex-start; justify-content: center;">
+                    <div class="fragment" style="text-align: center;">
+                        <div style="background: linear-gradient(145deg, #fff, #f0f0f0); padding: 2vw; border-radius: 1.5vw; box-shadow: 0 1vw 3vw rgba(0,0,0,0.3); width: 18vw; height: 18vw; display: flex; align-items: center; justify-content: center;">
+                            <img src="attachments/moto-razr.png" alt="Moto Razr" style="max-height: 14vw; object-fit: contain; filter: drop-shadow(0 0.5vw 1.5vw rgba(0,0,0,0.4));">
+                        </div>
+                        <h4 style="margin-top: 1.5vw; font-size: 1.6vw;">Motorola Razr V3</h4>
+                        <p style="color: var(--gray-500); font-size: 1vw;">The coolest phone you could own</p>
+                    </div>
+                    <div class="fragment hidden-until-visible" style="text-align: center;">
+                        <div style="background: linear-gradient(145deg, #fff, #f0f0f0); padding: 2vw; border-radius: 1.5vw; box-shadow: 0 1vw 3vw rgba(0,0,0,0.15); width: 18vw; height: 18vw; display: flex; align-items: center; justify-content: center;">
+                            <img src="attachments/web2.png" alt="Web 2.0" style="max-height: 14vw; object-fit: contain;">
+                        </div>
+                        <h4 style="margin-top: 1.5vw; font-size: 1.6vw;">Web 2.0 Era</h4>
+                        <p style="color: var(--gray-500); font-size: 1vw;">User-generated content takes off</p>
+                    </div>
+                    <div class="fragment hidden-until-visible" style="text-align: center;">
+                        <div style="background: linear-gradient(145deg, #fff, #f0f0f0); padding: 2vw; border-radius: 1.5vw; box-shadow: 0 1vw 3vw rgba(0,0,0,0.15); width: 18vw; height: 18vw; display: flex; align-items: center; justify-content: center;">
+                            <img src="attachments/booking-com.png" alt="Booking.com" style="max-height: 14vw; max-width: 100%; object-fit: contain;">
+                        </div>
+                        <h4 style="margin-top: 1.5vw; font-size: 1.6vw;">Booking.nl</h4>
+                        <p style="color: var(--gray-500); font-size: 1vw;">9 years old</p>
+                    </div> 
+                </div>
+            </div>
+        </div>
+
+        <div class="slide" data-chapter="2005" id="inside-booking-2005">
+            <div class="flex-center fragment">
+                <h2>Inside Booking.com</h2>
+                <div class="highlight-box" style="margin-top: 3vh; text-align: center; padding: 3vw 5vw;">
+                    <p style="font-size: 3vw; font-weight: 700;">First Official A/B Experiment</p>
+                    <p style="font-size: 1.5vw; margin-top: 1vh;">February 5, 2005</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- CHAPTER 3: Experimentation -->
+
+        <div class="slide" data-chapter="Experimentation" id="every-change">
+            <div class="flex-center fragment">
+                <h2 style="max-width: 50vw; text-align: center;">
+                    <span style="color: var(--blue);">Everything </span> goes through experimentation
+                </h2>
+                <div style="display: flex; gap: 1vw; margin-top: 1vh; flex-wrap: wrap; justify-content: center; align-items: center;">
+                    <span class="tag">CSS tweaks</span>
+                    <span style="font-size: 1.5vw; color: var(--gray-400);">→</span>
+                    <span class="tag">Infrastructure hanges</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="slide" data-chapter="Experimentation" id="experiment-numbers">
+            <div class="flex-center">
+                <div style="display: flex; gap: 6vw; align-items: center;">
+                    <div class="fragment" style="text-align: center;">
+                        <div style="font-size: 6vw; font-weight: 900; color: var(--navy);">150K+</div>
+                        <div style="font-size: 1.4vw; color: var(--gray-600); margin-top: 1vh;">Total Experiments </div>
+                    </div>
+                    <div class="fragment hidden-until-visible" style="text-align: center;">
+                        <div style="font-size: 6vw; font-weight: 900; color: var(--blue);">1000+</div>
+                        <div style="font-size: 1.4vw; color: var(--gray-600); margin-top: 1vh;">Run In Parallel Anytime</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="slide" data-chapter="Experimentation" id="success-rate">
+            <div class="flex-center fragment">
+                <img src="attachments/star.png" style="position: absolute; top: 5vh; right: 5vw; width: 8vw; opacity: 0.9;" />
+                <h2 style="text-align: center; margin-bottom: 1.5vh;">Most experiments fail. And that's okay.</h2>
+                <div class="flex-row" style="margin-top: 3vh;">
+                    <div class="compare-box">
+                        <div class="compare-label">Our Success Rate</div>
+                        <div class="compare-value text-green">&lt;25%</div>
+                    </div>
+                </div>
+                <p class="subtitle" style="margin-top: 4vh; max-width: 40vw; text-align: center;">
+                    The goal isn't to be right. It's to learn fast.
+                </p>
+            </div>
+        </div>
+
+        <div class="slide" data-chapter="Experimentation" id="experimentation-dna">
+            <div class="flex-center fragment">
+                <img src="attachments/star.png" style="position: absolute; top: 5vh; right: 5vw; width: 8vw; opacity: 0.9;" />
+                <h2 style="margin-bottom: 3vh; text-align: center;">Experimentation Built Our <span style="color: var(--blue);">Data-Driven DNA</span> </h2>
+                <p style="font-size: 1.4vw; font-weight: 400; color: var(--gray-500); max-width: 60vw; text-align: center; line-height: 1.6;">
+                    No HIPPOs • No Endless Debates • Data (End-User) Decides
+                </p>
+            </div>
+        </div>
+
+
+
+        <!-- CHAPTER 2: Data Engineering -->
+
+        <div class="slide" data-chapter="Data Engineering" id="layer-transition-data">
+            <div class="flex-center fragment">
+                <h2>Let's begin here</h2>
+                <div style="text-align: center; max-width: 70vw;">
+                    <div style="display: flex; flex-direction: column; gap: 1.5vh;">
+                        <div style="background: #c8e6c9; padding: 1.5vw 4vw; border-radius: 0.8vw; opacity: 0.4;">
+                            <p style="font-size: 1.5vw; font-weight: 600; color: var(--gray-800);">Domain Intelligence</p>
+                        </div>
+                        <div style="background: #ffe0b2; padding: 1.5vw 4vw; border-radius: 0.8vw; opacity: 0.4;">
+                            <p style="font-size: 1.5vw; font-weight: 600; color: var(--gray-800);">ML Engineering</p>
+                        </div>
+                        <div style="position: relative;">
+                            <div style="background: #ffccbc; padding: 1.5vw 4vw; border-radius: 0.8vw; border: 3px solid var(--navy); box-shadow: 0 0.5vw 2vw rgba(0,0,0,0.15);">
+                                <p style="font-size: 1.5vw; font-weight: 600; color: var(--gray-800);">Data Management</p>
+                            </div>
+                            <span style="position: absolute; right: -3vw; top: 50%; transform: translateY(-50%); font-size: 2vw; color: var(--navy);">←</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="slide section-slide" data-chapter="Data Engineering" id="data-layer">
+            <div class="flex-center fragment">
+                <h2>Our Data Story</h2>
+                <p class="subtitle" style="color: rgba(255,255,255,0.7); margin-top: 16px;">MySQL • Hadoop • Cloud Lakehouse</p>
+            </div>
+        </div>
+
+
+        <div class="slide" data-chapter="MySQL" id="perl-mysql-transition">
+            <div class="flex-center fragment">
+                <h2 style="text-align: center; margin-bottom: 5vh;">The Original OLTP Stack</h2>
+                <div class="flex-row" style="gap: 5vw;">
+                    <div style="text-align: center;">
+                        <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/perl/perl-original.svg" alt="Perl" style="width: 10vw; height: 10vw;">
+                        <p style="font-size: 2vw; font-weight: 700; margin-top: 1.5vw; color: var(--navy);">Perl</p>
+                    </div>
+                    <div style="text-align: center; font-size: 5vw; color: var(--gray-400);">+</div>
+                    <div style="text-align: center; position: relative; width: 12vw; height: 14vw;">
+                        <div class="db-postgres" style="position: absolute; top: 0; left: 0; width: 100%; text-align: center;">
+                            <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/postgresql/postgresql-original.svg" alt="PostgreSQL" style="width: 10vw; height: 10vw;">
+                            <p style="font-size: 2vw; font-weight: 700; margin-top: 1.5vw; color: var(--navy);">PostgreSQL</p>
+                        </div>
+                        <div class="fragment db-mysql">
+                            <div style="position: absolute; top: 0; left: 0; width: 12vw; height: 14vw; background: white; text-align: center;">
+                                <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/mysql/mysql-original.svg" alt="MySQL" style="width: 10vw; height: 10vw;">
+                                <p style="font-size: 2vw; font-weight: 700; margin-top: 1.5vw; color: var(--navy);">MySQL</p>
+                                <p style="font-size: 0.9vw; color: var(--gray-500); margin-top: 0.5vw;">~ 2000</p>
+                            </div>
+                            <ul class="feature-list" style="position: absolute; left: 14vw; top: 0; text-align: left; white-space: nowrap;">
+                                <li style="font-size: 1.4vw;"><span class="check-icon">✓</span> Asynchronous replication</li>
+                                <li style="font-size: 1.4vw;"><span class="check-icon">✓</span> Commercial support</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="slide" data-chapter="MySQL" id="mysql-growth">
+            <div class="flex-center fragment">
+                <h2 style="margin-bottom: 4vh;">MySQL Growth</h2>
+                <div style="display: flex; gap: 6vw; align-items: center;">
+                    <div style="text-align: center;">
+                        <p style="color: var(--navy); font-size: 2vw; font-weight: 700; margin-bottom: 2vh;">2005</p>
+                        <div style="display: flex; gap: 2vw; align-items: center;">
+                            <div class="compare-box">
+                                <div class="compare-label">Master</div>
+                                <div class="compare-value">1</div>
+                            </div>
+                            <span style="font-size: 1.5vw; color: var(--gray-400);">+</span>
+                            <div class="compare-box">
+                                <div class="compare-label">Slaves</div>
+                                <div class="compare-value">4</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="fragment hidden-until-visible" style="display: flex; align-items: center; gap: 6vw;">
+                        <span style="font-size: 3vw; color: var(--accent);">→</span>
+                        <div style="text-align: center;">
+                            <p style="color: var(--navy); font-size: 2vw; font-weight: 700; margin-bottom: 2vh;">2020</p>
+                            <div class="compare-box">
+                                <div class="compare-label">Database Instances</div>
+                                <div class="compare-value" style="color: #d97706;">~6800</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="slide" data-chapter="MySQL" id="mysql-unique-question">
+            <div class="flex-center fragment">
+                <h2>What Is Unique About Our MySQL Setup?</h2>
+            </div>
+        </div>
+
+        <div class="slide" data-chapter="MySQL" id="mysql-unique-dont">
+            <div class="flex-center fragment">
+                <h2 style="margin-bottom: 4vh;">We <span style="color: var(--red);">Don't</span> Have ...</h2>
+                <ul style="list-style: none; padding: 0; font-size: 1.8vw; text-align: left;">
+                    <li style="margin-bottom: 2vh; display: flex; align-items: center; gap: 1vw;"><span style="color: var(--red);">✗</span> Stored Procedures</li>
+                    <li style="margin-bottom: 2vh; display: flex; align-items: center; gap: 1vw;"><span style="color: var(--red);">✗</span> UDFs</li>
+                    <li style="margin-bottom: 2vh; display: flex; align-items: center; gap: 1vw;"><span style="color: var(--red);">✗</span> Views</li>
+                    <li style="margin-bottom: 2vh; display: flex; align-items: center; gap: 1vw;"><span style="color: var(--red);">✗</span> Specialized Hardware</li>
+                    <li style="margin-bottom: 2vh; display: flex; align-items: center; gap: 1vw;"><span style="color: var(--red);">✗</span> Cache Layer</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="slide" data-chapter="MySQL" id="mysql-no-cache">
+            <div class="flex-center fragment">
+                <h2 style="margin-bottom: 2vh;">Wait... <span style="color: var(--red);">No Cache Layer?!</span></h2>
+            </div>
+        </div>
+
+        <div class="slide" data-chapter="MySQL" id="mysql-why-no-cache">
+            <div class="flex-center fragment">
+                <h2 style="margin-bottom: 1vh;">The Secret Sauce</h2>
+                <div style="display: flex; align-items: center; gap: 2vw;">
+                    <div style="text-align: center; padding: 2vw 2.5vw;">
+                        <p style="font-size: 2.5vw; font-weight: 700; color: var(--navy);">Smaller DBs</p>
+                        <p style="font-size: 1vw; color: var(--gray-500);">2TB soft limit</p>
+                    </div>
+                    <div class="fragment" style="display: flex; align-items: center; gap: 2vw;">
+                        <span style="font-size: 2vw; color: var(--gray-400);">+</span>
+                        <div style="text-align: center; padding: 2vw 2.5vw;">
+                            <p style="font-size: 2.5vw; font-weight: 700; color: #d97706;">Fits in NVMe</p>
+                            <p style="font-size: 1vw; color: var(--gray-500);">of standard server blade 7/9</p>
+                        </div>
+                    </div>
+                    <div class="fragment" style="display: flex; align-items: center; gap: 2vw;">
+                        <span style="font-size: 2vw; color: var(--gray-400);">=</span>
+                        <div style="text-align: center; padding: 2vw 2.5vw;">
+                            <p style="font-size: 3vw; font-weight: 700; color: var(--green);">&lt; 350 μs</p>
+                            <p style="font-size: 1vw; color: var(--gray-500);">point queries</p>
+                            <p style="font-size: 0.8vw; color: var(--gray-400);">Tested on Blade 7 - 2TB</p>
+                        </div>
+                    </div>
+                </div>
+                <p class="fragment" style="color: var(--gray-400); font-size: 1.2vw; margin-top: 3vh;">Faster backups · Quicker failovers · Lower cost</p>
+            </div>
+        </div>
+
+        <div class="slide" data-chapter="MySQL" id="mysql-how-manage">
+            <div class="flex-center">
+                <h2 style="margin-bottom: 6vh;">How Do We Manage Thousands of Instances?</h2>
+                <div class="fragment" style="display: flex; flex-direction: column; align-items: center; gap: 3vh;">
+                    <div style="display: flex; align-items: center; gap: 2vw;">
+                        <div class="fragment" style="background: linear-gradient(135deg, #0071c2, #003580); padding: 2vh 3vw; border-radius: 1vw; box-shadow: 0 0.5vw 2vw rgba(0,113,194,0.3);">
+                            <p style="font-size: 2vw; color: white; font-weight: 700; margin: 0;">Single Writer</p>
+                        </div>
+                        <div class="fragment" style="display: flex; align-items: center; gap: 2vw;">
+                            <span style="font-size: 1.8vw; color: var(--gray-400);">+</span>
+                            <div style="background: linear-gradient(135deg, #8b5cf6, #6d28d9); padding: 2vh 3vw; border-radius: 1vw; box-shadow: 0 0.5vw 2vw rgba(139,92,246,0.3);">
+                                <p style="font-size: 2vw; color: white; font-weight: 700; margin: 0;">MySQL Orchestrator</p>
+                            </div>
+                        </div>
+                        <div class="fragment" style="display: flex; align-items: center; gap: 2vw;">
+                            <span style="font-size: 1.8vw; color: var(--gray-400);">+</span>
+                            <div style="background: linear-gradient(135deg, #10b981, #059669); padding: 2vh 3vw; border-radius: 1vw; box-shadow: 0 0.5vw 2vw rgba(16,185,129,0.3);">
+                                <p style="font-size: 2vw; color: white; font-weight: 700; margin: 0;">Automation</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="slide" data-chapter="MySQL" id="mysql-orchestrator">
+            <div class="flex-center fragment">
+                <h2 style="margin-bottom: 1vh;">Our MySQL Architecture</h2>
+                <p style="color: var(--gray-500); font-size: 1.3vw; margin-bottom: 2vh;">Single writer setup · Replication chain</p>
+                <img src="attachments/orchestrator.png" alt="MySQL Orchestrator Replication Topology" style="max-width: 85%; max-height: 60vh; object-fit: contain; margin-bottom: 2vh;">
+                <div style="display: flex; gap: 3vw; font-size: 1.1vw;">
+                    <div style="text-align: center;">
+                        <span style="color: var(--green);">✓</span> Automatic failover
+                    </div>
+                    <div style="text-align: center;">
+                        <span style="color: var(--green);">✓</span> Topology discovery
+                    </div>
+                    <div style="text-align: center;">
+                        <span style="color: var(--green);">✓</span> Better Observability
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="slide" data-chapter="MySQL" id="mysql-spa">
+            <div class="flex-center fragment">
+                <h2 style="margin-bottom: 1vh;">The Need for Automation</h2>
+                <p style="color: var(--gray-400); font-size: 1.2vw; margin-bottom: 3vh;">An example</p>
+                <div style="display: flex; gap: 2vw; align-items: center;">
+                    <div class="fragment compare-box" style="padding: 1.5vw 2vw;">
+                        <div class="compare-label">Instances</div>
+                        <div class="compare-value" style="color: var(--accent);">~7000</div>
+                    </div>
+                    <div class="fragment" style="display: flex; align-items: center; gap: 2vw;">
+                        <span style="font-size: 1.5vw; color: var(--gray-500);">÷</span>
+                        <div class="compare-box" style="padding: 1.5vw 2vw;">
+                            <div class="compare-label">Refresh Cycle</div>
+                            <div class="compare-value">60 days</div>
+                        </div>
+                    </div>
+                    <div class="fragment" style="display: flex; align-items: center; gap: 2vw;">
+                        <span style="font-size: 1.5vw; color: var(--gray-500);">=</span>
+                        <div class="compare-box" style="padding: 1.5vw 2vw; border-color: var(--teal); background: rgba(0, 166, 153, 0.1);">
+                            <div class="compare-label" style="color: var(--teal);">Result</div>
+                            <div class="compare-value" style="color: var(--teal);">~1 action every 3 min</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="slide" data-chapter="MySQL" id="mysql-shaped">
+            <div class="flex-center fragment">
+                <h2 style="text-align: center; max-width: 60vw;">We didn't just <span style="color: var(--blue);">Use</span> MySQL — we helped <span style="color: var(--green);">Shape</span> it</h2>
+            </div>
+        </div>
+
+        <div class="slide" data-chapter="MySQL" id="mysql-decision">
+            <div class="flex-center fragment">
+                <img src="attachments/star.png" style="position: absolute; top: 5vh; right: 5vw; width: 8vw; opacity: 0.9;" />
+                <h2 style="text-align: center;">Early decision: <span style="color: var(--red);">Don't fork,</span> <span style="color: var(--green);">Contribute upstream</span></h2>
+                <div class="fragment">
+                    <p style="font-size: 1.4vw; color: var(--gray-400); line-height: 1.6; margin-bottom: 3vh; text-align: center;">
+                        Many modern MySQL features exist today because of us
+                    </p>
+                    <div style="display: flex; gap: 1.5vw; flex-wrap: wrap; justify-content: center; margin-bottom: 3vh;">
+                        <span style="background: var(--blue); color: white; padding: 0.8vw 1.5vw; border-radius: 8px; font-size: 1.5vw;">GTID-based Replication</span>
+                        <span style="background: var(--blue); color: white; padding: 0.8vw 1.5vw; border-radius: 8px; font-size: 1.5vw;">Binlog Compression (zstd)</span>
+                        <span style="background: var(--blue); color: white; padding: 0.8vw 1.5vw; border-radius: 8px; font-size: 1.5vw;">Parallel Replication</span>
+                        <span style="background: var(--blue); color: white; padding: 0.8vw 1.5vw; border-radius: 8px; font-size: 1.5vw;">...</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="slide" data-chapter="MySQL" id="early-analytics">
+            <div class="flex-center fragment">
+                <h2 style="text-align: center; margin-bottom: 3vh;">ML in Perl-Era</h2>
+                <div class="flex-row" style="gap: 4vw;">
+                    <div style="text-align: center;">
+                        <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/perl/perl-original.svg" alt="Perl" style="width: 8vw; height: 8vw;">
+                        <p style="font-size: 1.8vw; font-weight: 700; margin-top: 1vw; color: var(--navy);">Perl Scripts</p>
+                    </div>
+                    <div style="text-align: center; font-size: 4vw; color: var(--gray-400); align-self: center;">+</div>
+                    <div style="text-align: center;">
+                       <div style="width: 8vw; height: 8vw; background: var(--navy); border-radius: 16px; display: flex; align-items: center; justify-content: center;">
+                            <span style="font-size: 4vw;">⏰</span>
+                        </div>
+                        <p style="font-size: 1.8vw; font-weight: 700; margin-top: 1vw; color: var(--navy);">Cron Jobs</p>
+                    </div>
+                    <div style="text-align: center; font-size: 4vw; color: var(--gray-400); align-self: center;">+</div>
+                    <div style="text-align: center; margin-top: 1.5vw; display: flex; flex-direction: column; align-items: center;">
+                         <div style="width: 8vw; height: 8vw; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 16px; display: flex; align-items: center; justify-content: center;">
+                            <span style="font-size: 3vw; color: white;">📚</span>
+                        </div>
+                        <p style="font-size: 1.6vw; font-weight: 700; margin-top: 1vw; color: var(--navy);">CPAN</p>
+                        <p style="font-size: 0.9vw; color: var(--gray-500); margin-top: 0.5vw;">Statistical libraries</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="slide" data-chapter="MySQL" id="ml-before-hadoop">
+            <h2 style="text-align: center; margin-bottom: 1vh;">It solved real business problems</h2>
+            <p style="text-align: center; color: var(--gray-400); font-size: 1.1vw; margin-bottom: 3vh;">Classical ML Examples ~2011 </p>
+            
+            <div style="display: flex; flex-direction: column; gap: 2vw; padding: 0 4vw; justify-content: center;">
+                <!-- Cards Section -->
+                <div style="display: flex; flex-wrap: wrap; gap: 2vw; justify-content: center;">
+                    <!-- Classification Cards -->
+                    <div>
+                        <div class="fragment" style="background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%); border-radius: 16px; padding: 2vw; box-shadow: 0 8px 32px rgba(0,0,0,0.1); border: 2px solid var(--blue); transform: translateY(0); transition: all 0.3s ease;">
+                            <div style="display: flex; align-items: center; gap: 1vw; margin-bottom: 1vw;">
+                                <div style="background: var(--blue); color: white; width: 3vw; height: 3vw; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5vw; line-height: 1;">🛡️</div>
+                                <div style="color: var(--blue); font-weight: 700; font-size: 1.5vw;">Classification</div>
+                            </div>
+                            <div style="margin-bottom: 1.5vw;">
+                                <div style="font-weight: 600; color: var(--gray-900); font-size: 1.3vw; margin-bottom: 0.5vw;">Fraud Detection</div>
+                            </div>
+                            <div style="margin-bottom: 1.5vw;">
+                                <div style="font-weight: 600; color: var(--gray-900); font-size: 1.3vw; margin-bottom: 0.5vw;">Business vs Leisure</div>
+                            </div>
+                            <div style="margin-bottom: 1.5vw;">
+                                <div style="font-weight: 600; color: var(--gray-900); font-size: 1.3vw; margin-bottom: 0.5vw;">Review Categorization</div>
+                            </div>
+                            <div style="margin-top: 1.5vw; padding-top: 1.5vw; border-top: 1px solid rgba(59, 130, 246, 0.2);">
+                                <div style="display: flex; flex-wrap: wrap; gap: 0.5vw;">
+                                    <div style="background: rgba(59, 130, 246, 0.15); color: #1e40af; padding: 0.3vw 0.8vw; border-radius: 20px; font-size: 1.0vw; font-weight: 500; display: inline-block; border: 1px solid rgba(59, 130, 246, 0.3);">Naive Bayes</div>
+                                    <div style="background: rgba(59, 130, 246, 0.15); color: #1e40af; padding: 0.3vw 0.8vw; border-radius: 20px; font-size: 1.0vw; font-weight: 500; display: inline-block; border: 1px solid rgba(59, 130, 246, 0.3);">Regex NLP</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Prediction Card -->
+                    <div>
+                        <div class="fragment" style="background: linear-gradient(135deg, #faf5ff 0%, #e9d5ff 100%); border-radius: 16px; padding: 2vw; box-shadow: 0 8px 32px rgba(0,0,0,0.1); border: 2px solid var(--purple); min-width: 300px; max-width: 340px; transform: translateY(0); transition: all 0.3s ease;">
+                            <div style="display: flex; align-items: center; gap: 1vw; margin-bottom: 1vw;">
+                                <div style="background: var(--purple); color: white; width: 3vw; height: 3vw; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5vw; line-height: 1;">📈</div>
+                                <div style="color: var(--purple); font-weight: 700; font-size: 1.5vw;">Prediction</div>
+                            </div>
+                            <div style="margin-bottom: 1.5vw;">
+                                <div style="font-weight: 600; color: var(--gray-900); font-size: 1.3vw; margin-bottom: 0.5vw;">Demand Forecasting</div>
+                            </div>
+                            <div style="margin-bottom: 1.5vw;">
+                                <div style="font-weight: 600; color: var(--gray-900); font-size: 1.3vw; margin-bottom: 0.5vw;">&nbsp;</div>
+                            </div>
+                            <div style="margin-bottom: 1.5vw;">
+                                <div style="font-weight: 600; color: var(--gray-900); font-size: 1.3vw; margin-bottom: 0.5vw;">&nbsp;</div>
+                            </div>
+                            <div style="margin-top: 1.5vw; padding-top: 1.5vw; border-top: 1px solid rgba(147, 51, 234, 0.2);">
+                                <div style="display: flex; flex-wrap: wrap; gap: 0.5vw;">
+                                    <div style="background: rgba(147, 51, 234, 0.15); color: #6b21a8; padding: 0.3vw 0.8vw; border-radius: 20px; font-size: 1.0vw; font-weight: 500; display: inline-block; border: 1px solid rgba(147, 51, 234, 0.3);">Curve-Fitting</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Recommendations Card -->
+                    <div>
+                        <div class="fragment" style="background: linear-gradient(135deg, #fff7ed 0%, #fed7aa 100%); border-radius: 16px; padding: 2vw; box-shadow: 0 8px 32px rgba(0,0,0,0.1); border: 2px solid var(--orange); min-width: 320px; transform: translateY(0); transition: all 0.3s ease;">
+                            <div style="display: flex; align-items: center; gap: 1vw; margin-bottom: 1vw;">
+                                <div style="background: var(--orange); color: white; width: 3vw; height: 3vw; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5vw; line-height: 1;">🏨</div>
+                                <div style="color: var(--orange); font-weight: 700; font-size: 1.5vw;">Recommendations</div>
+                            </div>
+                            <div style="margin-bottom: 1.5vw;">
+                                <div style="font-weight: 600; color: var(--gray-900); font-size: 1.3vw; margin-bottom: 0.5vw;">Similar Hotels</div>
+                            </div>
+                            <div style="margin-bottom: 1.5vw;">
+                                <div style="font-weight: 600; color: var(--gray-900); font-size: 1.3vw; margin-bottom: 0.5vw;">Hotel-to-Hotel Recs</div>
+                            </div>
+                            <div style="margin-bottom: 1.5vw;">
+                                <div style="font-weight: 600; color: var(--gray-900); font-size: 1.3vw; margin-bottom: 0.5vw;">&nbsp;</div>
+                            </div>
+                            <div style="margin-top: 1.5vw; padding-top: 1.5vw; border-top: 1px solid rgba(249, 115, 22, 0.2);">
+                                <div style="display: flex; flex-wrap: wrap; gap: 0.5vw;">
+                                    <div style="background: rgba(249, 115, 22, 0.15); color: #c2410c; padding: 0.3vw 0.8vw; border-radius: 20px; font-size: 1.0vw; font-weight: 500; display: inline-block; border: 1px solid rgba(249, 115, 22, 0.3);">KNN + Fisher Test</div>
+                                    <div style="background: rgba(249, 115, 22, 0.15); color: #c2410c; padding: 0.3vw 0.8vw; border-radius: 20px; font-size: 1.0vw; font-weight: 500; display: inline-block; border: 1px solid rgba(249, 115, 22, 0.3);">Collaborative Filtering</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Remove the grouped algorithms section -->
+        </div>
+
+        <div class="slide" data-chapter="MySQL" id="hadoop-intro">
+            <div class="flex-center fragment">
+                <h2 style="margin-bottom: 2vh;">This Setup Worked, Until...</h2>
+                <p style="font-size: 1.2vw; color: var(--gray-500); margin-bottom: 3vh;">Data grew too large</p>
+            </div>
+        </div>
+
+        <div class="slide" data-chapter="Hadoop" id="hadoop-title">
+            <div class="flex-center">
+                <img src="attachments/hadoop-logo.png" alt="Hadoop" style="height: 12vw; margin-bottom: 3vh;">
+                <h2 style="font-size: 3.5vw; margin-bottom: 1vh;">Hadoop to the Rescue</h2>
+                <p style="font-size: 1.4vw; color: var(--gray-400);">Distributed storage and processing at scale</p>
+            </div>
+        </div>
+
+        <div class="slide" data-chapter="Hadoop" id="hadoop-setup">
+            <div class="flex-center">
+                <h2 style="margin-bottom: 3vh;">2 x On-Premise <img src="attachments/hadoop-logo.png" alt="Hadoop" style="height: 4vw; vertical-align: middle;">  Clusters (~2011)</h2>
+                <p style="font-size: 1.2vw; color: var(--gray-400); margin-bottom: 3vh;">Per-cluster configuration</p>
+                <div class="fragment" style="display: flex; gap: 3vw; align-items: center;">
+                    <div class="compare-box" style="padding: 2vw 3vw;">
+                        <div class="compare-label">Cores</div>
+                        <div class="compare-value" style="color: var(--blue);">~60,000</div>
+                    </div>
+                    <!-- <div class="compare-box" style="padding: 2vw 3vw;">
+                        <div class="compare-label">RAM</div>
+                        <div class="compare-value" style="color: var(--blue);">240 TB</div>
+                    </div> -->
+                    <div class="compare-box" style="padding: 2vw 3vw;">
+                        <div class="compare-label">Raw Disk</div>
+                        <div class="compare-value" style="color: var(--blue);">200 PB</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="slide" data-chapter="Hadoop" id="hadoop-architecture">
+            <div class="flex-center fragment">
+                <h2 style="margin-bottom: 1vh;">The Setup Looked Like This</h2>
+                <p style="color: var(--gray-500); font-size: 1.2vw; margin-bottom: 2vh; font-style: italic;">Our Hadoop ecosystem</p>
+                <div style="position: relative; width: 70vw; height: 55vh;">
+                    <img class="fragment fade-in" src="attachments/hadoop1.png" alt="Hadoop Architecture 1" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain;">
+                    <img class="fragment fade-in" src="attachments/hadoop2.png" alt="Hadoop Architecture 2" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain;">
+                    <img class="fragment fade-in" src="attachments/hadoop3.png" alt="Hadoop Architecture 3" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain;">
+                    <img class="fragment fade-in" src="attachments/hadoop4.png" alt="Hadoop Architecture 4" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain;">
+                </div>
+            </div>
+        </div>
+
+         <div class="slide" data-chapter="Hadoop" id="hadoop-data-load">
+            <div class="flex-center">
+                <h2 style="margin-bottom: 2vh; font-size: 2.2vw; max-width: 70vw; text-align: center; line-height: 1.2;">How Data Reaches Hadoop?</h2>
+                <div style="position: relative; width: 90%; height: 64vh; display: flex; align-items: center; justify-content: center; margin: 0 auto;">
+                    <img class="fragment" src="attachments/dataload0.png" alt="Hadoop Workflow Step 1" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; object-position: center;">
+                    <img class="fragment fade-in" src="attachments/dataload1.png" alt="Hadoop Workflow Step 2" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; object-position: center;">
+                    <img class="fragment fade-in" src="attachments/dataload2.png" alt="Hadoop Workflow Step 3" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; object-position: center;">
+                </div>
+            </div>
+        </div>
+
+        <div class="slide" data-chapter="Hadoop" id="batch-predictions">
+            <div class="flex-center">
+                <h2 style="margin-bottom: 2vh; font-size: 2.2vw; max-width: 72vw; text-align: center; line-height: 1.2;">And This Data Powered ML Predictions</h2>
+                <p style="color: var(--gray-500); font-size: 1.2vw; margin-bottom: 2vh;">An example of offline inference</p>
+                <div style="position: relative; width: 90%; height: 64vh; display: flex; align-items: center; justify-content: center; margin: 0 auto;">
+                    <img class="fragment" src="attachments/batch0.png" alt="Hadoop Workflow Step 1" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; object-position: center;">
+                    <img class="fragment fade-in" src="attachments/batch1.png" alt="Hadoop Workflow Step 2" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; object-position: center;">
+                    <img class="fragment fade-in" src="attachments/batch2.png" alt="Hadoop Workflow Step 2" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; object-position: center;">
+                    <img class="fragment fade-in" src="attachments/batch3.png" alt="Hadoop Workflow Step 3" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; object-position: center;">
+                    <img class="fragment fade-in" src="attachments/batch4.png" alt="Hadoop Workflow Step 4" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; object-position: center;">
+                    <img class="fragment fade-in" src="attachments/batch5.png" alt="Hadoop Workflow Step 5" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; object-position: center;">
+                </div>
+            </div>
+        </div>
+
+        <div class="slide" data-chapter="Hadoop" id="lookup-tables">
+            <h2 style="text-align: center; font-size: 2.2vw; margin-bottom: 1vh;">We faked "Realtime Predictions" with <span style="color: var(--blue);">Lookup Tables</span></h2>
+            
+            
+            <div style="position: relative; width: 90%; height: 64vh; display: flex; align-items: center; justify-content: center; margin: 0 auto;">
+                <img class="fragment" src="attachments/lookup0.png" alt="Lookup Tables Step 1" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; object-position: center;">
+                <img class="fragment fade-in" src="attachments/lookup1.png" alt="Lookup Tables Step 2" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; object-position: center;">
+                <img class="fragment fade-in" src="attachments/lookup2.png" alt="Lookup Tables Step 3" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; object-position: center;">
+                <img class="fragment fade-in" src="attachments/lookup3.png" alt="Lookup Tables Step 4" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; object-position: center;">
+                <img class="fragment fade-in" src="attachments/lookup4.png" alt="Lookup Tables Step 5" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; object-position: center;">
+                <img class="fragment fade-in" src="attachments/lookup6.png" alt="Lookup Tables Step 6" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; object-position: center;">
+                <img class="fragment fade-in" src="attachments/lookup7.png" alt="Lookup Tables Step 7" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; object-position: center;">
+            </div>
+            
+            <p class="fragment" style="text-align: center; color: var(--gray-400); font-size: 1.1vw; margin-top: 2vh;">No real-time computation • MySQL as Cache</p>
+        </div>
+
+        <div class="slide" data-chapter="Hadoop" id="hadoop-served-well">
+            <div class="flex-center fragment">
+                <h2 style="margin-bottom: 3vh;">Hadoop Powered Our ML Pipeline For Years</h2>
+                <p style="font-size: 1.8vw; color: var(--gray-600); max-width: 60vw; text-align: center; line-height: 1.6;">
+                    But....
+                </p>
+            </div>
+        </div>
+
+        <div class="slide" data-chapter="Hadoop" id="hadoop-problems">
+            <div class="flex-center">
+                <h2 style="margin-bottom: 1vh;">... The Cracks Appeared</h2>
+                <p style="color: var(--gray-500); font-size: 1.2vw; margin-bottom: 2vh; font-style: italic;">An ML scientist's perspective</p>
+                <div style="position: relative; width: 90%; height: 65vh; display: flex; align-items: center; justify-content: center; margin: 0 auto;">
+                    <img class="fragment" src="attachments/cracks1.png" alt="Hadoop Issues Step 1" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; object-position: center;">
+                    <img class="fragment fade-in" src="attachments/cracks2.png" alt="Hadoop Issues Step 2" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; object-position: center;">
+                    <img class="fragment fade-in" src="attachments/cracks3.png" alt="Hadoop Issues Step 3" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; object-position: center;">
+                    <img class="fragment fade-in" src="attachments/cracks4.png" alt="Hadoop Issues Step 4" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; object-position: center;">
+                    <img class="fragment fade-in" src="attachments/cracks5.png" alt="Hadoop Issues Step 5" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; object-position: center;">
+                    <img class="fragment fade-in" src="attachments/cracks6.png" alt="Hadoop Issues Step 6" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; object-position: center;">
+                </div>
+            </div>
+        </div>
+
+        <div class="slide" data-chapter="Hadoop" id="hadoop-mold">
+            <div class="flex-center">
+                <h2 style="margin-bottom: 0.5vh;">Is this Mold?</h2>
+                <p style="font-size: 1.2vw; color: #666; margin-bottom: 2vh; font-style: italic;">Petabytes of data • Thousands of workflows • Circa 2018</p>
+                <img src="attachments/the-mold.png" alt="The Mold - Workflow Dependencies" style="max-width: 85%; max-height: 60vh; object-fit: contain; border-radius: 8px; box-shadow: 0 4px 20px rgba(0,0,0,0.15);">
+                <p style="color: var(--gray-500); font-size: 0.7vw; margin-top: 0.5vh; font-style: italic;">Image credit: Bennie Schut</p>
+            </div>
+        </div>
+
+        <div class="slide" data-chapter="Cloud" id="hadoop-timeline-1">
+            <h2 style="text-align: center; margin-bottom: 4vh;">Saying Goodbye to Hadoop</h2>
+            <div class="fragment h-timeline-container" style="padding-top: 10vh;">
+                <div class="h-timeline-line" style="top: calc(10vh + 10px);"></div>
+                <div class="h-timeline-era">
+                    <div class="h-timeline-dot yellow"></div>
+                    <div class="h-timeline-year">Late 2011</div>
+                    <div class="h-timeline-title">Hadoop Setup</div>
+                    <div class="h-timeline-subtitle">Two clusters</div>
+                </div>
+                <div class="h-timeline-era fragment">
+                    <div class="h-timeline-dot orange"></div>
+                    <div class="h-timeline-year">2018</div>
+                    <div class="h-timeline-title">Limit Realization</div>
+                    <div class="h-timeline-subtitle">Interdependent workflows</div>
+                </div>
+                <div class="h-timeline-era">
+                    
+                </div>
+                <div class="h-timeline-era">
+                   
+                </div>
+                <div class="h-timeline-era">
+                  
+                </div>
+                <div class="h-timeline-era fragment">
+                    <div class="h-timeline-dot gray"></div>
+                    <div class="h-timeline-year">2022</div>
+                    <div class="h-timeline-title">Maintenance</div>
+                    <div class="h-timeline-subtitle">Hadoop in KTLO mode</div>
+                </div>
+                <div class="h-timeline-era">
+                    
+                </div>
+                <div class="h-timeline-era fragment">
+                    <div class="h-timeline-dot red"></div>
+                    <div class="h-timeline-year">2025</div>
+                    <div class="h-timeline-title">Sunset</div>
+                    <div class="h-timeline-subtitle">RIP Hadoop</div>
+                </div>
+            </div>
+            <p style="text-align: right; font-size: 14px; color: var(--gray-500); font-style: italic; margin-top: 3vw; margin-right: 5vw;">* Indicative timeline</p>
+        </div>
+
+      
+
+        <div class="slide" data-chapter="Cloud" id="bdx-migration">
+            <div class="flex-center">
+                <h2 style="margin-bottom: 3vh;">And The Odds Were Against Us</h2>
+                <div class="fragment" style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 2vw; padding: 0 6vw;">
+                    <div class="fragment" style="text-align: center;">
+                        <div style="font-size: 3.5vw; margin-bottom: 1vh;">💾</div>
+                        <div style="font-size: 2.2vw; font-weight: 700; color: var(--navy);">100s</div>
+                        <div style="font-size: 1vw; color: var(--gray-600);">of petabytes</div>
+                    </div>
+                    <div class="fragment" style="text-align: center;">
+                        <div style="font-size: 3.5vw; margin-bottom: 1vh;">🗄️</div>
+                        <div style="font-size: 2.2vw; font-weight: 700; color: var(--navy);">~190K</div>
+                        <div style="font-size: 1vw; color: var(--gray-600);">Hadoop tables</div>
+                    </div>
+                    <div class="fragment" style="text-align: center;">
+                        <div style="font-size: 3.5vw; margin-bottom: 1vh;">⚙️</div>
+                        <div style="font-size: 2.2vw; font-weight: 700; color: var(--navy);">7,000+</div>
+                        <div style="font-size: 1vw; color: var(--gray-600);">workflows</div>
+                    </div>
+                    <div class="fragment" style="text-align: center; border-left: 2px solid var(--gray-400); padding-left: 2vw;">
+                        <div style="font-size: 3.5vw; margin-bottom: 1vh;">👥</div>
+                        <div style="font-size: 2.2vw; font-weight: 700; color: var(--navy);">100s</div>
+                        <div style="font-size: 1vw; color: var(--gray-600);">of teams</div>
+                    </div>
+                    <div class="fragment" style="text-align: center;">
+                        <div style="font-size: 3.5vw; margin-bottom: 1vh;">🔄</div>
+                        <div style="font-size: 2.2vw; font-weight: 700; color: var(--navy);">24/7</div>
+                        <div style="font-size: 1vw; color: var(--gray-600);">continuity</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="slide" data-chapter="Cloud" id="migration-goal">
+            <div class="flex-center fragment">
+                <h2 style="margin-bottom: 3vh;">Our Plan</h2>
+                <p style="font-size: 2.5vw; color: var(--navy); font-weight: 600; margin-bottom: 4vh; text-align: center;"><span style="color: var(--green);">Move Everything</span> • <span style="color: var(--orange);">Stop Nothing</span> • <span style="color: var(--red);">Align Everyone</span></p>
+            </div>
+        </div>
+
+        <div class="slide" data-chapter="Cloud" id="hadoop-long-goodbye">
+            <div class="flex-center fragment">
+                <h2 style="margin-bottom: 3vh;">The Four Major Hurdles</h2>
+                <div style="position: relative; width: 85%; height: 60vh;">
+                    <img class="fragment " src="attachments/major1.png" alt="Challenge 1" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; object-position: center; border-radius: 8px;">
+                    <img class="fragment fade-in" src="attachments/major2.png" alt="Challenge 2" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; object-position: center; border-radius: 8px;">
+                    <img class="fragment fade-in" src="attachments/major3.png" alt="Challenge 3" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; object-position: center; border-radius: 8px;">
+                    <img class="fragment fade-in" src="attachments/major4.png" alt="Challenge 4" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; object-position: center; border-radius: 8px;">
+                </div>
+            </div>
+        </div>
+
+        <div class="slide" data-chapter="Cloud" id="hadoop-timeline">
+            <h2 style="text-align: center; margin-bottom: 4vh;">Saying Goodbye to Hadoop</h2>
+            <div class="fragment h-timeline-container" style="padding-top: 10vh;">
+                <div class="h-timeline-line" style="top: calc(10vh + 10px);"></div>
+                <div class="h-timeline-era">
+                    <div class="h-timeline-dot yellow"></div>
+                    <div class="h-timeline-year">Late 2011</div>
+                    <div class="h-timeline-title">Hadoop Setup</div>
+                    <div class="h-timeline-subtitle">Two clusters</div>
+                </div>
+                <div class="h-timeline-era">
+                    <div class="h-timeline-dot orange"></div>
+                    <div class="h-timeline-year">2018</div>
+                    <div class="h-timeline-title">Limit Realization</div>
+                    <div class="h-timeline-subtitle">Interdependent workflows</div>
+                </div>
+                <div class="h-timeline-era flipped fragment">
+                    <div class="h-timeline-dot red"></div>
+                    <div class="h-timeline-year">2018-2019</div>
+                    <div class="h-timeline-title">Shelved Cloud</div>
+                    <div class="h-timeline-subtitle">Cost & Strategy Shift</div>
+                </div>
+                <div class="h-timeline-era fragment">
+                    <div class="h-timeline-dot green"></div>
+                    <div class="h-timeline-year">2019-2020</div>
+                    <div class="h-timeline-title">Improve Discovery & Compute</div>
+                    <div class="h-timeline-subtitle">Data Catalogue, Spark on K8s</div>
+                </div>
+                <div class="h-timeline-era flipped fragment">
+                    <div class="h-timeline-dot purple"></div>
+                    <div class="h-timeline-year">2021-2023</div>
+                    <div class="h-timeline-title">Modernize Data</div>
+                    <div class="h-timeline-subtitle">Cloud-Native Management</div>
+                </div>
+                <div class="h-timeline-era">
+                    <div class="h-timeline-dot gray"></div>
+                    <div class="h-timeline-year">2022</div>
+                    <div class="h-timeline-title">Maintenance</div>
+                    <div class="h-timeline-subtitle">Hadoop in KTLO mode</div>
+                </div>
+                <div class="h-timeline-era flipped fragment">
+                    <div class="h-timeline-dot green"></div>
+                    <div class="h-timeline-year">2023-2025</div>
+                    <div class="h-timeline-title">The Big Migration</div>
+                    <div class="h-timeline-subtitle">All workflows → Cloud</div>
+                </div>
+                <div class="h-timeline-era">
+                    <div class="h-timeline-dot red"></div>
+                    <div class="h-timeline-year">2025</div>
+                    <div class="h-timeline-title">Sunset</div>
+                    <div class="h-timeline-subtitle">RIP Hadoop</div>
+                </div>
+            </div>
+            <p style="text-align: right; font-size: 14px; color: var(--gray-500); font-style: italic; margin-top: 3vw;">* Indicative timeline</p>
+        </div>
+        
+        <div class="slide" data-chapter="Cloud" id="migration-phases">
+            <div class="flex-center fragment">
+                <h2 style="margin-bottom: 2vh;">This is How it Happened</h2>
+                <p style="font-size: 1.2vw; color: #666; margin-bottom: 2vh; font-style: italic;">Five phases of migration</p>
+                <div style="position: relative; width: 90%; height: 55vh;">
+                    <img src="attachments/phase1.png" alt="Phase 1" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; object-position: center;">
+                    <img class="fragment fade-in" src="attachments/phase2.png" alt="Phase 2" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; object-position: center;">
+                    <img class="fragment fade-in" src="attachments/phase3.png" alt="Phase 3" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; object-position: center;">
+                    <img class="fragment fade-in" src="attachments/phase4.png" alt="Phase 4" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; object-position: center;">
+                    <img class="fragment fade-in" src="attachments/phase5.png" alt="Phase 5" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; object-position: center;">
+                </div>
+            </div>
+        </div>
+
+        <div class="slide" data-chapter="Cloud" id="key-to-migration">
+            <div class="flex-center">
+                <img src="attachments/star.png" style="position: absolute; top: 5vh; right: 5vw; width: 8vw; opacity: 0.9;" />
+                <h2 style="margin-bottom: 1vh;">Key to Our Success: <span style="color: var(--blue);">A Unified Command Center</span></h2>
+                <p style="font-size: 1.2vw; color: #666; margin-bottom: 2vh; font-style: italic;">Everything in one place — status, dependencies, blockers</p>
+                <div style="display: flex; align-items: center; gap: 3vw; margin-top: 2vh;">
+                    <div class="fragment hidden-until-visible" style="flex-shrink: 0;">
+                        <img src="attachments/graph-server.png" alt="Graph Server" style="max-height: 55vh; ">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        
+         <div class="slide" data-chapter="Cloud" id="no-plan-b">
+            <div class="flex-center fragment">
+                <img src="attachments/star.png" style="position: absolute; top: 5vh; right: 5vw; width: 8vw; opacity: 0.9;" />
+                <h2 style="margin-bottom: 2vh;">To Pull-off the Impossible, <span style="color: var(--red);">Burn the Boats</span></h2>
+                <p style="font-size: 1.4vw; color: var(--gray-500); max-width: 50vw; text-align: center; line-height: 1.6;">
+                    When there is no plan B, we will find a way
+                </p>
+            </div>
+        </div>
+
+        
+        <div class="slide" data-chapter="Cloud" id="prevention">
+            <div class="flex-center fragment">
+                <img src="attachments/star.png" style="position: absolute; top: 5vh; right: 5vw; width: 8vw; opacity: 0.9;" />
+                <h2 style="margin-bottom: 1vh;">But a Better Strategy is <span style="color: var(--green);">Prevention</span></h2>
+                <p style="font-size: 1.2vw; color: var(--gray-500); font-style: italic; max-width: 50vw; text-align: center;">
+                    Four Lessons we'd hand our past selves
+                </p>
+                <div style="position: relative; width: 90%; height: 60vh;">
+                    <img class="fragment" src="attachments/advice1.png" alt="Advice 1" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; object-position: center; border-radius: 8px;">
+                    <img class="fragment fade-in" src="attachments/advice2.png" alt="Advice 2" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; object-position: center; border-radius: 8px;">
+                    <img class="fragment fade-in" src="attachments/advice3.png" alt="Advice 3" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; object-position: center; border-radius: 8px;">
+                    <img class="fragment fade-in" src="attachments/advice4.png" alt="Advice 4" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; object-position: center; border-radius: 8px;">
+                </div>
+            </div>
+        </div>
+
+        <!-- CHAPTER: ML Infra -->
+        <div class="slide" data-chapter="ML Engineering" id="layer-transition-ml">
+            <div class="flex-center fragment">
+                <h2>ML Engineering Layer</h2>
+                <div style="text-align: center; max-width: 70vw;">
+                    <div style="display: flex; flex-direction: column; gap: 1.5vh;">
+                        <div style="background: #c8e6c9; padding: 1.5vw 4vw; border-radius: 0.8vw; opacity: 0.4;">
+                            <p style="font-size: 1.5vw; font-weight: 600; color: var(--gray-800);">Domain Intelligence</p>
+                        </div>
+                        <div style="position: relative;">
+                            <div style="background: #ffe0b2; padding: 1.5vw 4vw; border-radius: 0.8vw; border: 3px solid var(--navy); box-shadow: 0 0.5vw 2vw rgba(0,0,0,0.15);">
+                                <p style="font-size: 1.5vw; font-weight: 600; color: var(--gray-800);">ML Engineering</p>
+                            </div>
+                            <span style="position: absolute; right: -3vw; top: 50%; transform: translateY(-50%); font-size: 2vw; color: var(--navy);">←</span>
+                        </div>
+                        <div style="background: #ffccbc; padding: 1.5vw 4vw; border-radius: 0.8vw; opacity: 0.4;">
+                            <p style="font-size: 1.5vw; font-weight: 600; color: var(--gray-800);">Data Management</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="slide section-slide" data-chapter="ML Engineering" id="ml-engineering-title">
+            <div class="flex-center">
+                <h2>ML Model Serving + Feature Engineering</h2>
+                <p class="subtitle">Infrastructure & systems powering AI at scale</p>
+            </div>
+        </div>
+        
+        <div class="slide" data-chapter="ML Engineering" id="tech-evolution-vertical">
+            <h2 style="text-align: center; margin-bottom: 2vh;">Evolution of our ML Stack</h2>
+            <div class="timeline-container">
+                <div class="timeline-era fragment">
+                    <div class="timeline-era-year">2005</div>
+                    <div class="timeline-era-dot red"></div>
+                    <div class="timeline-era-content">
+                        <div class="timeline-era-title">Perl Libraries + MySQL </div>
+                        <div class="timeline-era-tech">
+                            <span class="timeline-tech-tag">Formula-based algorithms</span>
+                            <span class="timeline-tech-tag">Statistical methods</span>
+                            <span class="timeline-tech-tag">Naive Bayes</span>
+                            <span class="timeline-tech-tag">T-tests</span>
+                            <span class="timeline-tech-tag">Curve fitting</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="timeline-era fragment compact">
+                    <div class="timeline-era-year">Late 2011</div>
+                    <div class="timeline-era-dot blue"></div>
+                    <div class="timeline-era-content">
+                        <div class="timeline-era-title">Hadoop</div>
+                    </div>
+                </div>
+
+                <div class="timeline-era fragment">
+                    <div class="timeline-era-year">2013-2014</div>
+                    <div class="timeline-era-dot green"></div>
+                    <div class="timeline-era-content">
+                        <div class="timeline-era-title">Oozie + Python & sklearn</div>
+                        <div class="timeline-era-tech">
+                            <span class="timeline-tech-tag">K-Means</span>
+                            <span class="timeline-tech-tag">Random Forest</span>
+                            <span class="timeline-tech-tag">SGD</span>
+                            <span class="timeline-tech-tag">SVM</span>
+                            <span class="timeline-tech-tag">TF-IDF NLP</span>
+                            <span class="timeline-tech-tag">Word2Vec</span>
+                            <span class="timeline-tech-tag">Vowpal Wabbit</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="timeline-era fragment compact">
+                    <div class="timeline-era-year">2015</div>
+                    <div class="timeline-era-dot orange"></div>
+                    <div class="timeline-era-content">
+                        <div class="timeline-era-title">Apache Spark + MLlib</div>
+                    </div>
+                </div>
+                <div class="timeline-era fragment compact">
+                    <div class="timeline-era-year">2016</div>
+                    <div class="timeline-era-dot purple"></div>
+                    <div class="timeline-era-content">
+                        <div class="timeline-era-title">H2O.ai</div>
+                    </div>
+                </div>
+                <div class="timeline-era fragment">
+                    <div class="timeline-era-year">2017</div>
+                    <div class="timeline-era-dot navy"></div>
+                    <div class="timeline-era-content">
+                        <div class="timeline-era-title">Deep Learning</div>
+                        <div class="timeline-era-tech">
+                            <span class="timeline-tech-tag">CNN</span>
+                            <span class="timeline-tech-tag">TensorFlow</span>
+                            <span class="timeline-tech-tag">Keras</span>
+                            <span class="timeline-tech-tag">PyTorch</span>
+                            <span class="timeline-tech-tag">Huggingface</span>
+                            <span class="timeline-tech-tag">LightGBM</span>
+                            <span class="timeline-tech-tag">LSTM/RNN</span>
+                            <span class="timeline-tech-tag">...</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="timeline-era fragment compact">
+                    <div class="timeline-era-year">2023</div>
+                    <div class="timeline-era-dot pink"></div>
+                    <div class="timeline-era-content">
+                        <div class="timeline-era-title">Generative AI</div>
+                    </div>
+                </div>
+                 <div class="timeline-era fragment compact">
+                    <div class="timeline-era-year">2025</div>
+                    <div class="timeline-era-dot gray"></div>
+                    <div class="timeline-era-content">
+                        <div class="timeline-era-title">Agentic Systems</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="slide" data-chapter="ML Engineering" id="pivotal-2015">
+            <div class="flex-center fragment">
+                <h2 style="margin-bottom: 1vh;">2015 was A Pivotal Year</h2>
+                <p class="fragment" style="color: var(--gray-400); font-size: 1.2vw; margin-bottom: 4vh;">We began solving two core problems</p>
+                <div style="display: flex; gap: 4vw; justify-content: center;">
+                    <div class="fragment" style="background: linear-gradient(135deg, #e3f2fd, #bbdefb); padding: 3vw 4vw; border-radius: 1.2vw; text-align: center; min-width: 20vw;">
+                        <div style="font-size: 3vw; margin-bottom: 1.5vh;">⚡</div>
+                        <div style="font-size: 1.6vw; font-weight: 700; color: var(--navy); margin-bottom: 1vh;">Realtime Predictions</div>
+                        <div style="font-size: 1.1vw; color: var(--gray-600);">Online Inference at scale</div>
+                    </div>
+                    <div class="fragment" style="background: linear-gradient(135deg, #f3e5f5, #e1bee7); padding: 3vw 4vw; border-radius: 1.2vw; text-align: center; min-width: 20vw;">
+                        <div style="font-size: 3vw; margin-bottom: 1.5vh;">🔧</div>
+                        <div style="font-size: 1.6vw; font-weight: 700; color: var(--navy); margin-bottom: 1vh;">Feature Engineering</div>
+                        <div style="font-size: 1.1vw; color: var(--gray-600);">For Training & Inference</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="slide" data-chapter="ML Inference" id="ml-inference-service">
+            <h2 style="text-align: center; margin-bottom: 1vh;">Our First Model Serving Service</h2>
+            <p style="text-align: center; color: var(--gray-400); font-size: 1.1vw; margin-bottom: 3vh;">Abstracting inference complexity</p>
+            
+            <div style="position: relative; width: 90%; height: 65vh; display: flex; align-items: center; justify-content: center; margin: 0 auto;">
+                <img class="fragment fade-in" src="attachments/rs-first0.png" alt="ML Inference Service Step 1" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; object-position: center;">
+                <img class="fragment fade-in" src="attachments/rs-first1.png" alt="ML Inference Service Step 2" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; object-position: center;">
+                <img class="fragment fade-in" src="attachments/rs-first2.png" alt="ML Inference Service Step 3" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; object-position: center;">
+                <img class="fragment fade-in" src="attachments/rs-first3.png" alt="ML Inference Service Step 3" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; object-position: center;">
+                <img class="fragment fade-in" src="attachments/rs-first4.png" alt="ML Inference Service Step 3" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; object-position: center;">
+            </div>
+        </div>
+
+                <div class="slide" data-chapter="ML Inference" id="supported-formats">
+            <h2 style="text-align: center; margin-bottom: 1vh;">Supported Model Formats</h2>
+            <p style="text-align: center; color: var(--gray-400); font-size: 1.1vw; margin-bottom: 3vh;"></p>
+            
+            <div class="fragment" style="display: flex; flex-wrap: wrap; gap: 1.2vw 1.5vw; justify-content: center; max-width: 60vw; margin: 0 auto;">
+                <div style="background: linear-gradient(135deg, rgba(255,149,0,0.2) 0%, rgba(255,149,0,0.08) 100%); padding: 0.8vw 1.2vw; border-radius: 8px; border-left: 3px solid var(--orange);">
+                    <span style="font-weight: 600; color: var(--gray-800); font-size: 1.1vw;">🧪 H2O Models</span>
+                </div>
+                <div style="background: linear-gradient(135deg, rgba(52,199,89,0.2) 0%, rgba(52,199,89,0.08) 100%); padding: 0.8vw 1.2vw; border-radius: 8px; border-left: 3px solid var(--green);">
+                    <span style="font-weight: 600; color: var(--gray-800); font-size: 1.1vw;">🔶 TensorFlow 2.x</span>
+                </div>
+                <div style="background: linear-gradient(135deg, rgba(0,122,255,0.2) 0%, rgba(0,122,255,0.08) 100%); padding: 0.8vw 1.2vw; border-radius: 8px; border-left: 3px solid var(--blue);">
+                    <span style="font-weight: 600; color: var(--gray-800); font-size: 1.1vw;">🐍 Python Models</span>
+                </div>
+                <div style="background: linear-gradient(135deg, rgba(255,149,0,0.2) 0%, rgba(255,149,0,0.08) 100%); padding: 0.8vw 1.2vw; border-radius: 8px; border-left: 3px solid var(--orange);">
+                    <span style="font-weight: 600; color: var(--gray-800); font-size: 1.1vw;">🐰 Vowpal Wabbit</span>
+                </div>
+                <div style="background: linear-gradient(135deg, rgba(255,59,48,0.2) 0%, rgba(255,59,48,0.08) 100%); padding: 0.8vw 1.2vw; border-radius: 8px; border-left: 3px solid var(--red);">
+                    <span style="font-weight: 600; color: var(--gray-800); font-size: 1.1vw;">🔗 Ensemble (Chimera)</span>
+                </div>
+                <div style="background: linear-gradient(135deg, rgba(175,82,222,0.2) 0%, rgba(175,82,222,0.08) 100%); padding: 0.8vw 1.2vw; border-radius: 8px; border-left: 3px solid var(--purple);">
+                    <span style="font-weight: 600; color: var(--gray-800); font-size: 1.1vw;">🌿 LightGBM</span>
+                </div>
+                <div style="background: linear-gradient(135deg, rgba(90,200,250,0.2) 0%, rgba(90,200,250,0.08) 100%); padding: 0.8vw 1.2vw; border-radius: 8px; border-left: 3px solid var(--teal);">
+                    <span style="font-weight: 600; color: var(--gray-800); font-size: 1.1vw;">☁️ SageMaker (AWS)</span>
+                </div>
+                <div style="background: linear-gradient(135deg, rgba(52,199,89,0.2) 0%, rgba(52,199,89,0.08) 100%); padding: 0.8vw 1.2vw; border-radius: 8px; border-left: 3px solid var(--green);">
+                    <span style="font-weight: 600; color: var(--gray-800); font-size: 1.1vw;">🚀 Triton (NVIDIA)</span>
+                </div>
+                <div style="background: linear-gradient(135deg, rgba(175,82,222,0.2) 0%, rgba(175,82,222,0.08) 100%); padding: 0.8vw 1.2vw; border-radius: 8px; border-left: 3px solid var(--purple);">
+                    <span style="font-weight: 600; color: var(--gray-800); font-size: 1.1vw;">📊 Linear Models (CSV)</span>
+                </div>
+                <div style="background: linear-gradient(135deg, rgba(90,200,250,0.2) 0%, rgba(90,200,250,0.08) 100%); padding: 0.8vw 1.2vw; border-radius: 8px; border-left: 3px solid var(--teal);">
+                    <span style="font-weight: 600; color: var(--gray-800); font-size: 1.1vw;">🗄️ Lookup Tables (Cassandra)</span>
+                </div>
+                <div style="background: linear-gradient(135deg, rgba(0,122,255,0.2) 0%, rgba(0,122,255,0.08) 100%); padding: 0.8vw 1.2vw; border-radius: 8px; border-left: 3px solid var(--blue);">
+                    <span style="font-weight: 600; color: var(--gray-800); font-size: 1.1vw;">🔄 Identity Models</span>
+                </div>
+                <div style="background: linear-gradient(135deg, rgba(107,114,128,0.15) 0%, rgba(107,114,128,0.05) 100%); padding: 0.8vw 1.2vw; border-radius: 8px; border-left: 3px solid #9ca3af;">
+                    <span style="font-weight: 500; color: var(--gray-500); font-size: 1.05vw;">📈 Legacy Models</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="slide" data-chapter="ML Inference" id="rs-architecture">
+            <h2 style="text-align: center; margin-bottom: 1vh;">Today's ML Inference Platform</h2>
+            <p style="text-align: center; color: var(--gray-400); font-size: 1.1vw; margin-bottom: 3vh;">Simplified Inference Architecture</p>
+            
+            <div class="fragment" style="position: relative; width: 90%; height: 65vh; display: flex; align-items: center; justify-content: center; margin: 0 auto;">
+                <img class="fragment fade-in" src="attachments/rs0.png" alt="Ranking System 0" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; object-position: center;">
+                <img class="fragment fade-in" src="attachments/rs1.png" alt="Ranking System 1" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; object-position: center;">
+                <img class="fragment fade-in" src="attachments/rs2.png" alt="Ranking System 2" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; object-position: center;">
+                <img class="fragment fade-in" src="attachments/rs3.png" alt="Ranking System 3" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; object-position: center;">
+                <img class="fragment fade-in" src="attachments/rs4.png" alt="Ranking System 4" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; object-position: center;">
+                <img class="fragment fade-in" src="attachments/rs5.png" alt="Ranking System 5" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; object-position: center;">
+                <img class="fragment fade-in" src="attachments/rs6.png" alt="Ranking System 6" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; object-position: center;">
+                <img class="fragment fade-in" src="attachments/rs7.png" alt="Ranking System 7" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; object-position: center;">
+                <img class="fragment fade-in" src="attachments/rs8.png" alt="Ranking System 8" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; object-position: center;">
+                <img class="fragment fade-in" src="attachments/rs9.png" alt="Ranking System 9" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; object-position: center;">
+                <img class="fragment fade-in" src="attachments/rs10.png" alt="Ranking System 10" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; object-position: center;">
+                <img class="fragment fade-in" src="attachments/rs11.png" alt="Ranking System 11" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; object-position: center;">
+                <img class="fragment fade-in" src="attachments/rs12.png" alt="Ranking System 12" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; object-position: center;">
+                <img class="fragment fade-in" src="attachments/rs13.png" alt="Ranking System 13" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; object-position: center;">
+                <img class="fragment fade-in" src="attachments/rs14.png" alt="Ranking System 14" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; object-position: center;">
+            </div>
+        </div>
+
+        <div class="slide" data-chapter="ML Inference" id="ml-inference-stats">
+            <div class="flex-center fragment">
+                <h2 style="margin-bottom: 3vh;">Numbers as of 2024</h2>
+                <div style="display: flex; gap: 6vw; align-items: center;">
+                    <div class="fragment" style="text-align: center;">
+                        <div style="font-size: 6vw; font-weight: 900; color: var(--blue);">480+</div>
+                        <div style="font-size: 1.4vw; color: var(--gray-600); margin-top: 1vh;">ML Models</div>
+                    </div>
+                    <div class="fragment" style="text-align: center;">
+                        <div style="font-size: 6vw; font-weight: 900; color: var(--purple);">400B+</div>
+                        <div style="font-size: 1.4vw; color: var(--gray-600); margin-top: 1vh;">Predictions Per Day (at peak)</div>
+                    </div>
+                    <div class="fragment" style="text-align: center;">
+                        <div style="font-size: 6vw; font-weight: 900; color: var(--navy);">< 20ms</div>
+                        <div style="font-size: 1.4vw; color: var(--gray-600); margin-top: 1vh;">Typical Latency</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="slide section-slide" data-chapter="Feature Engineering" id="feature-engineering-title">
+            <div class="flex-center">
+                <h2>Feature Engineering</h2>
+                <p class="subtitle">Turning Raw Data into Model Input Signals</p>
+            </div>
+        </div>
+
+        <div class="slide" data-chapter="Feature Engineering" id="ml-80-slide">
+            <div class="flex-center fragment">
+                <h2 style="margin-bottom: 2vh;">ML Scientists' Spent <span style="color: var(--red);">80% of Their Time</span> in Munging Data</h2>
+            </div>
+        </div>
+
+        <div class="slide" data-chapter="Feature Engineering" id="feature-pain-points">
+            <div class="flex-center fragment">
+                <h2 style="text-align: center; margin-bottom: 4vh;">Top Two Pain Points</h2>
+                <div style="position: relative; width: 90%; height: 35vh; display: flex; align-items: center; justify-content: center; margin: 0 auto;">
+                    <img class="fragment fade-in" src="attachments/fe1.png" alt="Feature Engineering 1" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; object-position: center;">
+                    <img class="fragment fade-in" src="attachments/fe2.png" alt="Feature Engineering 2" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; object-position: center;">
+                </div>
+            </div>
+        </div>
+
+        <div class="slide" data-chapter="Feature Engineering" id="two-pipelines">
+            <h2 style="text-align: center; margin-bottom: 2vh;">Let's Build <span style="color: var(--blue);">Re-usable</span> Computations</h2>
+            <p style="text-align: center; color: var(--gray-400); font-size: 1.2vw; margin-bottom: 4vh;">Our First Attempt</p>
+            
+            <div class="fragment" style="display: flex; gap: 4vw; padding: 0 12vw; align-items: stretch;">
+                <div class="fragment" style="flex: 1; background: linear-gradient(135deg, var(--purple), var(--blue)); padding: 3vw; border-radius: 1vw; color: white; text-align: center;">
+                    <div style="font-size: 2.5vw; font-weight: 700; margin-bottom: 1vh;">Offline Computation</div>
+                    <div style="font-size: 1.3vw; opacity: 0.9;">For Training Features</div>
+                </div>
+                
+                <div class="fragment" style="flex: 1; background: linear-gradient(135deg, var(--blue), var(--navy)); padding: 3vw; border-radius: 1vw; color: white; text-align: center;">
+                    <div style="font-size: 2.5vw; font-weight: 700; margin-bottom: 1vh;">Online Computation</div>
+                    <div style="font-size: 1.3vw; opacity: 0.9;">For Inference Features</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="slide" data-chapter="Feature Engineering" id="building-training-dataset">
+            <div class="flex-center">
+                <h2 style="text-align: center; margin-bottom: 1vh;">Building Training Dataset</h2>
+                <p style="text-align: center; color: var(--gray-400); font-size: 1.1vw; margin-bottom: 2vh;">A Classic Approach</p>
+                
+                <div style="display: flex; justify-content: center; align-items: center; width: 100%; height: 60vh; position: relative;">
+                    <img class="fragment fade-in" src="attachments/offline1.png" alt="Step 1" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; object-position: center;">
+                    <img class="fragment fade-in" src="attachments/offline2.png" alt="Step 2" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; object-position: center;">
+                    <img class="fragment fade-in" src="attachments/offline3.png" alt="Step 3" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; object-position: center;">
+                    <img class="fragment fade-in" src="attachments/offline4.png" alt="Step 4" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; object-position: center;">
+                    <img class="fragment fade-in" src="attachments/offline5.png" alt="Step 4" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; object-position: center;">
+                </div>
+            </div>
+        </div>
+
+        <div class="slide" data-chapter="Feature Engineering" id="build-feature-table">
+            <div class="flex-center">
+                <h2 style="text-align: center; margin-bottom: 2vh;">Let's Help Build <br><span style="color: var(--blue);">Feature Tables</span> and <span style="color: var(--blue);">Time-wise Joins</span></h2>
+                <p style="text-align: center; color: var(--gray-400); font-size: 1.3vw; margin-bottom: 3vh;">in a consistent manner</p>
+            </div>
+        </div>
+
+        <div class="slide" data-chapter="Feature Engineering" id="step1-feature-table">
+            <div class="flex-center fragment">
+                <h2 style="text-align: center; margin-bottom: 1vh;">How did We Help Build Feature Tables?</h2>
+                <p style="text-align: center; color: var(--gray-400); font-size: 1.2vw; margin-bottom: 2vh;">Example: Count the no. of searches in the last 7 days</p>
+                <div style="display: flex; justify-content: center; align-items: center; width: 100%; height: 55vh; position: relative;">
+                    <img src="attachments/ft1.png" alt="Step 1" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; object-position: center;">
+                    <img class="fragment fade-in" src="attachments/ft2.png" alt="Step 2" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; object-position: center;">
+                    <img class="fragment fade-in" src="attachments/ft3.png" alt="Step 3" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; object-position: center;">
+                    <img class="fragment fade-in" src="attachments/ft4.png" alt="Step 4" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; object-position: center;">
+                </div>
+            </div>
+        </div>
+
+        <div class="slide" data-chapter="Feature Engineering" id="feature-vader">
+            <h2 style="text-align: center; margin-bottom: 1vh;">Offline Feature Computation</h2>
+            <p style="text-align: center; color: var(--gray-400); font-size: 1.1vw; margin-bottom: 2vh;">Using SparkML Transformers</p>
+            
+            <div style="display: flex; justify-content: center; padding: 0 4vw;">
+                <div style="position: relative; width: 70vw; height: 60vh;">
+                    <img class="fragment fade-in" src="attachments/off-fv1.png" alt="FeatureVader Offline 1" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; object-position: center; border-radius: 12px;">
+                    <img class="fragment fade-in" src="attachments/off-fv2.png" alt="FeatureVader Offline 2" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; object-position: center; border-radius: 12px;">
+                    <img class="fragment fade-in" src="attachments/off-fv3.png" alt="FeatureVader Offline 3" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; object-position: center; border-radius: 12px;">
+                    <img class="fragment fade-in" src="attachments/off-fv4.png" alt="FeatureVader Offline 4" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; object-position: center; border-radius: 12px;">
+                </div>
+            </div>
+        </div>
+
+        <div class="slide" data-chapter="Feature Engineering" id="online-feature-computation">
+            <div class="flex-center fragment">
+                <h2 style="text-align: center; margin-bottom: 1vh;">Online Feature Computation</h2>
+                <p style="text-align: center; color: var(--gray-400); font-size: 1.1vw; margin-bottom: 2vh;">Computing features in real-time</p>
+                
+                <div style="display: flex; justify-content: center; align-items: center; width: 100%; height: 40vh; position: relative;">
+                    <img src="attachments/online1.png" alt="Online Step 1" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; object-position: center;">
+                    <img class="fragment fade-in" src="attachments/online2.png" alt="Online Step 2" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; object-position: center;">
+                    <img class="fragment fade-in" src="attachments/online3.png" alt="Online Step 3" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; object-position: center;">
+                    <img class="fragment fade-in" src="attachments/online4.png" alt="Online Step 4" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; object-position: center;">
+                    <img class="fragment fade-in" src="attachments/online5.png" alt="Online Step 4" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; object-position: center;">
+                    <img class="fragment fade-in" src="attachments/online6.png" alt="Online Step 4" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; object-position: center;">
+                </div>
+            </div>
+        </div>
+
+        <div class="slide" data-chapter="Feature Engineering" id="feature-drawbacks">
+            <h2 style="text-align: center; margin-bottom: 3vh;">But There Were Challenges</h2>
+            <p style="text-align: center; color: var(--gray-400); font-size: 1.2vw; margin-bottom: 4vh;">Parity • Skew • Performance • Stability • Backfilling</p>
+        </div>
+
+        <div class="slide" data-chapter="Feature Engineering" id="build-unifid-timelines">
+            <div class="flex-center">
+                <h2 style="text-align: center; margin-bottom: 2vh;">Let's Bring <span style="color: var(--blue);">Data & Computational Parity</span></h2>
+                <p style="text-align: center; color: var(--gray-400); font-size: 1.3vw; margin-bottom: 3vh;">Our Second Attempt</p>
+            </div>
+        </div>
+
+        <div class="slide" data-chapter="Feature Engineering" id="timelines-intro">
+            <h2 style="text-align: center; margin-bottom: 2vh;">We Tackled <span style="color: var(--blue);">Data Parity</span> with <span style="color: var(--blue);">Timelines</span> </h2>
+            <div style="text-align: center; margin-bottom: 4vh;">
+                <div style="display: inline-block; background: linear-gradient(135deg, var(--purple), var(--blue)); padding: 1.5vw 3vw; border-radius: 1vw; color: white;">
+                    <span style="font-size: 1.4vw; font-weight: 600;">Time-ordered sequence of events per user</span>
+                </div>
+            </div>
+
+            <div style="text-align: center; margin-bottom: 4vh; font-size: 1.2vw; color: var(--gray-600);">
+                Example: Search logs, Reservations, Cancellations
+            </div>
+        </div>
+
+        <div class="slide" data-chapter="Feature Engineering" id="fc-timeline">
+            <h2 style="text-align: center; margin-bottom: 1vh;">How Were Timelines Built?</h2>
+            
+            <div style="display: flex; justify-content: center; padding: 0 4vw;">
+                <div style="position: relative; width: 70vw; height: 50vh;">
+                    <img class="fragment fade-in" src="attachments/fc1.png" alt="Feature Cruncher 1" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; object-position: center; border-radius: 12px;">
+                    <img class="fragment fade-in" src="attachments/fc2.png" alt="Feature Cruncher 2" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; object-position: center; border-radius: 12px;">
+                    <img class="fragment fade-in" src="attachments/fc3.png" alt="Feature Cruncher 3" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; object-position: center; border-radius: 12px;">
+                    <img class="fragment fade-in" src="attachments/fc4.png" alt="Feature Cruncher 4" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; object-position: center; border-radius: 12px;">
+                    <img class="fragment fade-in" src="attachments/fc5.png" alt="Feature Cruncher 5" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; object-position: center; border-radius: 12px;">
+                </div>
+            </div>
+        </div>
+
+        <div class="slide" data-chapter="Feature Engineering" id="fc-unified">
+            <h2 style="text-align: center; margin-bottom: 1vh;">How We Used Timelines for <span style="color: var(--blue);">Computational Parity</span>?</h2>
+            
+            <div style="display: flex; justify-content: center; padding: 0 4vw;">
+                <div style="position: relative; width: 70vw; height: 60vh;">
+                    <img class="fragment fade-in" src="attachments/fcc1.png" alt="Feature Cruncher Unified 1" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; object-position: center; border-radius: 12px;">
+                    <img class="fragment fade-in" src="attachments/fcc2.png" alt="Feature Cruncher Unified 2" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; object-position: center; border-radius: 12px;">
+                    <img class="fragment fade-in" src="attachments/fcc3.png" alt="Feature Cruncher Unified 3" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; object-position: center; border-radius: 12px;">
+                    <img class="fragment fade-in" src="attachments/fcc4.png" alt="Feature Cruncher Unified 4" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; object-position: center; border-radius: 12px;">
+                    <img class="fragment fade-in" src="attachments/fcc5.png" alt="Feature Cruncher Unified 5" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; object-position: center; border-radius: 12px;">
+                    <img class="fragment fade-in" src="attachments/fcc6.png" alt="Feature Cruncher Unified 6" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; object-position: center; border-radius: 12px;">
+                    <img class="fragment fade-in" src="attachments/fcc7.png" alt="Feature Cruncher Unified 7" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; object-position: center; border-radius: 12px;">
+                    <img class="fragment fade-in" src="attachments/fcc8.png" alt="Feature Cruncher Unified 8" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; object-position: center; border-radius: 12px;">
+                </div>
+            </div>
+        </div>
+
+        <div class="slide" data-chapter="Feature Engineering" id="fc-downsides">
+            <div class="flex-center fragment">
+                <h2 style="margin-bottom: 2vh;">But There Were Major Downsides</h2>
+                <p style="font-size: 1.4vw; color: var(--gray-500); max-width: 55vw; text-align: center; line-height: 1.8;">
+                    Java Requirement • High Latency
+                </p>
+            </div>
+        </div>
+
+        <div class="slide" data-chapter="Feature Engineering" id="build-feature-store">
+            <div class="flex-center">
+                <h2 style="text-align: center; margin-bottom: 2vh;">Decentralize <span style="color: var(--purple);">Feature Computation</span> 
+                    and <br> Centralize <span style="color: var(--blue);">Feature Storage and Serving</span></h2>
+                <p style="text-align: center; color: var(--gray-400); font-size: 1.3vw; margin-bottom: 3vh;">Our Third Attempt</p>
+            </div>
+        </div>
+
+        <div class="slide" data-chapter="Feature Engineering" id="feature-store-architecture">
+            <div class="flex-center fragment">
+                <h2 style="text-align: center; margin-bottom: 1vh;">Feature Store</h2>
+                <p style="text-align: center; color: var(--gray-400); font-size: 1.1vw; margin-bottom: 2vh;">Manage, store, and serve feature data</p>
+                
+                <div style="display: flex; justify-content: center; align-items: center; width: 100%; height: 65vh; position: relative;">
+                    <img class="fragment fade-in" src="attachments/fs1.png" alt="Feature Store Step 1" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; object-position: center;">
+                    <img class="fragment fade-in" src="attachments/fs2.png" alt="Feature Store Step 2" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; object-position: center;">
+                    <img class="fragment fade-in" src="attachments/fs3.png" alt="Feature Store Step 3" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; object-position: center;">
+                    <img class="fragment fade-in" src="attachments/fs4.png" alt="Feature Store Step 4" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; object-position: center;">
+                    <img class="fragment fade-in" src="attachments/fs5.png" alt="Feature Store Step 5" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; object-position: center;">
+                    <img class="fragment fade-in" src="attachments/fs6.png" alt="Feature Store Step 6" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; object-position: center;">
+                </div>
+            
+            </div>
+        </div>
+
+        <div class="slide" data-chapter="Feature Engineering" id="feature-engineering-unsolved">
+            <div class="flex-center fragment">
+                <img src="attachments/star.png" style="position: absolute; top: 5vh; right: 5vw; width: 8vw; opacity: 0.9;" />
+                <h2 style="margin-bottom: 3vh;">Feature Engineering Is a Multi-Dimensional Problem</h2>
+                <p style="font-size: 1.4vw; color: var(--gray-500); max-width: 55vw; text-align: center; line-height: 1.6; margin-bottom: 2vh;">
+                    And we haven't found a silver bullet yet!
+                </p>
+            </div>
+        </div>
+
+        <!-- CHAPTER: Domain Intelligence -->
+
+        <div class="slide" data-chapter="Domain Intelligence" id="layer-transition-domain">
+            <div class="flex-center fragment">
+                <h2>Domain Intelligence Layer</h2>
+                <div style="text-align: center; max-width: 70vw;">
+                    <div style="display: flex; flex-direction: column; gap: 1.5vh;">
+                        <div style="position: relative;">
+                            <div style="background: #c8e6c9; padding: 1.5vw 4vw; border-radius: 0.8vw; border: 3px solid var(--navy); box-shadow: 0 0.5vw 2vw rgba(0,0,0,0.15);">
+                                <p style="font-size: 1.5vw; font-weight: 600; color: var(--gray-800);">Domain Intelligence</p>
+                            </div>
+                            <span style="position: absolute; right: -3vw; top: 50%; transform: translateY(-50%); font-size: 2vw; color: var(--navy);">←</span>
+                        </div>
+                        <div style="background: #ffe0b2; padding: 1.5vw 4vw; border-radius: 0.8vw; opacity: 0.4;">
+                            <p style="font-size: 1.5vw; font-weight: 600; color: var(--gray-800);">ML Engineering</p>
+                        </div>
+                        <div style="background: #ffccbc; padding: 1.5vw 4vw; border-radius: 0.8vw; opacity: 0.4;">
+                            <p style="font-size: 1.5vw; font-weight: 600; color: var(--gray-800);">Data Management</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="slide section-slide" data-chapter="Domain Intelligence" id="domain-intelligence-title">
+            <div class="flex-center">
+                <h2>A Collection of <br /> <span style="color: var(--yellow);"> Specialized ML Platforms</span></h2>
+            </div>
+        </div>
+
+        <!-- Add Domain Intelligence content slides here -->
+        <div class="slide" data-chapter="Domain Intelligence" id="domain-intel-platforms">
+            <div class="fragment flex-center">
+                <h2 style="margin-bottom: 1vh;">What Specialized Platforms Do We Have?</h2>
+                <p style="font-size: 1.1vw; color: #666; margin-bottom: 2vh; font-style: italic;">&ast; Not in any particular order</p>
+                <div style="position: relative; display: flex; justify-content: center; padding: 0 4vw;">
+                    <img class="fragment fade-in" src="attachments/domain-intro1.png" alt="Domain Intelligence Platforms" style="max-height: 60vh; max-width: 90vw; border-radius: 12px;">
+                    <img class="fragment fade-in" src="attachments/domain-intro2.png" alt="Domain Intelligence Platforms" style="position: absolute; top: 0; max-height: 60vh; max-width: 90vw; border-radius: 12px;">
+                    <img class="fragment fade-in" src="attachments/domain-intro3.png" alt="Domain Intelligence Platforms" style="position: absolute; top: 0; max-height: 60vh; max-width: 90vw; border-radius: 12px;">
+                    <img class="fragment fade-in" src="attachments/domain-intro4.png" alt="Domain Intelligence Platforms" style="position: absolute; top: 0; max-height: 60vh; max-width: 90vw; border-radius: 12px;">
+                    <img class="fragment fade-in" src="attachments/domain-intro5.png" alt="Domain Intelligence Platforms" style="position: absolute; top: 0; max-height: 60vh; max-width: 90vw; border-radius: 12px;">
+                </div>
+            </div>
+        </div>
+
+        <div class="slide section-slide" data-chapter="Domain Intelligence" id="ranking-platform-intro">
+            <div class="flex-center">
+                <h2>Ranking Platform</h2>
+                <p class="subtitle">Personalized real-time ordering at scale</p>
+            </div>
+        </div>
+
+        <div class="slide" data-chapter="Domain Intelligence" id="ranking-intro">
+            <h2 style="text-align: center;">Ranking Platform</h2>
+            <p style="text-align: center; color: var(--gray-500); font-size: 1.1vw; margin-bottom: 2vh;">A three-way optimization: Traveller • Partner • Platform</p>
+            <div style="display: flex; justify-content: center; padding: 0 4vw;">
+                <img src="attachments/ranking-intro.png" alt="Ranking Platform" style="max-height: 70vh; max-width: 90vw; border-radius: 12px;">
+            </div>
+        </div>
+
+        <div class="slide" data-chapter="Domain Intelligence" id="ranking-history">
+            <h2 style="text-align: center; margin-bottom: 1vh;">Ranking, Circa 2005</h2>
+            <p style="text-align: center; color: var(--gray-500); font-size: 1.1vw; margin-bottom: 3vh;">A simple formula, precomputed</p>
+            
+            <div style="display: flex; flex-direction: column; align-items: center; gap: 2vh; padding: 0 12vw;">
+                <div style="background: #1e293b; padding: 2.5vh 2vw; border-radius: 0.8vw; font-family: monospace;">
+                    <div style="font-size: 1.6vw; color: #e2e8f0;">Hotel Rank = <span style="color: #fbbf24;">F&lpar;</span>  <span style="color: #a78bfa;">Bookings, views, ...</span><span style="color: #fbbf24;">&rpar;</span> + <span style="color: #60a5fa;">rand()</span></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="slide" data-chapter="Domain Intelligence" id="ranking-evolution">
+            <h2 style="text-align: center; margin-bottom: 1vh;">The Formula Evolved</h2>
+            <p style="text-align: center; color: var(--gray-500); font-size: 1.1vw; ">Many factors added, tested and tuned</p>
+            <div style="display: flex; justify-content: center; padding: 0 4vw;">
+                <div style="position: relative; width: 70vw; height: 60vh;">
+                    <!-- <img class="fragment fade-in" src="attachments/rnk1.png" alt="Ranking Formula 1" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; object-position: center; border-radius: 12px;"> -->
+                    <img class="fragment fade-in" src="attachments/rnk2.png" alt="Ranking Formula 2" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; object-position: center; border-radius: 12px;">
+                    <!-- <img class="fragment fade-in" src="attachments/rnk3.png" alt="Ranking Formula 3" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; object-position: center; border-radius: 12px;"> -->
+                    <img class="fragment fade-in" src="attachments/rnk4.png" alt="Ranking Formula 4" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; object-position: center; border-radius: 12px;">
+                    <!-- <img class="fragment fade-in" src="attachments/rnk5.png" alt="Ranking Formula 5" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; object-position: center; border-radius: 12px;"> -->
+                    <img class="fragment fade-in" src="attachments/rnk6.png" alt="Ranking Formula 6" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; object-position: center; border-radius: 12px;">
+                    <!-- <img class="fragment fade-in" src="attachments/rnk7.png" alt="Ranking Formula 7" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; object-position: center; border-radius: 12px;"> -->
+                    <img class="fragment fade-in" src="attachments/rnk8.png" alt="Ranking Formula 8" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; object-position: center; border-radius: 12px;">
+                </div>
+            </div>
+        </div>
+
+        <div class="slide" data-chapter="Domain Intelligence" id="ranking-unbeatable">
+            <h2 style="text-align: center; margin-bottom: 4vh;">We Attempted to <span style="color: var(--blue);">Replace the Formula with ML</span></h2>
+        </div>
+
+        <div class="slide" data-chapter="Domain Intelligence" id="ranking-mad-scientist">
+            <h2 style="text-align: center; margin-bottom: 2vh;">But The Formula was Undefeatable ...</h2>
+            <p style="text-align: center; color: var(--gray-400); font-size: 1.2vw; margin-bottom: 2vh;">... for a longtime</p>
+            <div style="display: flex; justify-content: center; padding: 0 4vw;">
+                <img src="attachments/rnk-formula.png" alt="Mad Scientist" style="max-height: 50vh; max-width: 70vw; border-radius: 12px;">
+            </div>
+        </div>
+
+        <div class="slide" data-chapter="Domain Intelligence" id="ranking-unbeatable">
+            <h2 style="text-align: center; margin-bottom: 3vh;">Next, We Wanted to <span style="color: var(--blue);">Personalize Search Results</span> </h2>
+            <p style="text-align: center; color: var(--gray-400); font-size: 1.2vw; margin-bottom: 2vh;">But Nobody believed it was ossible</p>
+        </div>
+
+        <div class="slide" data-chapter="Domain Intelligence" id="ranking-personalization">
+            <h2 style="text-align: center; margin-bottom: 1vh;">The Problem with Personalization</h2>
+            <div style="display: flex; justify-content: center; padding: 0 4vw;">
+                <div style="position: relative; width: 80vw; height: 60vh;">
+                    <img class="fragment fade-in" src="attachments/rnk-rs1.png" alt="Personalization Approach 1" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; object-position: center; border-radius: 12px;">
+                    <img class="fragment fade-in" src="attachments/rnk-rs2.png" alt="Personalization Approach 2" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; object-position: center; border-radius: 12px;">
+                    <img class="fragment fade-in" src="attachments/rnk-rs3.png" alt="Personalization Approach 3" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; object-position: center; border-radius: 12px;">
+                    <img class="fragment fade-in" src="attachments/rnk-rs4.png" alt="Personalization Approach 4" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; object-position: center; border-radius: 12px;">
+                    <img class="fragment fade-in" src="attachments/rnk-rs5.png" alt="Personalization Approach 5" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; object-position: center; border-radius: 12px;">
+                    <img class="fragment fade-in" src="attachments/rnk-rs6.png" alt="Personalization Approach 6" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; object-position: center; border-radius: 12px;">
+                    <img class="fragment fade-in" src="attachments/rnk-rs7.png" alt="Personalization Approach 7" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; object-position: center; border-radius: 12px;">
+                    <img class="fragment fade-in" src="attachments/rnk-rs8.png" alt="Personalization Approach 8" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; object-position: center; border-radius: 12px;">
+                    <img class="fragment fade-in" src="attachments/rnk-rs9.png" alt="Personalization Approach 9" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; object-position: center; border-radius: 12px;">
+                    <img class="fragment fade-in" src="attachments/rnk-rs10.png" alt="Personalization Approach 10" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; object-position: center; border-radius: 12px;">
+                    <img class="fragment fade-in" src="attachments/rnk-rs11.png" alt="Personalization Approach 11" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; object-position: center; border-radius: 12px;">
+                </div>
+            </div>
+        </div>
+
+        <div class="slide" data-chapter="Domain Intelligence" id="ranking-scale">
+            <h2 style="text-align: center; margin-bottom: 4vh;">Ranking at Scale</h2>
+            <div style="display: flex; gap: 6vw; padding: 0 12vw; justify-content: center;">
+                <div style="text-align: center;">
+                    <div style="font-size: 4vw; font-weight: 800; color: var(--blue);">100K+</div>
+                    <div style="font-size: 1.2vw; color: var(--gray-600); margin-top: 1vh;">requests/second</div>
+                </div>
+                <div style="text-align: center;">
+                    <div style="font-size: 4vw; font-weight: 800; color: var(--green);">&lt;150ms</div>
+                    <div style="font-size: 1.2vw; color: var(--gray-600); margin-top: 1vh;">p99.9 latency</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="slide" data-chapter="Domain Intelligence" id="ranking-architecture">
+            <h2 style="text-align: center; margin-bottom: 2vh;">From Search to Sorted Results</h2>
+            <div style="display: flex; justify-content: center; padding: 0 4vw;">
+                <img src="attachments/rnk-traffic.png" alt="Ranking Platform Architecture" style="max-height: 70vh; max-width: 90vw; border-radius: 12px;">
+            </div>
+        </div>
+
+        <!-- CHAPTER 5: Summary -->
+
+        <div class="slide section-slide" data-chapter="Summary" id="whats-next">
+            <div class="flex-center">
+                <h2>What's Brewing?</h2>
+                <p class="subtitle">Things keeping us busy </p>
+            </div>
+        </div>
+
+        <div class="slide" data-chapter="Summary" id="aiap">
+            <h2 style="text-align: center; margin-bottom: 1vh;">AI Application Platform</h2>
+            <div style="display: flex; justify-content: center; padding: 0 4vw;">
+                <img src="attachments/aiap-gold.png" alt="AI Application Platform" style="max-height: 70vh; max-width: 90vw; border-radius: 12px;">
+            </div>
+        </div>
+
+
+        </div><!-- End scale-wrapper -->
+
+        <!-- Chapter Navigation (outside scale-wrapper for fixed positioning) -->
+        <div class="chapter-nav">
+            <button class="chapter-btn active" onclick="goToChapter('Introduction')">Intro</button>
+            <button class="chapter-btn" onclick="goToChapter('2005')">2005</button>
+            <button class="chapter-btn" onclick="goToChapter('Experimentation')">Experimentation</button>
+            <button class="chapter-btn" onclick="goToChapter('Data Engineering')">Data</button>
+            <button class="chapter-btn" onclick="goToChapter('MySQL')">MySQL</button>
+            <button class="chapter-btn" onclick="goToChapter('Hadoop')">Hadoop</button>
+            <button class="chapter-btn" onclick="goToChapter('Cloud')">Cloud</button>
+            <button class="chapter-btn" onclick="goToChapter('ML Engineering')">ML Engineering</button>
+            <button class="chapter-btn" onclick="goToChapter('ML Inference')">ML Inference</button>
+            <button class="chapter-btn" onclick="goToChapter('Feature Engineering')">Feature Engineering</button>
+            <button class="chapter-btn" onclick="goToChapter('Domain Intelligence')">Domain Intelligence</button>
+            <button class="chapter-btn" onclick="goToChapter('Summary')">Summary</button>
+        </div>
+    </div>
+
+    <script>
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        const totalSlides = slides.length;
+        const chapters = {};
+        const slideIds = {};
+
+        // Build chapter index and slide ID index
+        slides.forEach((slide, index) => {
+            const chapter = slide.dataset.chapter;
+            if (!chapters[chapter]) {
+                chapters[chapter] = index;
+            }
+            // Build slide ID index
+            if (slide.id) {
+                slideIds[slide.id] = index;
+            }
+        });
+
+        function getFragments(slideIndex) {
+            return slides[slideIndex].querySelectorAll('.fragment');
+        }
+
+        function getVisibleFragments(slideIndex) {
+            return slides[slideIndex].querySelectorAll('.fragment.visible');
+        }
+
+        function getHiddenFragments(slideIndex) {
+            return slides[slideIndex].querySelectorAll('.fragment:not(.visible)');
+        }
+
+        function showNextFragment() {
+            const fragments = getHiddenFragments(currentSlide);
+            if (fragments.length > 0) {
+                fragments[0].classList.add('visible');
+                return true;
+            }
+            return false;
+        }
+
+        function hideLastFragment() {
+            const fragments = getVisibleFragments(currentSlide);
+            if (fragments.length > 0) {
+                fragments[fragments.length - 1].classList.remove('visible');
+                return true;
+            }
+            return false;
+        }
+
+        function showAllFragments(slideIndex) {
+            const fragments = getFragments(slideIndex);
+            fragments.forEach(f => f.classList.add('visible'));
+        }
+
+        function hideAllFragments(slideIndex) {
+            const fragments = getFragments(slideIndex);
+            fragments.forEach(f => f.classList.remove('visible'));
+        }
+
+        // Autoplay functionality
+        let autoplayInterval = null;
+
+        function startAutoplay() {
+            stopAutoplay();
+            const slide = slides[currentSlide];
+            const delay = slide.dataset.autoplay;
+            if (!delay) return;
+
+            autoplayInterval = setInterval(() => {
+                const hasMore = showNextFragment();
+                updateFragmentIndicator();
+                if (!hasMore) {
+                    stopAutoplay();
+                }
+            }, parseInt(delay));
+        }
+
+        function stopAutoplay() {
+            if (autoplayInterval) {
+                clearInterval(autoplayInterval);
+                autoplayInterval = null;
+            }
+        }
+
+        function showFirstFragmentAnimated() {
+            // Use requestAnimationFrame to delay showing fragment
+            // This allows the browser to render the hidden state first
+            requestAnimationFrame(() => {
+                requestAnimationFrame(() => {
+                    showNextFragment();
+                    updateFragmentIndicator();
+                });
+            });
+        }
+
+        function showAllFragmentsAnimated() {
+            // Use requestAnimationFrame to delay showing fragments
+            // This allows the browser to render the hidden state first
+            requestAnimationFrame(() => {
+                requestAnimationFrame(() => {
+                    showAllFragments(currentSlide);
+                    updateFragmentIndicator();
+                });
+            });
+        }
+
+        function updateFragmentIndicator() {
+            const indicator = document.getElementById('fragmentIndicator');
+            const fragments = getFragments(currentSlide);
+            const visibleCount = getVisibleFragments(currentSlide).length;
+
+            if (fragments.length === 0) {
+                indicator.classList.remove('visible');
+                indicator.innerHTML = '';
+                return;
+            }
+
+            indicator.classList.add('visible');
+            indicator.innerHTML = '';
+
+            for (let i = 0; i < fragments.length; i++) {
+                const dot = document.createElement('div');
+                dot.className = 'fragment-dot' + (i < visibleCount ? ' filled' : '');
+                indicator.appendChild(dot);
+            }
+        }
+
+        function updateHash() {
+            const slideId = slides[currentSlide].id;
+            if (slideId) {
+                history.replaceState(null, null, '#' + slideId);
+            } else {
+                history.replaceState(null, null, '#' + (currentSlide + 1));
+            }
+        }
+
+        function goToSlideById(id) {
+            if (slideIds[id] !== undefined) {
+                currentSlide = slideIds[id];
+                hideAllFragments(currentSlide);
+                updateSlide(false);
+                // Auto-show first fragment (with animation)
+                showFirstFragmentAnimated();
+            }
+        }
+
+        function goToSlideByNumber(num) {
+            const index = parseInt(num) - 1;
+            if (index >= 0 && index < totalSlides) {
+                currentSlide = index;
+                hideAllFragments(currentSlide);
+                updateSlide(false);
+                // Auto-show first fragment (with animation)
+                showFirstFragmentAnimated();
+            }
+        }
+
+        function handleHashChange() {
+            const hash = window.location.hash.slice(1);
+            if (!hash) return;
+
+            if (slideIds[hash] !== undefined) {
+                goToSlideById(hash);
+            } else if (!isNaN(hash)) {
+                goToSlideByNumber(hash);
+            }
+        }
+
+        function updateSlide(showAll = false) {
+            // Stop any existing autoplay
+            stopAutoplay();
+
+            // Update slides
+            slides.forEach((slide, index) => {
+                slide.classList.remove('active');
+                if (index === currentSlide) {
+                    slide.classList.add('active');
+                }
+            });
+
+            // Handle fragments based on navigation direction
+            if (showAll) {
+                showAllFragments(currentSlide);
+            }
+
+            // Start autoplay if slide has data-autoplay attribute
+            if (slides[currentSlide].dataset.autoplay) {
+                setTimeout(() => startAutoplay(), 500);
+            }
+
+            // Update fragment indicator
+            updateFragmentIndicator();
+
+            // Update URL hash
+            updateHash();
+
+            // Update counter
+            document.getElementById('currentSlide').textContent = currentSlide + 1;
+            document.getElementById('totalSlides').textContent = totalSlides;
+
+            // Update chapter name
+            const currentChapter = slides[currentSlide].dataset.chapter;
+            document.getElementById('chapterName').textContent = currentChapter;
+
+            // Update progress bar
+            const progress = ((currentSlide + 1) / totalSlides) * 100;
+            document.getElementById('progressBar').style.width = progress + '%';
+
+            // Update chapter navigation
+            const chapterToButton = {
+                'Introduction': 'Intro',
+                '2005': '2005',
+                'Experimentation': 'Experimentation',
+                'Data Engineering': 'Data',
+                'MySQL': 'MySQL',
+                'Hadoop': 'Hadoop',
+                'Cloud': 'Cloud',
+                'Model Evolution': 'Model Evolution',
+                'ML Engineering': 'ML Engineering',
+                'ML Inference': 'ML Inference',
+                'Feature Engineering': 'Feature Engineering',
+                'Domain': 'Domain Intelligence',
+                'Summary': 'Summary'
+            };
+            const activeButtonText = chapterToButton[currentChapter] || currentChapter;
+            document.querySelectorAll('.chapter-btn').forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.textContent === activeButtonText) {
+                    btn.classList.add('active');
+                }
+            });
+        }
+
+        function advance() {
+            // First try to show next fragment
+            if (showNextFragment()) {
+                updateFragmentIndicator();
+                return;
+            }
+            // If no more fragments, go to next slide
+            if (currentSlide < totalSlides - 1) {
+                currentSlide++;
+                hideAllFragments(currentSlide);
+                updateSlide(false);
+                // Auto-show first fragment when entering new slide (with animation)
+                showFirstFragmentAnimated();
+            }
+        }
+
+        function retreat() {
+            const visibleFragments = getVisibleFragments(currentSlide);
+            // If only 1 or 0 visible fragments, go to previous slide directly
+            // (don't hide the last fragment leaving a blank slide)
+            if (visibleFragments.length <= 1) {
+                if (currentSlide > 0) {
+                    currentSlide--;
+                    hideAllFragments(currentSlide);
+                    updateSlide(false);
+                    showAllFragmentsAnimated(); // Animate all fragments on previous slide
+                }
+                return;
+            }
+            // More than 1 visible fragment, hide the last one
+            hideLastFragment();
+            updateFragmentIndicator();
+        }
+
+        function goToChapter(chapterName) {
+            if (chapters[chapterName] !== undefined) {
+                currentSlide = chapters[chapterName];
+                hideAllFragments(currentSlide);
+                updateSlide(false);
+                showFirstFragmentAnimated();
+            }
+        }
+
+        // Keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            // Shift+Arrow: jump to first/last fragment on current slide
+            if (e.shiftKey) {
+                switch(e.key) {
+                    case 'ArrowRight':
+                    case 'ArrowDown':
+                        e.preventDefault();
+                        showAllFragmentsAnimated();
+                        updateFragmentIndicator();
+                        return;
+                    case 'ArrowLeft':
+                    case 'ArrowUp':
+                        e.preventDefault();
+                        hideAllFragments(currentSlide);
+                        showFirstFragmentAnimated();
+                        updateFragmentIndicator();
+                        return;
+                }
+            }
+
+            switch(e.key) {
+                case 'ArrowRight':
+                case 'ArrowDown':
+                case ' ':
+                case 'PageDown':
+                    e.preventDefault();
+                    advance();
+                    break;
+                case 'ArrowLeft':
+                case 'ArrowUp':
+                case 'PageUp':
+                    e.preventDefault();
+                    retreat();
+                    break;
+                case 'Home':
+                    e.preventDefault();
+                    currentSlide = 0;
+                    hideAllFragments(currentSlide);
+                    updateSlide(false);
+                    showFirstFragmentAnimated();
+                    break;
+                case 'End':
+                    e.preventDefault();
+                    currentSlide = totalSlides - 1;
+                    hideAllFragments(currentSlide);
+                    updateSlide(false);
+                    showAllFragmentsAnimated();
+                    break;
+                case 'f':
+                case 'F':
+                    if (!e.ctrlKey && !e.metaKey) {
+                        e.preventDefault();
+                        toggleFullscreen();
+                    }
+                    break;
+            }
+        });
+
+        // Click navigation
+        document.addEventListener('click', (e) => {
+            if (e.target.closest('.chapter-nav') || e.target.closest('.chapter-btn')) {
+                return;
+            }
+            const clickX = e.clientX;
+            const windowWidth = window.innerWidth;
+            if (clickX > windowWidth * 0.3) {
+                advance();
+            } else {
+                retreat();
+            }
+        });
+
+        // Touch navigation
+        let touchStartX = 0;
+        document.addEventListener('touchstart', (e) => {
+            touchStartX = e.touches[0].clientX;
+        });
+
+        document.addEventListener('touchend', (e) => {
+            const touchEndX = e.changedTouches[0].clientX;
+            const diff = touchStartX - touchEndX;
+            if (Math.abs(diff) > 50) {
+                if (diff > 0) {
+                    advance();
+                } else {
+                    retreat();
+                }
+            }
+        });
+
+        // Fullscreen
+        function toggleFullscreen() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen();
+            } else {
+                document.exitFullscreen();
+            }
+        }
+
+        // Listen for hash changes
+        window.addEventListener('hashchange', handleHashChange);
+
+        // Scaling for large displays
+        function scalePresentation() {
+            const wrapper = document.querySelector('.scale-wrapper');
+            const baseWidth = 1920;
+            const baseHeight = 1080;
+            const viewportWidth = window.innerWidth;
+            const viewportHeight = window.innerHeight;
+            
+            // Scale to FILL viewport (use max, not min) - content scales to cover entire screen
+            const scaleX = viewportWidth / baseWidth;
+            const scaleY = viewportHeight / baseHeight;
+            const scale = Math.max(scaleX, scaleY);
+            
+            wrapper.style.transform = `translate(-50%, -50%) scale(${scale})`;
+        }
+
+        // Scale on load and resize
+        window.addEventListener('resize', scalePresentation);
+        scalePresentation();
+
+        // Initialize - check for hash in URL first
+        if (window.location.hash) {
+            handleHashChange();
+        } else {
+            updateSlide(false);
+            // Auto-show first fragment on initial load (with animation)
+            showFirstFragmentAnimated();
+        }
+    </script>
+</body>
+</html>
+c
