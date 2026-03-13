@@ -2420,7 +2420,7 @@
         </div>
 
         <div class="slide" data-chapter="Domain Intelligence" id="ranking-mad-scientist">
-            <h2 style="text-align: center; margin-bottom: 2vh;">But The Formula was Undefeatable ...</h2>
+            <h2 style="text-align: center; margin-bottom: 2vh;">But <span style="color: var(--blue);">The Hand-crafted Formula</span> was Undefeatable ...</h2>
             <p style="text-align: center; color: var(--gray-400); font-size: 1.2vw; margin-bottom: 2vh;">... for a longtime</p>
             <div style="display: flex; justify-content: center; padding: 0 4vw;">
                 <img src="attachments/rnk-formula.png" alt="Mad Scientist" style="max-height: 50vh; max-width: 70vw; border-radius: 12px;">
@@ -2429,13 +2429,14 @@
 
         <div class="slide" data-chapter="Domain Intelligence" id="ranking-unbeatable">
             <h2 style="text-align: center; margin-bottom: 3vh;">Next, We Wanted to <span style="color: var(--blue);">Personalize Search Results</span> </h2>
-            <p style="text-align: center; color: var(--gray-400); font-size: 1.2vw; margin-bottom: 2vh;">But Nobody believed it was ossible</p>
+            <p style="text-align: center; color: var(--gray-400); font-size: 1.2vw; margin-bottom: 2vh;">But Nobody believed it was possible</p>
         </div>
 
         <div class="slide" data-chapter="Domain Intelligence" id="ranking-personalization">
-            <h2 style="text-align: center; margin-bottom: 1vh;">The Problem with Personalization</h2>
+            <h2 style="text-align: center; margin-bottom: 1vh;">The Challenge with Realtime Personalization</h2>
             <div style="display: flex; justify-content: center; padding: 0 4vw;">
                 <div style="position: relative; width: 80vw; height: 60vh;">
+                    <img class="fragment fade-in" src="attachments/rnk-rs0.png" alt="Personalization Approach 1" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; object-position: center; border-radius: 12px;">
                     <img class="fragment fade-in" src="attachments/rnk-rs1.png" alt="Personalization Approach 1" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; object-position: center; border-radius: 12px;">
                     <img class="fragment fade-in" src="attachments/rnk-rs2.png" alt="Personalization Approach 2" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; object-position: center; border-radius: 12px;">
                     <img class="fragment fade-in" src="attachments/rnk-rs3.png" alt="Personalization Approach 3" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; object-position: center; border-radius: 12px;">
@@ -2452,23 +2453,48 @@
         </div>
 
         <div class="slide" data-chapter="Domain Intelligence" id="ranking-scale">
-            <h2 style="text-align: center; margin-bottom: 4vh;">Ranking at Scale</h2>
+            <h2 style="text-align: center; margin-bottom: 4vh;">Ranking Scale (~2024)</h2>
             <div style="display: flex; gap: 6vw; padding: 0 12vw; justify-content: center;">
                 <div style="text-align: center;">
                     <div style="font-size: 4vw; font-weight: 800; color: var(--blue);">100K+</div>
                     <div style="font-size: 1.2vw; color: var(--gray-600); margin-top: 1vh;">requests/second</div>
                 </div>
                 <div style="text-align: center;">
-                    <div style="font-size: 4vw; font-weight: 800; color: var(--green);">&lt;150ms</div>
+                    <div style="font-size: 4vw; font-weight: 800; color: var(--green);">&lt;100ms</div>
                     <div style="font-size: 1.2vw; color: var(--gray-600); margin-top: 1vh;">p99.9 latency</div>
                 </div>
             </div>
         </div>
 
-        <div class="slide" data-chapter="Domain Intelligence" id="ranking-architecture">
-            <h2 style="text-align: center; margin-bottom: 2vh;">From Search to Sorted Results</h2>
+        <div class="slide" data-chapter="Domain Intelligence" id="ranking-unbeatable">
+            <h2 style="text-align: center; margin-bottom: 3vh;">Next, We Wanted <span style="color: var(--blue);">Faster Experimentation</span> </h2>
+            <p style="text-align: center; color: var(--gray-400); font-size: 1.2vw; margin-bottom: 2vh;">But a bad ranking algorithm is costly! </p>
+        </div>
+
+        <div class="slide" data-chapter="Domain Intelligence" id="ab-testing">
+            <div class="flex-center fragment">
+            <h2 style="text-align: center; margin-bottom: 2vh;">Interleaving Unlocked Faster Experimentation</h2>
             <div style="display: flex; justify-content: center; padding: 0 4vw;">
-                <img src="attachments/rnk-traffic.png" alt="Ranking Platform Architecture" style="max-height: 70vh; max-width: 90vw; border-radius: 12px;">
+                <div style="position: relative; width: 80vw; height: 70vh;">
+                    <img class="fragment fade-in" src="attachments/testing1.png" alt="A/B Testing 1" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; object-position: center; border-radius: 12px;">
+                    <img class="fragment fade-in" src="attachments/testing2.png" alt="A/B Testing 2" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; object-position: center; border-radius: 12px;">
+                </div>
+            </div>
+            </div>
+        </div>
+
+        <div class="slide" data-chapter="Domain Intelligence" id="interleaving-benefits">
+            <h2 style="text-align: center; margin-bottom: 3vh;">Key Interleaving Benefits</h2>
+            <div style="display: flex; gap: 3vw; justify-content: center; padding: 0 6vw;">
+                <div class="fragment" style="text-align: center; background: linear-gradient(135deg, #e3f2fd, #bbdefb); padding: 2vw 2.5vw; border-radius: 1vw; flex: 1; max-width: 30vw;">
+                    <div style="font-size: 2vw; font-weight: 700; color: var(--navy); margin-bottom: 0.8vh;">More Variants Together</div>
+                    <p style="font-size: 1vw; color: var(--gray-600);">10x Speedup</p>
+                </div>
+                
+                <div class="fragment" style="text-align: center; background: linear-gradient(135deg, #e8f5e8, #c8e6c8); padding: 2vw 2.5vw; border-radius: 1vw; flex: 1; max-width: 30vw;">
+                    <div style="font-size: 2vw; font-weight: 700; color: var(--navy); margin-bottom: 0.8vh;">On Less Traffic</div>
+                    <p style="font-size: 1vw; color: var(--gray-600);">100x less</p>
+                </div>
             </div>
         </div>
 
