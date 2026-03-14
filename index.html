@@ -995,6 +995,17 @@
         .benefit-circle.validate { background: var(--green); }
         .benefit-circle.iterate { background: var(--blue); }
         .benefit-circle.culture { background: var(--purple); }
+
+        /* Mobile responsiveness */
+        @media (max-width: 768px) {
+            .nav-counter,
+            .nav-chapter,
+            .progress-container,
+            .fragment-indicator,
+            .chapter-nav {
+                display: none !important;
+            }
+        }
     </style>
 
     <!-- Google Analytics 4 -->
@@ -1030,12 +1041,6 @@
             </h2>
                 <p class="subtitle" style="margin-top: 24px;"><span class="highlight-text">Architectures You've Always Wondered About</span></p>
                 <p class="subtitle" style="font-size: 20px;">QCon London 2026</p>
-                <div style="margin-top: 4vh;">
-                    <a href="qcon-ai-evolution.pdf" download="qcon-ai-evolution.pdf" target="_blank" style="display: inline-flex; align-items: center; gap: 0.5vw; padding: 1vw 2vw; background: var(--blue); color: white; text-decoration: none; border-radius: 2vw; font-size: 1.2vw; font-weight: 600; transition: all 0.3s ease;">
-                        <span>📄</span>
-                        <span>Download PDF</span>
-                    </a>
-                </div>
             </div>
         </div>
 
@@ -2622,7 +2627,7 @@
                 <div style="display: flex; justify-content: center; gap: 4vw; margin-top: 1.5vw;">
                     <div style="display: flex; flex-direction: column; align-items: center; gap: 0.6vw;">
                         <img src="attachments/qr-download.png" alt="Download QR Code" style="width: 11vw; height: 11vw; border-radius: 0.6vw; border: 0.2vw solid #0077b5; box-shadow: 0 4px 16px rgba(0,119,181,0.2);">
-                        <span style="font-size: 1vw; color: var(--gray-600); font-weight: 500;">Download Slides</span>
+                        <span style="font-size: 1vw; color: var(--gray-600); font-weight: 500;">Download Slides PDF</span>
                     </div>
                     <div style="display: flex; flex-direction: column; align-items: center; gap: 0.6vw;">
                         <img src="attachments/qr-linkedin.png" alt="LinkedIn QR Code" style="width: 11vw; height: 11vw; border-radius: 0.6vw; border: 0.2vw solid #0077b5; box-shadow: 0 4px 16px rgba(0,119,181,0.2);">
