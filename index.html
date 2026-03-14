@@ -878,7 +878,7 @@
 
         /* Slide specific styles */
         .title-slide {
-            background: linear-gradient(135deg, var(--navy) 0%, #2c5282 100%);
+            background: var(--navy);
             color: white;
         }
 
@@ -1066,27 +1066,7 @@
             </div>
         </div>
 
-        <!-- Bio Slide -->
-        <!-- <div class="slide" data-chapter="Introduction" id="bio" style="position: relative;">
-            <div class="flex-center">
-                <div style="display: flex; align-items: center; gap: 60px; padding: 40px;">
-                    <div style="flex-shrink: 0;">
-                        <div style="width: 280px; height: 280px; border-radius: 50%; background: linear-gradient(135deg, var(--booking-blue), var(--navy)); display: flex; align-items: center; justify-content: center; box-shadow: 0 8px 32px rgba(0,53,128,0.3);">
-                            <img src="attachments/headshot.jpg" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;"> 
-                        </div>
-                    </div>
-                    <div style="text-align: left;">
-                        <h2 style="font-size: 48px; margin-bottom: 12px;"><span style="color: var(--navy);">Jabez Eliezer </span> Manuel</h2>
-                        <p style="font-size: 28px; color: var(--booking-blue); font-weight: 600; margin-bottom: 8px;">Senior Principal Engineer <span style="color: var(--gray-600);">@ Booking.com</span></p>
-                        <p style="font-size: 22px; color: var(--gray-600); margin-bottom: 24px;">Leading the engineering efforts of AI Application Platform</p>
-                    </div>
-                </div>
-            </div>
-            <div style="position: absolute; bottom: 120px; right: 40px; display: flex; flex-direction: column; align-items: center; gap: 8px;">
-                <img src="attachments/qr-linkedin.png" alt="LinkedIn QR Code" style="width: 120px; height: 120px; border-radius: 8px; border: 3px solid #0077b5;">
-                <span style="font-size: 14px; color: var(--gray-600);">Scan to connect</span>
-            </div>
-        </div> -->
+      
 
         <div class="slide" data-chapter="Introduction" id="plan">
             <div class="flex-center fragment">
@@ -2455,17 +2435,25 @@
             </div>
         </div>
 
-        <div class="slide" data-chapter="Domain Intelligence" id="ranking-intro">
-            <h2 style="text-align: center;">Ranking Platform</h2>
-            <p style="text-align: center; color: var(--gray-500); font-size: 1.1vw; margin-bottom: 2vh;">A three-way optimization: Traveller • Partner • Platform</p>
+        <!-- CHAPTER 4: Ranking -->
+
+        <div class="slide section-slide" data-chapter="Ranking" id="ranking-section">
+            <div class="flex-center">
+                <h2>Ranking Platform</h2>
+                <p class="subtitle">Personalized real-time ordering at scale</p>
+            </div>
+        </div>
+        <div class="slide" data-chapter="Ranking" id="ranking-intro">
+            <h2 style="text-align: center;">The Three-way Optimization Challenge</h2>
+            <p style="text-align: center; color: var(--gray-500); font-size: 1.1vw; margin-bottom: 2vh;">Traveller • Partner • Business</p>
             <div style="display: flex; justify-content: center; padding: 0 4vw;">
-                <img src="attachments/ranking-intro.png" alt="Ranking Platform" style="max-height: 70vh; max-width: 90vw; border-radius: 12px;">
+                <img src="attachments/ranking-intro.png" alt="Ranking Platform" style="max-height: 65vh; max-width: 90vw; border-radius: 12px;">
             </div>
         </div>
 
-        <div class="slide" data-chapter="Domain Intelligence" id="ranking-history">
+        <div class="slide" data-chapter="Ranking" id="ranking-history">
             <h2 style="text-align: center; margin-bottom: 1vh;">Ranking, Circa 2005</h2>
-            <p style="text-align: center; color: var(--gray-500); font-size: 1.1vw; margin-bottom: 3vh;">A simple formula, precomputed</p>
+            <p style="text-align: center; color: var(--gray-500); font-size: 1.1vw; margin-bottom: 3vh;">A simple formula</p>
             
             <div style="display: flex; flex-direction: column; align-items: center; gap: 2vh; padding: 0 12vw;">
                 <div style="background: #1e293b; padding: 2.5vh 2vw; border-radius: 0.8vw; font-family: monospace;">
@@ -2474,28 +2462,28 @@
             </div>
         </div>
 
-        <div class="slide" data-chapter="Domain Intelligence" id="ranking-evolution">
+        <div class="slide" data-chapter="Ranking" id="ranking-evolution">
             <h2 style="text-align: center; margin-bottom: 1vh;">The Formula Evolved</h2>
-            <p style="text-align: center; color: var(--gray-500); font-size: 1.1vw; ">Many factors added, tested and tuned</p>
+            <p style="text-align: center; color: var(--gray-500); font-size: 1.1vw; ">Some factors that were experimented</p>
             <div style="display: flex; justify-content: center; padding: 0 4vw;">
-                <div style="position: relative; width: 70vw; height: 60vh;">
-                    <!-- <img class="fragment fade-in" src="attachments/rnk1.png" alt="Ranking Formula 1" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; object-position: center; border-radius: 12px;"> -->
+                <div class="fragment" style="position: relative; width: 70vw; height: 60vh;">
+                    <img class="fragment fade-in" src="attachments/rnk1.png" alt="Ranking Formula 1" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; object-position: center; border-radius: 12px;">
                     <img class="fragment fade-in" src="attachments/rnk2.png" alt="Ranking Formula 2" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; object-position: center; border-radius: 12px;">
-                    <!-- <img class="fragment fade-in" src="attachments/rnk3.png" alt="Ranking Formula 3" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; object-position: center; border-radius: 12px;"> -->
+                    <img class="fragment fade-in" src="attachments/rnk3.png" alt="Ranking Formula 3" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; object-position: center; border-radius: 12px;">
                     <img class="fragment fade-in" src="attachments/rnk4.png" alt="Ranking Formula 4" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; object-position: center; border-radius: 12px;">
-                    <!-- <img class="fragment fade-in" src="attachments/rnk5.png" alt="Ranking Formula 5" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; object-position: center; border-radius: 12px;"> -->
+                    <img class="fragment fade-in" src="attachments/rnk5.png" alt="Ranking Formula 5" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; object-position: center; border-radius: 12px;">
                     <img class="fragment fade-in" src="attachments/rnk6.png" alt="Ranking Formula 6" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; object-position: center; border-radius: 12px;">
-                    <!-- <img class="fragment fade-in" src="attachments/rnk7.png" alt="Ranking Formula 7" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; object-position: center; border-radius: 12px;"> -->
+                    <img class="fragment fade-in" src="attachments/rnk7.png" alt="Ranking Formula 7" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; object-position: center; border-radius: 12px;">
                     <img class="fragment fade-in" src="attachments/rnk8.png" alt="Ranking Formula 8" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; object-position: center; border-radius: 12px;">
                 </div>
             </div>
         </div>
 
-        <div class="slide" data-chapter="Domain Intelligence" id="ranking-unbeatable">
-            <h2 style="text-align: center; margin-bottom: 4vh;">We Attempted to <span style="color: var(--blue);">Replace the Formula with ML</span></h2>
+        <div class="slide" data-chapter="Ranking" id="ranking-unbeatable">
+            <h2 style="text-align: center; margin-bottom: 4vh;">We Attempted to <span style="color: var(--blue);">Replace The Formula with ML</span></h2>
         </div>
 
-        <div class="slide" data-chapter="Domain Intelligence" id="ranking-mad-scientist">
+        <div class="slide" data-chapter="Ranking" id="ranking-mad-scientist">
             <h2 style="text-align: center; margin-bottom: 2vh;">But <span style="color: var(--blue);">The Hand-crafted Formula</span> was Undefeatable ...</h2>
             <p style="text-align: center; color: var(--gray-400); font-size: 1.2vw; margin-bottom: 2vh;">... for a longtime</p>
             <div style="display: flex; justify-content: center; padding: 0 4vw;">
@@ -2503,12 +2491,17 @@
             </div>
         </div>
 
-        <div class="slide" data-chapter="Domain Intelligence" id="ranking-unbeatable">
-            <h2 style="text-align: center; margin-bottom: 3vh;">Next, We Wanted to <span style="color: var(--blue);">Personalize Search Results</span> </h2>
-            <p style="text-align: center; color: var(--gray-400); font-size: 1.2vw; margin-bottom: 2vh;">But Nobody believed it was possible</p>
+        <div class="slide" data-chapter="Ranking" id="ranking-unbeatable">
+            <h2 style="text-align: center; margin-bottom: 3vh;">Chief Reason was <span style="color: var(--red);">Infrastructure Limitation</span></h2>
+            <p style="text-align: center; color: var(--gray-400); font-size: 1.2vw; margin-bottom: 2vh;">Ideal model couldn't be trained on Spark</p>
         </div>
 
-        <div class="slide" data-chapter="Domain Intelligence" id="ranking-personalization">
+        <div class="slide" data-chapter="Ranking" id="ranking-unbeatable2">
+            <h2 style="text-align: center; margin-bottom: 3vh;">Next, We Wanted to Tackle <span style="color: var(--blue);">Personalized Ranking</span> </h2>
+            <p style="text-align: center; color: var(--gray-400); font-size: 1.2vw; margin-bottom: 2vh;">But not many believed it was possible</p>
+        </div>
+
+        <div class="slide" data-chapter="Ranking" id="ranking-personalization">
             <h2 style="text-align: center; margin-bottom: 1vh;">The Challenge with Realtime Personalization</h2>
             <div style="display: flex; justify-content: center; padding: 0 4vw;">
                 <div style="position: relative; width: 80vw; height: 60vh;">
@@ -2526,10 +2519,12 @@
                     <img class="fragment fade-in" src="attachments/rnk-rs11.png" alt="Personalization Approach 11" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; object-position: center; border-radius: 12px;">
                 </div>
             </div>
+            <p class="fragment" style="text-align: center; color: var(--gray-400); font-size: 1.2vw; margin-bottom: 2vh;">High-throughput & Low-latency requirements</p>
         </div>
 
-        <div class="slide" data-chapter="Domain Intelligence" id="ranking-scale">
-            <h2 style="text-align: center; margin-bottom: 4vh;">Ranking Scale (~2024)</h2>
+        <div class="slide" data-chapter="Ranking" id="ranking-scale">
+            <h2 style="text-align: center; margin-bottom: 2vh;"><span style="color: var(--purple);">Throughput</span> and <span style="color: var(--purple);">Latency</span></h2>
+            <p style="text-align: center; color: var(--gray-400); font-size: 1.2vw; margin-bottom: 2vh;">Numbers from 2024</p>
             <div style="display: flex; gap: 6vw; padding: 0 12vw; justify-content: center;">
                 <div style="text-align: center;">
                     <div style="font-size: 4vw; font-weight: 800; color: var(--blue);">100K+</div>
@@ -2542,12 +2537,16 @@
             </div>
         </div>
 
-        <div class="slide" data-chapter="Domain Intelligence" id="ranking-unbeatable">
-            <h2 style="text-align: center; margin-bottom: 3vh;">Next, We Wanted <span style="color: var(--blue);">Faster Experimentation</span> </h2>
-            <p style="text-align: center; color: var(--gray-400); font-size: 1.2vw; margin-bottom: 2vh;">But a bad ranking algorithm is costly! </p>
+        <div class="slide" data-chapter="Ranking" id="ranking-unbeatable3">
+            <h2 style="text-align: center; margin-bottom: 3vh;">Experiments Typically Run for <span style="color: var(--blue);">2-4 weeks</span> </h2>
         </div>
 
-        <div class="slide" data-chapter="Domain Intelligence" id="ab-testing">
+        <div class="slide" data-chapter="Ranking" id="ranking-unbeatable3">
+            <h2 style="text-align: center; margin-bottom: 3vh;">But, We Wanted to <span style="color: var(--blue);">Move Faster</span> </h2>
+            <p style="text-align: center; color: var(--gray-400); font-size: 1.2vw; margin-bottom: 2vh;">Well aware that poor ranking models are expensive.</p>
+        </div>
+
+        <div class="slide" data-chapter="Ranking" id="ab-testing">
             <div class="flex-center fragment">
             <h2 style="text-align: center; margin-bottom: 2vh;">Interleaving Unlocked Faster Experimentation</h2>
             <div style="display: flex; justify-content: center; padding: 0 4vw;">
@@ -2559,7 +2558,7 @@
             </div>
         </div>
 
-        <div class="slide" data-chapter="Domain Intelligence" id="interleaving-benefits">
+        <div class="slide" data-chapter="Ranking" id="interleaving-benefits">
             <h2 style="text-align: center; margin-bottom: 3vh;">Key Interleaving Benefits</h2>
             <div style="display: flex; gap: 3vw; justify-content: center; padding: 0 6vw;">
                 <div class="fragment" style="text-align: center; background: linear-gradient(135deg, #e3f2fd, #bbdefb); padding: 2vw 2.5vw; border-radius: 1vw; flex: 1; max-width: 30vw;">
@@ -2574,26 +2573,29 @@
             </div>
         </div>
 
-        <div class="slide" data-chapter="Domain Intelligence" id="ranking-more">
-            <div class="flex-center">
-                <h2 style="text-align: center; margin-bottom: 2vw;">Ranking is a Deep Rabbit Hole!</h2>
-                <p class="subtitle" style="color: var(--gray-400); font-size: 1.5vw;">But We'll stop here.</p>
+        <div class="slide" data-chapter="Experimentation" id="interleave-et">
+            <div class="flex-center fragment">
+                <h2 style="max-width: 50vw; text-align: center;">
+                    Preselect with <span style="color: var(--blue);">Interleaving</span> <br> & <br>
+                    Validate with <span style="color: var(--blue);">A/B Testing</span>
+                </h2>
+            </div>
+        </div>
+
+        <div class="slide" data-chapter="Experimentation" id="et-underpins">
+            <div class="flex-center fragment">
+                <h2 style="max-width: 50vw; text-align: center;">
+                    <span style="color: var(--blue);">Experimentation </span> still underpins everything we do
+                </h2>
             </div>
         </div>
 
         <!-- CHAPTER 5: Summary -->
 
-        <div class="slide section-slide" data-chapter="Summary" id="whats-next">
-            <div class="flex-center">
-                <h2>What's Brewing?</h2>
-                <p class="subtitle">Things keeping us busy </p>
-            </div>
-        </div>
-
         <div class="slide" data-chapter="Summary" id="aiap">
-            <h2 style="text-align: center; margin-bottom: 1vh;">What are We Working on?</h2>
+            <h2 style="text-align: center; margin-bottom: 1vh;">What's Brewing?</h2>
             <div style="display: flex; justify-content: center; padding: 0 4vw;">
-                <div style="position: relative; width: 80vw; height: 70vh;">
+                <div class="fragment" style="position: relative; width: 80vw; height: 70vh;">
                     <img class="fragment fade-in" src="attachments/aiap1.png" alt="AI Application Platform 1" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; object-position: center; border-radius: 12px;">
                     <img class="fragment fade-in" src="attachments/aiap2.png" alt="AI Application Platform 2" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; object-position: center; border-radius: 12px;">
                     <img class="fragment fade-in" src="attachments/aiap3.png" alt="AI Application Platform 3" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; object-position: center; border-radius: 12px;">
@@ -2606,6 +2608,29 @@
             </div>
         </div>
 
+        <!-- Bio Slide -->
+        <div class="slide" data-chapter="Introduction" id="bio" style="position: relative;">
+            <div class="flex-center" style="flex-direction: column; gap: 2vw;">
+                <div style="text-align: center;">
+                    <div style="width: 10vw; height: 10vw; border-radius: 50%; background: linear-gradient(135deg, var(--booking-blue), var(--navy)); display: flex; align-items: center; justify-content: center; box-shadow: 0 8px 32px rgba(0,53,128,0.3); margin: 0 auto 1.5vw;">
+                        <img src="attachments/headshot.jpg" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;"> 
+                    </div>
+                    <h2 style="font-size: 2.5vw; margin-bottom: 0.8vw;"><span style="color: var(--navy);">Jabez Eliezer </span> Manuel</h2>
+                    <p style="font-size: 1.5vw; color: var(--booking-blue); font-weight: 600;">Principal Engineer @ Booking.com</p>
+                </div>
+                
+                <div style="display: flex; justify-content: center; gap: 4vw; margin-top: 1.5vw;">
+                    <div style="display: flex; flex-direction: column; align-items: center; gap: 0.6vw;">
+                        <img src="attachments/qr-download.png" alt="Download QR Code" style="width: 11vw; height: 11vw; border-radius: 0.6vw; border: 0.2vw solid #0077b5; box-shadow: 0 4px 16px rgba(0,119,181,0.2);">
+                        <span style="font-size: 1vw; color: var(--gray-600); font-weight: 500;">Download Slides</span>
+                    </div>
+                    <div style="display: flex; flex-direction: column; align-items: center; gap: 0.6vw;">
+                        <img src="attachments/qr-linkedin.png" alt="LinkedIn QR Code" style="width: 11vw; height: 11vw; border-radius: 0.6vw; border: 0.2vw solid #0077b5; box-shadow: 0 4px 16px rgba(0,119,181,0.2);">
+                        <span style="font-size: 1vw; color: var(--gray-600); font-weight: 500;">Connect</span>
+                    </div>
+                </div>
+            </div>
+        </div>
 
         </div><!-- End scale-wrapper -->
 
@@ -2622,8 +2647,9 @@
             <button class="chapter-btn" onclick="goToChapter('ML Inference')">ML Inference</button>
             <button class="chapter-btn" onclick="goToChapter('Feature Engineering')">Feature Engineering</button>
             <button class="chapter-btn" onclick="goToChapter('Domain Intelligence')">Domain Intelligence</button>
+            <button class="chapter-btn" onclick="goToChapter('Ranking')">Ranking</button>
             <button class="chapter-btn" onclick="goToChapter('Summary')">Summary</button>
-        </div>
+            </div>
     </div>
 
     <script>
@@ -2843,11 +2869,11 @@
                 'MySQL': 'MySQL',
                 'Hadoop': 'Hadoop',
                 'Cloud': 'Cloud',
-                'Model Evolution': 'Model Evolution',
                 'ML Engineering': 'ML Engineering',
                 'ML Inference': 'ML Inference',
                 'Feature Engineering': 'Feature Engineering',
-                'Domain': 'Domain Intelligence',
+                'Domain Intelligence': 'Domain Intelligence',
+                'Ranking': 'Ranking',
                 'Summary': 'Summary'
             };
             const activeButtonText = chapterToButton[currentChapter] || currentChapter;
