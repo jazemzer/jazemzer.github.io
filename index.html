@@ -2628,7 +2628,7 @@
         </div>
 
         <!-- Bio Slide -->
-        <div class="slide" data-chapter="Introduction" id="bio" style="position: relative;">
+        <div class="slide" data-chapter="Summary" id="bio" style="position: relative;">
             <div class="flex-center" style="flex-direction: column; gap: 1vw;">
                 <div style="text-align: center;">
                     <div style="width: 10vw; height: 10vw; border-radius: 50%; background: linear-gradient(135deg, var(--booking-blue), var(--navy)); display: flex; align-items: center; justify-content: center; box-shadow: 0 8px 32px rgba(0,53,128,0.3); margin: 0 auto 1.5vw;">
@@ -2645,9 +2645,92 @@
                     </div>
                     <div style="display: flex; flex-direction: column; align-items: center; gap: 0.6vw;">
                         <img src="attachments/qr-linkedin.png" alt="LinkedIn QR Code" style="width: 11vw; height: 11vw; border-radius: 0.6vw; border: 0.2vw solid #0077b5; box-shadow: 0 4px 16px rgba(0,119,181,0.2);">
-                        <span style="font-size: 1vw; color: var(--gray-600); font-weight: 500;">Connect</span>
+                        <span style="font-size: 1vw; color: var(--gray-600); font-weight: 500;">LinkedIn</span>
                     </div>
                 </div>
+            </div>
+        </div>
+
+        <!-- CHAPTER 6: Appendix -->
+
+        <div class="slide" data-chapter="Appendix" id="appendix-title">
+            <div class="flex-center">
+                <h2 style="text-align: center; margin-bottom: 2vh;">Appendix</h2>
+                <p class="subtitle" style="color: var(--gray-600);">Additional Resources & References</p>
+            </div>
+        </div>
+
+        <div class="slide" data-chapter="Appendix" id="bdx-architecture">
+            <div class="flex-center">
+                <h2 style="margin-bottom: 0.5vh;">The Transition Architecture</h2>
+                <p style="font-size: 1.2vw; color: #666; margin-bottom: 2vh; font-style: italic;">
+                    Architecture that powered the Hadoop-to-cloud shift
+                </p>
+                <img src="attachments/bdx-architecture.png" alt="BDX Architecture" style="max-width: 100%; max-height: 60vh; object-fit: contain; ">
+                <p style="color: var(--gray-500); font-size: 1vw; margin-top: 2vh; font-style: italic;">
+                    Ingest • Transform • Govern • Serve
+                </p>
+            </div>
+        </div>
+
+        <div class="slide" data-chapter="Appendix" id="cip-arch">
+            <h2 style="text-align: center;">Content Intelligence Platform Architecture</h2>
+            <div style="display: flex; justify-content: center; padding: 0 4vw;">
+                <img src="attachments/cip-architecture.png" alt="CIP Architecture" style="max-height: 70vh; max-width: 90vw; border-radius: 12px;">
+            </div>
+        </div>
+
+        <div class="slide" data-chapter="Appendix" id="ml-inference-capabilities">
+            <h2 style="text-align: center; margin-bottom: 1vh;">ML Inference Capabilities</h2>
+            <p style="text-align: center; color: var(--gray-400); font-size: 1.1vw; margin-bottom: 1vh;">Real-time & Batch • Any Format • Any Infra</p>
+            
+            <div class="fragment" style="position: relative; width: 90%; height: 65vh; display: flex; align-items: center; justify-content: center; margin: 0 auto;">
+                <img class="fragment fade-in" src="attachments/cap0.png" alt="ML Inference Capability 0" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; object-position: center;">
+                <img class="fragment fade-in" src="attachments/cap1.png" alt="ML Inference Capability 1" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; object-position: center;">
+                <img class="fragment fade-in" src="attachments/cap2.png" alt="ML Inference Capability 2" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; object-position: center;">
+                <img class="fragment fade-in" src="attachments/cap3.png" alt="ML Inference Capability 3" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; object-position: center;">
+                <img class="fragment fade-in" src="attachments/cap4.png" alt="ML Inference Capability 4" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; object-position: center;">
+                <img class="fragment fade-in" src="attachments/cap5.png" alt="ML Inference Capability 5" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; object-position: center;">
+                <img class="fragment fade-in" src="attachments/cap6.png" alt="ML Inference Capability 6" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; object-position: center;">
+                <img class="fragment fade-in" src="attachments/cap7.png" alt="ML Inference Capability 7" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; object-position: center;">
+                <img class="fragment fade-in" src="attachments/cap8.png" alt="ML Inference Capability 8" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; object-position: center;">
+                <img class="fragment fade-in" src="attachments/cap9.png" alt="ML Inference Capability 9" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; object-position: center;">
+            </div>
+        </div>
+
+        <div class="slide" data-chapter="Appendix" id="agent-catalog">
+            <div class="fragment flex-center">
+                <h2 style="text-align: center; margin-bottom: 2vh;">Agent Catalog</h2>
+                <p style="text-align: center; color: var(--gray-500); font-size: 1.1vw;">Understand, parse, transform, and generate human language</p>
+                <div style="position: relative; display: flex; justify-content: center; padding: 0 4vw;">
+                    <img class="fragment fade-in" src="attachments/nlp1.png" alt="NLP Engine" style="max-height: 75vh; max-width: 85vw; border-radius: 12px;">
+                    <img class="fragment fade-in" src="attachments/nlp2.png" alt="NLP Engine" style="position: absolute; top: 0; max-height: 75vh; max-width: 85vw; border-radius: 12px;">
+                    <img class="fragment fade-in" src="attachments/nlp3.png" alt="NLP Engine" style="position: absolute; top: 0; max-height: 75vh; max-width: 85vw; border-radius: 12px;">
+                    <img class="fragment fade-in" src="attachments/nlp4.png" alt="NLP Engine" style="position: absolute; top: 0; max-height: 75vh; max-width: 85vw; border-radius: 12px;">
+                    <img class="fragment fade-in" src="attachments/nlp5.png" alt="NLP Engine" style="position: absolute; top: 0; max-height: 75vh; max-width: 85vw; border-radius: 12px;">
+                    <img class="fragment fade-in" src="attachments/nlp6.png" alt="NLP Engine" style="position: absolute; top: 0; max-height: 75vh; max-width: 85vw; border-radius: 12px;">
+                    <img class="fragment fade-in" src="attachments/nlp7.png" alt="NLP Engine" style="position: absolute; top: 0; max-height: 75vh; max-width: 85vw; border-radius: 12px;">
+                    <img class="fragment fade-in" src="attachments/nlp8.png" alt="NLP Engine" style="position: absolute; top: 0; max-height: 75vh; max-width: 85vw; border-radius: 12px;">
+                    <img class="fragment fade-in" src="attachments/nlp9.png" alt="NLP Engine" style="position: absolute; top: 0; max-height: 75vh; max-width: 85vw; border-radius: 12px;">
+                    <img class="fragment fade-in" src="attachments/nlp10.png" alt="NLP Engine" style="position: absolute; top: 0; max-height: 75vh; max-width: 85vw; border-radius: 12px;">
+                    <img class="fragment fade-in" src="attachments/nlp11.png" alt="NLP Engine" style="position: absolute; top: 0; max-height: 75vh; max-width: 85vw; border-radius: 12px;">
+                    <img class="fragment fade-in" src="attachments/nlp12.png" alt="NLP Engine" style="position: absolute; top: 0; max-height: 75vh; max-width: 85vw; border-radius: 12px;">
+                </div>
+            </div>
+        </div>
+
+        <div class="slide" data-chapter="Appendix" id="genai-studio">
+            <h2 style="text-align: center; margin-bottom: 2vh;">GenAI Studio</h2>
+            <div style="display: flex; justify-content: center; padding: 0 4vw;">
+                <img src="attachments/flow-builder.png" alt="GenAI Studio" style="max-height: 70vh; max-width: 90vw; border-radius: 12px;">
+            </div>
+        </div>
+
+        <div class="slide" data-chapter="Appendix" id="recp-pipeline">
+            <h2 style="text-align: center; margin-bottom: 1vh;">Recommendation Pipeline</h2>
+            <p style="text-align: center; color: var(--gray-500); font-size: 1.1vw;">Personalized recommendations through configurable stages</p>
+            <div style="display: flex; justify-content: center; padding: 0 4vw;">
+                <img src="attachments/recp-pipeline-new.png" alt="Recommendation Pipeline" style="max-height: 70vh; max-width: 90vw; border-radius: 12px;">
             </div>
         </div>
 
@@ -2668,6 +2751,7 @@
             <button class="chapter-btn" onclick="goToChapter('Domain Intelligence')">Domain Intelligence</button>
             <button class="chapter-btn" onclick="goToChapter('Ranking')">Ranking</button>
             <button class="chapter-btn" onclick="goToChapter('Summary')">Summary</button>
+            <button class="chapter-btn" onclick="goToChapter('Appendix')">Appendix</button>
             </div>
     </div>
 
@@ -2893,7 +2977,8 @@
                 'Feature Engineering': 'Feature Engineering',
                 'Domain Intelligence': 'Domain Intelligence',
                 'Ranking': 'Ranking',
-                'Summary': 'Summary'
+                'Summary': 'Summary',
+                'Appendix': 'Appendix'
             };
             const activeButtonText = chapterToButton[currentChapter] || currentChapter;
             document.querySelectorAll('.chapter-btn').forEach(btn => {
