@@ -1032,18 +1032,6 @@
         <!-- Scaled content wrapper -->
         <div class="scale-wrapper">
 
-        <!-- CHAPTER 1: Introduction -->
-
-        <div class="slide title-slide active" data-chapter="Introduction" id="title">
-            <div class="flex-center ">
-                <h2 style="text-align: center; margin-bottom: 3vh;">
-                The Evolution of AI at Booking.com
-            </h2>
-                <p class="subtitle" style="margin-top: 24px;"><span class="highlight-text">Architectures You've Always Wondered About</span></p>
-                <p class="subtitle" style="font-size: 20px;">QCon London 2026</p>
-            </div>
-        </div>
-
         <div class="slide" data-chapter="Introduction" id="navigation-help">
             <div class="flex-center">
                 <h2 style="text-align: center; margin-bottom: 3vh; color: var(--gray-600);">Navigation Tips</h2>
@@ -1062,12 +1050,64 @@
                 </div>
             </div>
         </div>
+        <!-- CHAPTER 1: Introduction -->
+
+        <div class="slide title-slide active" data-chapter="Introduction" id="title">
+            <div class="flex-center ">
+                <h2 style="text-align: center; margin-bottom: 3vh;">
+                The Evolution of AI at Booking.com
+            </h2>
+                <p class="subtitle" style="margin-top: 24px;"><span class="highlight-text">Architectures You've Always Wondered About</span></p>
+                <p class="subtitle" style="font-size: 20px;">QCon London 2026</p>
+            </div>
+        </div>
 
         <div class="slide" data-chapter="Introduction" id="scale">
             <div class="flex-center fragment">
-                <p class="stat-label" style="margin-bottom: 16px;">Today, Booking.com impacts</p>
+                <p class="stat-label" style="margin-bottom: 16px;">Today, <span style="color: var(--blue);">Booking.com</span> impacts</p>
                 <div class="big-number text-navy">Billions</div>
-                <p class="stat-label">of travel decisions every day</p>
+                <p class="stat-label">of travel decisions</p>
+            </div>
+        </div>
+
+        <div class="slide" data-chapter="Introduction" id="ml-platforms">
+            <div class="flex-center fragment">
+                <p class="stat-label" style="margin-bottom: 3vh;">And each decision is supported by</p>
+                <div class="big-number text-blue" style="font-size: 6vw;">ML Platforms</div>
+                <p class="stat-label">behind the scenes</p>
+            </div>
+        </div>
+
+        <div class="slide" data-chapter="Introduction" id="time-travel">
+            <div class="flex-center fragment">
+                <h2 style="margin-bottom: 3vh;">Go back in time by</h2>
+                <div class="big-number text-blue" style="font-size: 6vw;">Two Decades</div>
+                <p class="stat-label">to see how we got here</p>
+            </div>
+        </div>
+
+        <div class="slide" data-chapter="Introduction" id="housekeeping">
+            <div class="flex-center fragment">
+                <h2 style="margin-bottom: 3vh;">Before we dive in...</h2>
+                <p style="font-size: 1.4vw; color: var(--gray-600); margin-bottom: 3vh;">A few practical notes</p>
+                <div style="text-align: left; max-width: 65vw;">
+                    <div class="fragment" style="margin-bottom: 3vh;">
+                        <div style="font-size: 2vw; font-weight: 700; color: var(--blue); margin-bottom: 0.8vh;">📈 Fast-Paced Tour</div>
+                        <p style="font-size: 1.4vw; color: var(--gray-600);">Expect highlights, not deep dives</p>
+                    </div>
+                    <div class="fragment" style="margin-bottom: 3vh;">
+                        <div style="font-size: 2vw; font-weight: 700; color: var(--blue); margin-bottom: 0.8vh;">💬 Questions?</div>
+                        <p style="font-size: 1.4vw; color: var(--gray-600);">Catch me afterwards or online</p>
+                    </div>
+                    <div class="fragment" style="margin-bottom: 3vh;">
+                        <div style="font-size: 2vw; font-weight: 700; color: var(--blue); margin-bottom: 0.8vh;">📱 Slide Deck Access</div>
+                        <p style="font-size: 1.4vw; color: var(--gray-600);">QR code at the end</p>
+                    </div>
+                    <div class="fragment" style="margin-bottom: 3vh;">
+                        <div style="font-size: 2vw; font-weight: 700; color: var(--blue); margin-bottom: 0.8vh;">⚠️ Grain of Salt</div>
+                        <p style="font-size: 1.4vw; color: var(--gray-600);">Legends appear over time</p>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -1085,6 +1125,36 @@
                         <div style="background: #ffccbc; padding: 1.5vw 4vw; border-radius: 0.8vw; box-shadow: 0 0.5vw 2vw rgba(0,0,0,0.15);">
                             <p style="font-size: 2vw; font-weight: 600; color: var(--gray-800);">Data Management</p>
                         </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="slide" data-chapter="Introduction" id="three-layers-detail">
+            <div class="flex-center fragment">
+                <h2 style="margin-bottom: 3vh;">What We'll Cover</h2>
+                <div style="display: flex; gap: 2vw; max-width: 85vw;">
+                    <div class="fragment" style="flex: 1; background: #ffccbc; padding: 2vw; border-radius: 1vw; box-shadow: 0 0.5vw 2vw rgba(0,0,0,0.15);">
+                        <h3 style="font-size: 1.8vw; font-weight: 700; color: var(--gray-800); margin-bottom: 1.5vw;">Data Management</h3>
+                        <ul style="font-size: 1.2vw; color: var(--gray-600); list-style: none; padding: 0; margin: 0;">
+                            <li style="margin-bottom: 0.8vh;">• Database evolution</li>
+                            <li style="margin-bottom: 0.8vh;">• Scale challenges</li>
+                            <li>• Cloud migration</li>
+                        </ul>
+                    </div>
+                    <div class="fragment" style="flex: 1; background: #ffe0b2; padding: 2vw; border-radius: 1vw;">
+                        <h3 style="font-size: 1.8vw; font-weight: 700; color: var(--gray-800); margin-bottom: 1.5vw;">ML Engineering</h3>
+                        <ul style="font-size: 1.2vw; color: var(--gray-600); list-style: none; padding: 0; margin: 0;">
+                            <li style="margin-bottom: 0.8vh;">• Model serving at scale</li>
+                            <li style="margin-bottom: 0.8vh;">• Feature engineering attempts</li>
+                        </ul>
+                    </div>
+                    <div class="fragment" style="flex: 1; background: #c8e6c9; padding: 2vw; border-radius: 1vw;">
+                        <h3 style="font-size: 1.8vw; font-weight: 700; color: var(--gray-800); margin-bottom: 1.5vw;">Domain Intelligence</h3>
+                        <ul style="font-size: 1.2vw; color: var(--gray-600); list-style: none; padding: 0; margin: 0;">
+                            <li style="margin-bottom: 0.8vh;">• High-level tour</li>
+                            <li>• One deep dive</li>
+                        </ul>
                     </div>
                 </div>
             </div>
@@ -1188,15 +1258,10 @@
                 <img src="attachments/star.png" style="position: absolute; top: 5vh; right: 5vw; width: 8vw; opacity: 0.9;" />
                 <h2 style="margin-bottom: 3vh; text-align: center;">Experimentation Built Our <span style="color: var(--blue);">Data-Driven DNA</span> </h2>
                 <p class="fragment" style="font-size: 1.4vw; font-weight: 400; color: var(--gray-500); max-width: 60vw; text-align: center; line-height: 1.6;">
-                    Isolated Code & Feature Releases • Minimized Risk
-                </p>
-                <p class="fragment" style="font-size: 1.4vw; font-weight: 400; color: var(--gray-500); max-width: 60vw; text-align: center; line-height: 1.6;">
-                    Eliminiated HIPPOs • Ended Debates • Captured Learnings
+                    Eliminiated HIPPOs • Ended Debates • Created a Culture of Humility
                 </p>
             </div>
         </div>
-
-
 
         <!-- CHAPTER 2: Data Engineering -->
 
@@ -1292,9 +1357,70 @@
             </div>
         </div>
 
+
+        <div class="slide" data-chapter="MySQL" id="mysql-how-manage">
+            <div class="flex-center">
+                <h2 style="margin-bottom: 6vh;">How Do We Manage Thousands of DB Instances?</h2>
+                <div class="fragment" style="display: flex; flex-direction: column; align-items: center; gap: 3vh;">
+                    <div style="display: flex; align-items: center; gap: 2vw;">
+                        <div class="fragment" style="background: linear-gradient(135deg, #0071c2, #003580); padding: 2vh 3vw; border-radius: 1vw; box-shadow: 0 0.5vw 2vw rgba(0,113,194,0.3);">
+                            <p style="font-size: 2vw; color: white; font-weight: 700; margin: 0;">Single Writer</p>
+                        </div>
+                        <div class="fragment" style="display: flex; align-items: center; gap: 2vw;">
+                            <span style="font-size: 1.8vw; color: var(--gray-400);">+</span>
+                            <div style="background: linear-gradient(135deg, #8b5cf6, #6d28d9); padding: 2vh 3vw; border-radius: 1vw; box-shadow: 0 0.5vw 2vw rgba(139,92,246,0.3);">
+                                <p style="font-size: 2vw; color: white; font-weight: 700; margin: 0;">Replication Chain</p>
+                            </div>
+                        </div>
+                        <div class="fragment" style="display: flex; align-items: center; gap: 2vw;">
+                            <span style="font-size: 1.8vw; color: var(--gray-400);">+</span>
+                            <div style="background: linear-gradient(135deg, #10b981, #059669); padding: 2vh 3vw; border-radius: 1vw; box-shadow: 0 0.5vw 2vw rgba(16,185,129,0.3);">
+                                <p style="font-size: 2vw; color: white; font-weight: 700; margin: 0;">Automation</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="slide" data-chapter="MySQL" id="mysql-orchestrator">
+            <div class="flex-center fragment">
+                <h2 style="margin-bottom: 1vh;">Our MySQL Setup</h2>
+                <p style="color: var(--gray-500); font-size: 1.3vw; margin-bottom: 2vh;">Single writer · Replication chain · Automatic Failovers</p>
+                <img src="attachments/orchestrator.png" alt="MySQL Orchestrator Replication Topology" style="max-width: 85%; max-height: 60vh; object-fit: contain; margin-bottom: 2vh;">
+            </div>
+        </div>
+
+        <div class="slide" data-chapter="MySQL" id="mysql-spa">
+            <div class="flex-center fragment">
+                <h2 style="margin-bottom: 1vh;">The Automation Necessity</h2>
+                <p style="color: var(--gray-400); font-size: 1.2vw; margin-bottom: 3vh;">Managing Refresh Cycles</p>
+                <div style="display: flex; gap: 2vw; align-items: center;">
+                    <div class="fragment compare-box" style="padding: 1.5vw 2vw;">
+                        <div class="compare-label">Instances</div>
+                        <div class="compare-value" style="color: var(--accent);">~7000</div>
+                    </div>
+                    <div class="fragment" style="display: flex; align-items: center; gap: 2vw;">
+                        <span style="font-size: 1.5vw; color: var(--gray-500);">÷</span>
+                        <div class="compare-box" style="padding: 1.5vw 2vw;">
+                            <div class="compare-label">Refresh Cycle</div>
+                            <div class="compare-value">60 days</div>
+                        </div>
+                    </div>
+                    <div class="fragment" style="display: flex; align-items: center; gap: 2vw;">
+                        <span style="font-size: 1.5vw; color: var(--gray-500);">=</span>
+                        <div class="compare-box" style="padding: 1.5vw 2vw; border-color: var(--teal); background: rgba(0, 166, 153, 0.1);">
+                            <div class="compare-label" style="color: var(--teal);">Result</div>
+                            <div class="compare-value" style="color: var(--teal);">~1 action every 3 min</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <div class="slide" data-chapter="MySQL" id="mysql-unique-question">
             <div class="flex-center fragment">
-                <h2>What Is So Unique About Our MySQL Setup?</h2>
+                <h2>What Makes Our MySQL Setup Different?</h2>
             </div>
         </div>
 
@@ -1345,66 +1471,6 @@
             </div>
         </div>
 
-        <div class="slide" data-chapter="MySQL" id="mysql-how-manage">
-            <div class="flex-center">
-                <h2 style="margin-bottom: 6vh;">How Do We Manage Thousands of DB Instances?</h2>
-                <div class="fragment" style="display: flex; flex-direction: column; align-items: center; gap: 3vh;">
-                    <div style="display: flex; align-items: center; gap: 2vw;">
-                        <div class="fragment" style="background: linear-gradient(135deg, #0071c2, #003580); padding: 2vh 3vw; border-radius: 1vw; box-shadow: 0 0.5vw 2vw rgba(0,113,194,0.3);">
-                            <p style="font-size: 2vw; color: white; font-weight: 700; margin: 0;">Single Writer</p>
-                        </div>
-                        <div class="fragment" style="display: flex; align-items: center; gap: 2vw;">
-                            <span style="font-size: 1.8vw; color: var(--gray-400);">+</span>
-                            <div style="background: linear-gradient(135deg, #8b5cf6, #6d28d9); padding: 2vh 3vw; border-radius: 1vw; box-shadow: 0 0.5vw 2vw rgba(139,92,246,0.3);">
-                                <p style="font-size: 2vw; color: white; font-weight: 700; margin: 0;">MySQL Orchestrator</p>
-                            </div>
-                        </div>
-                        <div class="fragment" style="display: flex; align-items: center; gap: 2vw;">
-                            <span style="font-size: 1.8vw; color: var(--gray-400);">+</span>
-                            <div style="background: linear-gradient(135deg, #10b981, #059669); padding: 2vh 3vw; border-radius: 1vw; box-shadow: 0 0.5vw 2vw rgba(16,185,129,0.3);">
-                                <p style="font-size: 2vw; color: white; font-weight: 700; margin: 0;">Automation</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="slide" data-chapter="MySQL" id="mysql-orchestrator">
-            <div class="flex-center fragment">
-                <h2 style="margin-bottom: 1vh;">Our MySQL Setup</h2>
-                <p style="color: var(--gray-500); font-size: 1.3vw; margin-bottom: 2vh;">Single writer · Replication chain · Automatic Failovers</p>
-                <img src="attachments/orchestrator.png" alt="MySQL Orchestrator Replication Topology" style="max-width: 85%; max-height: 60vh; object-fit: contain; margin-bottom: 2vh;">
-            </div>
-        </div>
-
-        <div class="slide" data-chapter="MySQL" id="mysql-spa">
-            <div class="flex-center fragment">
-                <h2 style="margin-bottom: 1vh;">The Need for Automation</h2>
-                <p style="color: var(--gray-400); font-size: 1.2vw; margin-bottom: 3vh;">Managing Refresh Cycles</p>
-                <div style="display: flex; gap: 2vw; align-items: center;">
-                    <div class="fragment compare-box" style="padding: 1.5vw 2vw;">
-                        <div class="compare-label">Instances</div>
-                        <div class="compare-value" style="color: var(--accent);">~7000</div>
-                    </div>
-                    <div class="fragment" style="display: flex; align-items: center; gap: 2vw;">
-                        <span style="font-size: 1.5vw; color: var(--gray-500);">÷</span>
-                        <div class="compare-box" style="padding: 1.5vw 2vw;">
-                            <div class="compare-label">Refresh Cycle</div>
-                            <div class="compare-value">60 days</div>
-                        </div>
-                    </div>
-                    <div class="fragment" style="display: flex; align-items: center; gap: 2vw;">
-                        <span style="font-size: 1.5vw; color: var(--gray-500);">=</span>
-                        <div class="compare-box" style="padding: 1.5vw 2vw; border-color: var(--teal); background: rgba(0, 166, 153, 0.1);">
-                            <div class="compare-label" style="color: var(--teal);">Result</div>
-                            <div class="compare-value" style="color: var(--teal);">~1 action every 3 min</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
         <div class="slide" data-chapter="MySQL" id="mysql-shaped">
             <div class="flex-center fragment">
                 <h2 style="text-align: center; max-width: 60vw;">We didn't just <span style="color: var(--blue);">Use</span> MySQL — we helped <span style="color: var(--green);">Shape</span> it</h2>
@@ -1437,14 +1503,7 @@
                         <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/perl/perl-original.svg" alt="Perl" style="width: 8vw; height: 8vw;">
                         <p style="font-size: 1.8vw; font-weight: 700; margin-top: 1vw; color: var(--navy);">Perl Scripts</p>
                     </div>
-                    <div style="text-align: center; font-size: 4vw; color: var(--gray-400); align-self: center;">+</div>
-                    <div style="text-align: center;">
-                       <div style="width: 8vw; height: 8vw; background: var(--navy); border-radius: 16px; display: flex; align-items: center; justify-content: center;">
-                            <span style="font-size: 4vw;">⏰</span>
-                        </div>
-                        <p style="font-size: 1.8vw; font-weight: 700; margin-top: 1vw; color: var(--navy);">Cron Jobs</p>
-                    </div>
-                    <div style="text-align: center; font-size: 4vw; color: var(--gray-400); align-self: center;">+</div>
+                     <div style="text-align: center; font-size: 4vw; color: var(--gray-400); align-self: center;">+</div>
                     <div style="text-align: center; margin-top: 1.5vw; display: flex; flex-direction: column; align-items: center;">
                          <div style="width: 8vw; height: 8vw; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 16px; display: flex; align-items: center; justify-content: center;">
                             <span style="font-size: 3vw; color: white;">📚</span>
@@ -1452,6 +1511,14 @@
                         <p style="font-size: 1.6vw; font-weight: 700; margin-top: 1vw; color: var(--navy);">CPAN</p>
                         <p style="font-size: 0.9vw; color: var(--gray-500); margin-top: 0.5vw;">Statistical libraries</p>
                     </div>
+                    <div style="text-align: center; font-size: 4vw; color: var(--gray-400); align-self: center;">+</div>
+                    <div style="text-align: center;">
+                       <div style="width: 8vw; height: 8vw; background: var(--navy); border-radius: 16px; display: flex; align-items: center; justify-content: center;">
+                            <span style="font-size: 4vw;">⏰</span>
+                        </div>
+                        <p style="font-size: 1.8vw; font-weight: 700; margin-top: 1vw; color: var(--navy);">Cron Jobs</p>
+                    </div>
+                   
                 </div>
             </div>
         </div>
@@ -1619,7 +1686,7 @@
 
         <div class="slide" data-chapter="Hadoop" id="lookup-tables">
             <h2 style="text-align: center; font-size: 2.2vw; margin-bottom: 1vh;">We faked "Realtime Predictions" with <span style="color: var(--blue);">Lookup Tables</span></h2>
-            
+            <p style="text-align: center; color: var(--gray-400); font-size: 1.1vw; margin-top: 2vh;">No real-time computation • MySQL as Cache</p>
             
             <div style="position: relative; width: 90%; height: 64vh; display: flex; align-items: center; justify-content: center; margin: 0 auto;">
                 <img class="fragment" src="attachments/lookup0.png" alt="Lookup Tables Step 1" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; object-position: center;">
@@ -1631,7 +1698,6 @@
                 <img class="fragment fade-in" src="attachments/lookup7.png" alt="Lookup Tables Step 7" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; object-position: center;">
             </div>
             
-            <p class="fragment" style="text-align: center; color: var(--gray-400); font-size: 1.1vw; margin-top: 2vh;">No real-time computation • MySQL as Cache</p>
         </div>
 
         <div class="slide" data-chapter="Hadoop" id="hadoop-served-well">
@@ -1715,7 +1781,7 @@
 
         <div class="slide" data-chapter="Cloud" id="bdx-migration">
             <div class="flex-center">
-                <h2 style="margin-bottom: 3vh;">And The Odds Were Against Us</h2>
+                <h2 style="margin-bottom: 3vh;">Why was it Difficult to Migrate Away?</h2>
                 <div class="fragment" style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 2vw; padding: 0 6vw;">
                     <div class="fragment" style="text-align: center;">
                         <div style="font-size: 3.5vw; margin-bottom: 1vh;">💾</div>
@@ -1755,7 +1821,7 @@
 
         <div class="slide" data-chapter="Cloud" id="hadoop-long-goodbye">
             <div class="flex-center fragment">
-                <h2 style="margin-bottom: 3vh;">The Four Major Hurdles</h2>
+                <h2 style="margin-bottom: 3vh;">We had Four Problems to Solve</h2>
                 <div style="position: relative; width: 85%; height: 60vh;">
                     <img class="fragment " src="attachments/major1.png" alt="Challenge 1" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; object-position: center; border-radius: 8px;">
                     <img class="fragment fade-in" src="attachments/major2.png" alt="Challenge 2" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; object-position: center; border-radius: 8px;">
@@ -1823,7 +1889,7 @@
         
         <div class="slide" data-chapter="Cloud" id="migration-phases">
             <div class="flex-center fragment">
-                <h2 style="margin-bottom: 2vh;">This is How it Happened</h2>
+                <h2 style="margin-bottom: 2vh;">This is How We Migrated</h2>
                 <img src="attachments/star.png" style="position: absolute; top: 5vh; right: 5vw; width: 8vw; opacity: 0.9;" />
                 <p style="font-size: 1.2vw; color: #666; margin-bottom: 2vh; font-style: italic;">Five phases of migration</p>
                 <div style="position: relative; width: 90%; height: 55vh;">
@@ -1866,7 +1932,7 @@
                 <img src="attachments/star.png" style="position: absolute; top: 5vh; right: 5vw; width: 8vw; opacity: 0.9;" />
                 <h2 style="margin-bottom: 1vh;">But a Better Strategy is <span style="color: var(--green);">Prevention</span></h2>
                 <p style="font-size: 1.2vw; color: var(--gray-500); font-style: italic; max-width: 50vw; text-align: center;">
-                    Four Lessons we'd hand our past selves
+                    Four messages that we'd send back in time
                 </p>
                 <div style="position: relative; width: 90%; height: 60vh;">
                     <img class="fragment" src="attachments/advice1.png" alt="Advice 1" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; object-position: center; border-radius: 8px;">
@@ -1899,6 +1965,7 @@
                 </div>
             </div>
         </div>
+        
         <div class="slide section-slide" data-chapter="ML Engineering" id="ml-engineering-title">
             <div class="flex-center">
                 <h2>ML Model Serving + Feature Engineering</h2>
@@ -2192,7 +2259,7 @@
                 <div style="display: flex; justify-content: center; align-items: center; width: 100%; height: 55vh; position: relative;">
                     <img src="attachments/ft1.png" alt="Step 1" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; object-position: center;">
                     <img class="fragment fade-in" src="attachments/ft2.png" alt="Step 2" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; object-position: center;">
-                    <img class="fragment fade-in" src="attachments/ft3.png" alt="Step 3" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; object-position: center;">
+                    <!-- <img class="fragment fade-in" src="attachments/ft3.png" alt="Step 3" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; object-position: center;"> -->
                     <img class="fragment fade-in" src="attachments/ft4.png" alt="Step 4" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; object-position: center;">
                 </div>
             </div>
