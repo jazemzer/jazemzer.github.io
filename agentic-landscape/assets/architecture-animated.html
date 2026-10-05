@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Agentic Ecosystem Architecture</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@600;700;800&display=swap');
+:root{
+  --ink:#10233f;--muted:#5d708b;--blue:#003b95;--bright:#006ce4;
+  --cyan:#e7f4ff;--cyan2:#c9e6ff;--lime:#d9f7c8;--gold:#ffd76a;
+  --coral:#ff7a68;--paper:#f7f9fc;--white:#fff;--line:#dbe4ef;
+  --new-bg:#e6f4e0;--new-border:#6db856;
+  --art-bg:#fff5d4;--art-border:#d4a017;
+  --exist-bg:#dceeff;--exist-border:#5a9fd4;
+  --ext-bg:#f4f5f7;--ext-border:#a0aab4;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:100%;height:100%;overflow:hidden;background:#f0f3f7;font-family:'DM Sans',system-ui,sans-serif;color:var(--ink);cursor:pointer;user-select:none}
+#canvas{position:relative;width:1500px;height:940px;transform-origin:top left;margin:0 auto}
+.box{position:absolute;border-radius:10px;padding:8px 14px;font-size:13.5px;font-weight:600;text-align:center;display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1.25;opacity:0;transform:translateY(12px);transition:opacity .55s ease,transform .55s ease;z-index:2}
+.box.visible{opacity:1;transform:none}
+.box .sub{font-size:11px;font-weight:400;color:var(--muted);margin-top:3px}
+.box .badge{position:absolute;bottom:-16px;font-size:10px;font-weight:700;padding:1px 7px;border-radius:4px;background:rgba(0,0,0,.06);color:var(--muted)}
+.new{background:var(--new-bg);border:2px dashed var(--new-border)}
+.artefact{background:var(--art-bg);border:2px dashed var(--art-border)}
+.existing{background:var(--exist-bg);border:2px solid var(--exist-border)}
+.external{background:var(--ext-bg);border:2px solid var(--ext-border)}
+
+.platform{position:absolute;border-radius:14px;padding:0;opacity:0;transform:translateY(12px);transition:opacity .55s ease,transform .55s ease;z-index:1}
+.platform.visible{opacity:1;transform:none}
+.platform-label{position:absolute;bottom:-22px;left:0;right:0;text-align:center;font-family:'Manrope',sans-serif;font-size:13px;font-weight:800;color:var(--ink)}
+
+.section{position:absolute;border-radius:16px;border:2px solid var(--line);background:rgba(255,255,255,.45);opacity:0;transform:translateY(12px);transition:opacity .55s ease,transform .55s ease;z-index:0}
+.section.visible{opacity:1;transform:none}
+.section-title{position:absolute;top:10px;left:0;right:0;text-align:center;font-family:'Manrope',sans-serif;font-size:16px;font-weight:800;color:var(--ink)}
+.section-sub{position:absolute;bottom:-20px;left:0;right:0;text-align:center;font-size:11px;color:var(--muted);font-style:italic}
+
+.label{position:absolute;font-size:11.5px;font-weight:600;color:var(--muted);opacity:0;transition:opacity .5s ease .2s;z-index:3;white-space:nowrap}
+.label.visible{opacity:1}
+
+.sdk-area{position:absolute;border-radius:14px;border:2px dashed var(--art-border);background:rgba(255,245,212,.25);opacity:0;transform:translateY(12px);transition:opacity .55s ease,transform .55s ease;z-index:0}
+.sdk-area.visible{opacity:1;transform:none}
+.sdk-label{position:absolute;font-family:'Manrope',sans-serif;font-size:14px;font-weight:800;color:var(--ink)}
+.sdk-sub{font-size:11px;font-weight:400;color:var(--muted);margin-top:2px}
+
+svg.arrows{position:absolute;top:0;left:0;width:1500px;height:940px;z-index:3;pointer-events:none}
+svg .arrow-group{opacity:0;transition:opacity .5s ease .15s}
+svg .arrow-group.visible{opacity:1}
+svg line,svg polyline,svg path{fill:none;stroke:var(--muted);stroke-width:2}
+svg .dashed{stroke-dasharray:8 5}
+svg .dotted{stroke-dasharray:3 4;stroke-width:1.5;stroke:var(--ext-border)}
+
+.flow-dot{fill:var(--bright);opacity:0;transition:opacity .4s ease .6s}
+.flow-dot.visible{opacity:.7}
+
+.legend{position:absolute;top:12px;right:15px;display:flex;flex-direction:column;gap:6px;font-size:12px;font-weight:600;opacity:0;transition:opacity .5s ease;z-index:5}
+.legend.visible{opacity:1}
+.legend-item{display:flex;align-items:center;gap:8px}
+.legend-swatch{width:22px;height:16px;border-radius:4px}
+
+.step-bar{position:fixed;bottom:0;left:0;right:0;display:flex;justify-content:center;gap:2px;padding:12px 20px;background:rgba(255,255,255,.92);backdrop-filter:blur(8px);border-top:1px solid var(--line);z-index:10}
+.step-dot{width:10px;height:10px;border-radius:50%;background:var(--line);transition:background .3s,transform .3s}
+.step-dot.active{background:var(--bright);transform:scale(1.35)}
+.step-dot.done{background:var(--exist-border)}
+.step-labels{position:fixed;bottom:28px;left:0;right:0;display:flex;justify-content:center;gap:0;padding:0 20px;z-index:10}
+.step-name{width:80px;text-align:center;font-size:9.5px;font-weight:600;color:var(--muted);opacity:.4;transition:opacity .3s,color .3s}
+.step-name.active{opacity:1;color:var(--bright)}
+
+.hint{position:fixed;bottom:52px;left:0;right:0;text-align:center;font-size:12px;color:var(--muted);opacity:.6;z-index:10;transition:opacity 1s}
+.hint.hidden{opacity:0}
+
+.footnote{position:absolute;bottom:6px;left:20px;font-size:10.5px;color:var(--muted);opacity:0;transition:opacity .5s ease}
+.footnote.visible{opacity:.7}
+
+@keyframes pulse{0%,100%{opacity:.7}50%{opacity:.3}}
+</style>
+</head>
+<body>
+<div id="canvas">
+
+<!-- ===== LEGEND ===== -->
+<div class="legend" data-step="0">
+  <div class="legend-item"><div class="legend-swatch" style="background:var(--new-bg);border:2px dashed var(--new-border)"></div>New Systems / Components</div>
+  <div class="legend-item"><div class="legend-swatch" style="background:var(--art-bg);border:2px dashed var(--art-border)"></div>Internal Artefacts</div>
+  <div class="legend-item"><div class="legend-swatch" style="background:var(--exist-bg);border:2px solid var(--exist-border)"></div>Existing Booking Systems</div>
+  <div class="legend-item"><div class="legend-swatch" style="background:var(--ext-bg);border:2px solid var(--ext-border)"></div>External Systems</div>
+</div>
+
+<!-- ===== STEP 1: FOUNDATION ===== -->
+<div class="box external" data-step="1" style="left:365px;top:735px;width:185px;height:68px">
+  External LLMs
+  <span class="sub">OpenAI, Google, etc</span>
+</div>
+<div class="platform existing" data-step="1" style="left:585px;top:700px;width:295px;height:120px;background:var(--exist-bg);border:2px solid var(--exist-border)">
+  <div class="platform-label">ML Platform</div>
+</div>
+<div class="box existing" data-step="1" style="left:600px;top:725px;width:265px;height:48px">
+  Traditional ML Models
+</div>
+<div class="box new" data-step="1" style="left:618px;top:855px;width:240px;height:58px">
+  Fine-tuned<br>In-house LLMs
+  <span class="sub">llama, mistral, gemma, etc</span>
+</div>
+<div class="label" data-step="1" style="left:830px;top:808px">Scala</div>
+
+<!-- ===== STEP 2: GENAI GATEWAY ===== -->
+<div class="box new" data-step="2" style="left:555px;top:600px;width:200px;height:50px">
+  GenAI Gateway
+  <span class="badge">Python</span>
+</div>
+<div class="box new" data-step="2" style="left:318px;top:600px;width:205px;height:50px">
+  GuardRails Service
+  <span class="badge">Python</span>
+</div>
+
+<!-- ===== STEP 3: TOOLS ===== -->
+<div class="box new" data-step="3" style="left:110px;top:645px;width:190px;height:50px">
+  Toolbox Platform
+  <span class="badge">Python</span>
+</div>
+<div class="box external" data-step="3" style="left:95px;top:735px;width:220px;height:58px">
+  Tools &amp; Resources
+  <span class="sub">(Internal &amp; External)</span>
+</div>
+
+<!-- ===== STEP 4: AGENT RUNTIME ===== -->
+<div class="platform new" data-step="4" style="left:388px;top:415px;width:345px;height:140px;background:var(--new-bg);border:2px dashed var(--new-border)">
+  <div class="platform-label">Agent Serving Platform</div>
+</div>
+<div class="box new" data-step="4" style="left:420px;top:445px;width:115px;height:58px">
+  Agent 1
+</div>
+<div class="label" data-step="4" style="left:548px;top:465px;font-size:18px;font-weight:800;color:var(--muted)">···</div>
+<div class="box new" data-step="4" style="left:585px;top:445px;width:115px;height:58px">
+  Agent 2
+</div>
+<div class="label" data-step="4" style="left:540px;top:425px;font-size:12px;font-weight:700;color:var(--bright)">a2a</div>
+
+<!-- ===== STEP 5: AGENT ACCESS ===== -->
+<div class="box new" data-step="5" style="left:460px;top:330px;width:185px;height:42px">
+  Agent Gateway
+</div>
+<div class="box existing" data-step="5" style="left:210px;top:330px;width:185px;height:42px">
+  Backend Applications
+</div>
+<div class="label" data-step="5" style="left:405px;top:338px;font-weight:700;color:var(--ink)">http →</div>
+<div class="label" data-step="5" style="left:520px;top:380px;font-size:10.5px;color:var(--muted)">invoke<br>other agents</div>
+<div class="label" data-step="5" style="left:660px;top:328px;font-size:10.5px;color:var(--muted)">http/a2a →</div>
+
+<!-- ===== STEP 6: AGENT SDK ===== -->
+<div class="sdk-area" data-step="6" style="left:18px;top:340px;width:240px;height:230px"></div>
+<div class="box artefact" data-step="6" style="left:32px;top:365px;width:212px;height:68px">
+  Agent Catalog
+  <span class="sub">library of reusable agents</span>
+</div>
+<div class="box artefact" data-step="6" style="left:32px;top:448px;width:212px;height:68px">
+  Specialized Agent<br>Framework
+  <span class="sub">opinionated, best-practice framework</span>
+</div>
+<div class="sdk-label" data-step="6" style="left:32px;top:530px">
+  Booking Agent SDK
+  <div class="sdk-sub">Wrapper over open-source SDKs<br>(Langchain, PydanticAI, etc)</div>
+</div>
+<div class="label" data-step="6" style="left:260px;top:455px;font-size:10.5px;color:var(--muted);max-width:120px;white-space:normal;line-height:1.3">used to create, configure and run agents →</div>
+
+<!-- ===== STEP 7: ORCHESTRATION ===== -->
+<div class="box existing" data-step="7" style="left:580px;top:14px;width:220px;height:42px">
+  Backend Applications
+</div>
+<div class="box existing" data-step="7" style="left:600px;top:82px;width:185px;height:42px">
+  Gateway
+</div>
+<div class="platform new" data-step="7" style="left:300px;top:148px;width:590px;height:135px;background:var(--new-bg);border:2px dashed var(--new-border)">
+  <div class="platform-label" style="bottom:-24px">Workflow Orchestration Platform</div>
+</div>
+<div class="box new" data-step="7" style="left:315px;top:158px;width:255px;height:110px;padding-top:4px">
+  Shared Orchestrator
+</div>
+<div class="box artefact" data-step="7" style="left:342px;top:200px;width:200px;height:42px">
+  Workflows
+</div>
+<div class="label" data-step="7" style="left:580px;top:208px;font-size:18px;font-weight:800;color:var(--muted)">···</div>
+<div class="box new" data-step="7" style="left:605px;top:158px;width:270px;height:110px;padding-top:4px">
+  Dedicated Orchestrator N
+</div>
+<div class="box artefact" data-step="7" style="left:632px;top:200px;width:215px;height:42px">
+  Workflows
+</div>
+<div class="box existing" data-step="7" style="left:940px;top:180px;width:205px;height:60px">
+  Other Booking<br>Services
+</div>
+<div class="box artefact" data-step="7" style="left:32px;top:170px;width:205px;height:55px">
+  Orchestration SDK
+  <span class="badge">Python &nbsp;Java</span>
+</div>
+<div class="label" data-step="7" style="left:115px;top:148px;font-size:10.5px;color:var(--muted)">used to build<br>workflows ↘</div>
+<div class="label" data-step="7" style="left:840px;top:810px">Java</div>
+
+<!-- ===== STEP 8: EVALUATION STACK ===== -->
+<div class="section" data-step="8" style="left:1010px;top:315px;width:470px;height:230px">
+  <div class="section-title">Evaluation Stack</div>
+  <div class="section-sub">Suite of components that powers GenAI evaluation</div>
+</div>
+<div class="box new" data-step="8" style="left:1025px;top:352px;width:218px;height:48px;font-size:12.5px">
+  Evaluation Harness
+  <span class="sub">(package + service)</span>
+</div>
+<div class="box new" data-step="8" style="left:1252px;top:352px;width:218px;height:48px;font-size:12.5px">
+  Benchmark Datasets
+</div>
+<div class="box new" data-step="8" style="left:1025px;top:412px;width:218px;height:48px;font-size:12.5px">
+  Judge Factory
+</div>
+<div class="box new" data-step="8" style="left:1252px;top:412px;width:218px;height:48px;font-size:12.5px">
+  Judge Catalog
+</div>
+<div class="box new" data-step="8" style="left:1025px;top:472px;width:218px;height:48px;font-size:12.5px">
+  LLM Leaderboard
+</div>
+<div class="box new" data-step="8" style="left:1252px;top:472px;width:218px;height:48px;font-size:12.5px">
+  Agent Optimization
+</div>
+
+<!-- ===== STEP 9: FOUNDATIONAL SYSTEMS ===== -->
+<div class="section" data-step="9" style="left:1010px;top:600px;width:470px;height:250px">
+  <div class="section-title">Foundational Systems</div>
+</div>
+<div class="box new" data-step="9" style="left:1025px;top:638px;width:218px;height:48px;font-size:12.5px">
+  AI Registry
+</div>
+<div class="box new" data-step="9" style="left:1252px;top:638px;width:218px;height:48px;font-size:12.5px">
+  AI Studio
+</div>
+<div class="box new" data-step="9" style="left:1025px;top:698px;width:218px;height:48px;font-size:12.5px">
+  Embeddings &amp; RAG
+</div>
+<div class="box new" data-step="9" style="left:1252px;top:698px;width:218px;height:48px;font-size:12.5px">
+  Agent Working Memory
+</div>
+<div class="box new" data-step="9" style="left:1025px;top:758px;width:218px;height:48px;font-size:12.5px">
+  Observability
+</div>
+<div class="box new" data-step="9" style="left:1252px;top:758px;width:218px;height:48px;font-size:12.5px">
+  Offline Security<br>Monitoring
+</div>
+<div class="label" data-step="9" style="left:1105px;top:828px;font-size:10px">Grafana &nbsp;&nbsp; Arize</div>
+
+<!-- ===== FOOTNOTE ===== -->
+<div class="footnote" data-step="1">* Some components have been excluded for brevity</div>
+
+<!-- ===== SVG ARROWS ===== -->
+<svg class="arrows" viewBox="0 0 1500 940">
+<defs>
+  <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,1 L9,5 L0,9z" fill="#5d708b"/></marker>
+  <marker id="ah-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,1 L9,5 L0,9z" fill="var(--bright)"/></marker>
+</defs>
+
+<!-- Step 2: GenAI GW connections -->
+<g class="arrow-group" data-step="2">
+  <line x1="655" y1="650" x2="480" y2="730" marker-end="url(#ah)"/>
+  <line x1="655" y1="650" x2="700" y2="698" marker-end="url(#ah)"/>
+  <line x1="738" y1="820" x2="738" y2="855" marker-end="url(#ah)" class="dashed"/>
+</g>
+
+<!-- Step 3: Toolbox connections -->
+<g class="arrow-group" data-step="3">
+  <line x1="205" y1="695" x2="205" y2="733" marker-end="url(#ah)"/>
+</g>
+
+<!-- Step 4: Agent internal + mcp down -->
+<g class="arrow-group" data-step="4">
+  <line x1="535" y1="474" x2="585" y2="474" marker-end="url(#ah-blue)" stroke="var(--bright)" stroke-width="1.5"/>
+  <line x1="560" y1="555" x2="560" y2="598" marker-end="url(#ah)"/>
+  <line x1="420" y1="555" x2="420" y2="598" marker-end="url(#ah)" class="dashed"/>
+</g>
+<!-- mcp label placed via HTML label -->
+<div class="label" data-step="4" style="left:568px;top:570px;font-weight:700;color:var(--ink)">mcp</div>
+
+<!-- Step 5: Agent access connections -->
+<g class="arrow-group" data-step="5">
+  <line x1="395" y1="351" x2="458" y2="351" marker-end="url(#ah)"/>
+  <line x1="552" y1="372" x2="560" y2="413" marker-end="url(#ah)"/>
+  <line x1="645" y1="351" x2="1008" y2="430" class="dotted" marker-end="url(#ah)"/>
+</g>
+
+<!-- Step 6: SDK connections -->
+<g class="arrow-group" data-step="6">
+  <line x1="244" y1="470" x2="386" y2="475" class="dashed" marker-end="url(#ah)"/>
+</g>
+
+<!-- Step 7: Orchestration connections -->
+<g class="arrow-group" data-step="7">
+  <line x1="690" y1="56" x2="692" y2="80" marker-end="url(#ah)"/>
+  <line x1="692" y1="124" x2="595" y2="146" marker-end="url(#ah)"/>
+  <line x1="785" y1="103" x2="938" y2="200" marker-end="url(#ah)"/>
+  <line x1="237" y1="195" x2="298" y2="210" class="dashed" marker-end="url(#ah)"/>
+</g>
+
+<!-- Step 8: Eval connection -->
+<g class="arrow-group" data-step="8">
+  <line x1="733" y1="485" x2="1008" y2="445" class="dotted" marker-end="url(#ah)"/>
+</g>
+
+<!-- Step 9: Foundational connections -->
+<g class="arrow-group" data-step="9">
+  <line x1="755" y1="625" x2="1008" y2="665" class="dotted" marker-end="url(#ah)"/>
+  <line x1="733" y1="540" x2="1008" y2="720" class="dotted" marker-end="url(#ah)"/>
+</g>
+
+<!-- Flowing dots on main path (appear after step 4) -->
+<circle class="flow-dot" data-step="4" r="4" fill="var(--bright)">
+  <animateMotion dur="2.5s" repeatCount="indefinite" path="M560,555 L560,598 L655,650 L700,698" begin="0s"/>
+</circle>
+<circle class="flow-dot" data-step="5" r="3.5" fill="var(--bright)">
+  <animateMotion dur="2s" repeatCount="indefinite" path="M395,351 L458,351 L552,372 L560,413" begin="0.4s"/>
+</circle>
+</svg>
+
+</div><!-- /canvas -->
+
+<!-- Step indicator -->
+<div class="step-labels" id="stepLabels"></div>
+<div class="step-bar" id="stepBar"></div>
+<div class="hint" id="hint">Click or press → to advance</div>
+
+<script>
+const STEPS = [
+  'Start',
+  'Foundation',
+  'Gateway',
+  'Tools',
+  'Agents',
+  'Access',
+  'SDK',
+  'Orchestration',
+  'Evaluation',
+  'Systems'
+];
+const TOTAL = STEPS.length - 1;
+let current = 0;
+
+function initStepBar() {
+  const bar = document.getElementById('stepBar');
+  const labels = document.getElementById('stepLabels');
+  for (let i = 0; i <= TOTAL; i++) {
+    const dot = document.createElement('div');
+    dot.className = 'step-dot';
+    dot.dataset.idx = i;
+    dot.onclick = e => { e.stopPropagation(); goTo(i); };
+    bar.appendChild(dot);
+
+    const name = document.createElement('div');
+    name.className = 'step-name';
+    name.textContent = STEPS[i];
+    labels.appendChild(name);
+  }
+  updateBar();
+}
+
+function updateBar() {
+  document.querySelectorAll('.step-dot').forEach((d, i) => {
+    d.classList.toggle('active', i === current);
+    d.classList.toggle('done', i < current);
+  });
+  document.querySelectorAll('.step-name').forEach((n, i) => {
+    n.classList.toggle('active', i === current);
+  });
+}
+
+function reveal(step) {
+  document.querySelectorAll('[data-step]').forEach(el => {
+    const s = parseInt(el.dataset.step);
+    if (s <= step) {
+      el.classList.add('visible');
+    } else {
+      el.classList.remove('visible');
+    }
+  });
+}
+
+function goTo(step) {
+  current = Math.max(0, Math.min(TOTAL, step));
+  reveal(current);
+  updateBar();
+  if (current > 0) document.getElementById('hint').classList.add('hidden');
+}
+
+function next() { goTo(current + 1); }
+function prev() { goTo(current - 1); }
+
+// Scale canvas to fit viewport
+function scaleCanvas() {
+  const c = document.getElementById('canvas');
+  const scaleX = window.innerWidth / 1500;
+  const scaleY = (window.innerHeight - 55) / 940;
+  const s = Math.min(scaleX, scaleY, 1.15);
+  c.style.transform = `scale(${s})`;
+  c.style.marginLeft = `${Math.max(0, (window.innerWidth - 1500 * s) / 2)}px`;
+  c.style.marginTop = `${Math.max(0, ((window.innerHeight - 55) - 940 * s) / 2)}px`;
+}
+
+document.addEventListener('click', next);
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); next(); }
+  else if (e.key === 'ArrowLeft') { e.preventDefault(); prev(); }
+  else if (e.key === 'r' || e.key === 'R') goTo(0);
+});
+
+window.addEventListener('resize', scaleCanvas);
+
+initStepBar();
+scaleCanvas();
+goTo(0);
+</script>
+</body>
+</html>

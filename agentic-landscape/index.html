@@ -1,0 +1,1401 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>How We Built an Agentic Ecosystem @Booking.com</title>
+  <meta name="description" content="A product-led story of Booking.com's GenAI and agentic ecosystem." />
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@600;700;800&display=swap');
+    :root {
+      --ink:#10233f; --muted:#5d708b; --blue:#003b95; --bright:#006ce4;
+      --cyan:#e7f4ff; --cyan2:#c9e6ff; --lime:#d9f7c8; --gold:#ffd76a;
+      --coral:#ff7a68; --paper:#f7f9fc; --white:#fff; --line:#dbe4ef;
+      --shadow:0 18px 50px rgba(16,35,63,.12);
+    }
+    *{box-sizing:border-box}
+    html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#081b35;color:var(--ink);font-family:'DM Sans',system-ui,sans-serif}
+    a{color:inherit}
+    .deck{position:relative;width:100%;height:100%}
+    .slide{position:absolute;inset:0;display:none;overflow:hidden;background:var(--paper)}
+    .slide.active{display:flex;animation:enter .35s ease-out both}
+    @keyframes enter{from{opacity:0;transform:translateX(14px)}to{opacity:1;transform:none}}
+    .slide-inner{width:min(1440px,100%);height:100%;margin:auto;padding:5.2vh 5.2vw 5.8vh;display:flex;flex-direction:column;position:relative}
+    .eyebrow{font-size:clamp(12px,1.1vw,18px);letter-spacing:.14em;text-transform:uppercase;font-weight:800;color:var(--bright);margin-bottom:1.1vh}
+    h1,h2,h3{font-family:'Manrope',sans-serif;margin:0;line-height:1.04;letter-spacing:-.035em}
+    h1{font-size:clamp(44px,5.6vw,84px)}
+    h2{font-size:clamp(34px,4vw,62px);max-width:1180px}
+    h3{font-size:clamp(19px,1.6vw,28px);letter-spacing:-.02em}
+    p{font-size:clamp(17px,1.45vw,25px);line-height:1.42;margin:.7em 0;color:var(--muted)}
+    strong{color:var(--ink)}
+    .sub{font-size:clamp(19px,1.65vw,28px);max-width:1050px}
+    .content{flex:1;display:flex;align-items:center;min-width:0;min-height:0;padding:2.2vh 0}
+    .grid{width:100%;display:grid;gap:1.4vw}
+    .g2{grid-template-columns:repeat(2,1fr)} .g3{grid-template-columns:repeat(3,1fr)} .g4{grid-template-columns:repeat(4,1fr)}
+    .card{background:var(--white);border:1px solid var(--line);border-radius:20px;padding:1.5vw;box-shadow:0 8px 24px rgba(16,35,63,.06)}
+    .card p{font-size:clamp(14px,1.1vw,19px);margin:.5em 0 0}
+    .card.accent{border-top:6px solid var(--bright)}
+    .num{font-family:'Manrope';font-size:clamp(34px,3.4vw,56px);font-weight:800;color:var(--bright);line-height:1}
+    .pill{display:inline-flex;align-items:center;gap:.45em;padding:.45em .78em;border-radius:999px;background:var(--cyan);color:var(--blue);font-size:clamp(12px,.9vw,16px);font-weight:700}
+    .pill.dark{background:var(--blue);color:white}.pill.green{background:var(--lime)}.pill.gold{background:#fff2c7}
+    .quote{font-family:'Manrope';font-weight:700;font-size:clamp(28px,3.2vw,52px);line-height:1.14;max-width:1150px}
+    .quote em{font-style:normal;color:var(--bright)}
+    .source{position:absolute;left:5.2vw;bottom:1.6vh;font-size:clamp(9px,.7vw,12px);color:#71839a;max-width:78%}
+    .source a{text-decoration:none;border-bottom:1px solid #aab8c9}
+    .slide-no{position:absolute;right:5.2vw;bottom:1.5vh;font-size:12px;color:#8b9aab}
+    .topline{position:absolute;left:0;right:0;top:0;height:7px;background:linear-gradient(90deg,var(--blue),var(--bright),#4fc3f7)}
+    .blue{background:linear-gradient(135deg,#062b68,#006ce4);color:white}.blue h1,.blue h2,.blue h3,.blue strong{color:white}.blue p,.blue .source,.blue .slide-no{color:#d9ebff}.blue .eyebrow{color:#88d1ff}
+    .dark{background:#091b33;color:white}.dark h1,.dark h2,.dark h3,.dark strong{color:white}.dark p,.dark .source,.dark .slide-no{color:#b8c9de}
+    .timeline{display:grid;grid-template-columns:repeat(4,1fr);gap:1vw;position:relative;width:100%;padding-top:2.4vh}
+    .timeline:before{content:'';position:absolute;left:3%;right:3%;top:4.2vh;height:3px;background:rgba(255,255,255,.3)}
+    .moment{position:relative;padding-top:4vh}
+    .moment:before{content:'';position:absolute;top:2.85vh;left:0;width:18px;height:18px;border-radius:50%;background:var(--gold);box-shadow:0 0 0 7px rgba(255,215,106,.18)}
+    .moment .date{font-weight:800;color:var(--gold);font-size:clamp(15px,1.25vw,21px)}
+    .moment h3{margin:.45em 0}.moment p{font-size:clamp(13px,1vw,18px);margin:0}
+    .chat{background:white;color:var(--ink);border-radius:28px;padding:2vw;box-shadow:var(--shadow);max-width:720px}
+    .bubble{padding:1em 1.15em;border-radius:18px;margin:.7em 0;font-size:clamp(15px,1.25vw,21px);line-height:1.35}
+    .bubble.user{background:var(--blue);color:white;margin-left:12%}.bubble.ai{background:#edf5ff;margin-right:7%}
+    .flow{width:100%;display:flex;align-items:stretch;justify-content:center;gap:.7vw}
+    .node{flex:1;min-width:0;background:white;border:1px solid var(--line);border-radius:16px;padding:1.1vw;text-align:center;display:flex;flex-direction:column;justify-content:center;min-height:105px}
+    .node b{font-family:'Manrope';font-size:clamp(14px,1.1vw,19px)}.node span{color:var(--muted);font-size:clamp(11px,.8vw,14px);margin-top:.35em}
+    .arrow{display:flex;align-items:center;color:var(--bright);font-size:2vw;font-weight:800}
+    .loop{display:grid;grid-template-columns:repeat(5,1fr);gap:1vw;width:100%}
+    .loop .card{position:relative}.loop .card:not(:last-child):after{content:'→';position:absolute;right:-1.1vw;top:42%;z-index:2;color:var(--bright);font-size:1.8vw;font-weight:800}
+    .lesson{margin-top:1.4vh;padding:1.1vw 1.4vw;border-left:6px solid var(--bright);background:var(--cyan);border-radius:0 14px 14px 0;font-size:clamp(16px,1.25vw,22px);font-weight:700}
+    .before-after{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:1.6vw;width:100%}.bigarrow{font-size:4vw;color:var(--bright)}
+    .query{font-family:'Manrope';font-weight:700;font-size:clamp(24px,2.7vw,42px);padding:1.4vw;background:white;border:2px solid var(--line);border-radius:18px}
+    .chips{display:flex;flex-wrap:wrap;gap:.7vw;margin-top:1.3vh}.chip{padding:.65em .9em;border-radius:12px;background:var(--cyan2);font-weight:700;font-size:clamp(13px,1vw,18px)}
+    .ladder{display:grid;grid-template-columns:repeat(5,1fr);gap:.7vw;align-items:end;width:100%;height:38vh}.step{background:white;border:1px solid var(--line);border-radius:16px 16px 0 0;padding:1vw;text-align:center;display:flex;flex-direction:column;justify-content:flex-end}.step:nth-child(1){height:35%}.step:nth-child(2){height:48%}.step:nth-child(3){height:62%}.step:nth-child(4){height:78%}.step:nth-child(5){height:94%;background:#fff2ee;border-color:#ffc3b9}.step b{font-size:clamp(14px,1.1vw,20px)}.step span{font-size:clamp(11px,.8vw,15px);color:var(--muted);margin-top:.4em}
+    .pressure{display:grid;grid-template-columns:1fr 1.25fr 1fr;gap:1vw;width:100%;align-items:stretch}.pressure .col{display:flex;flex-direction:column;gap:.75vw}.pressure .center{background:var(--blue);color:white;border-radius:24px;display:flex;align-items:center;justify-content:center;text-align:center;padding:2vw}.pressure .center h3{font-size:clamp(25px,2.5vw,42px)}
+    .arch{width:100%;display:grid;grid-template-columns:1fr;gap:.55vh}.layer{display:grid;grid-template-columns:180px 1fr;gap:1vw;align-items:center;border-radius:12px;padding:.65vw 1vw;background:white;border:1px solid var(--line)}.layer-name{font-weight:800;color:var(--blue);font-size:clamp(12px,.95vw,17px)}.items{display:flex;gap:.6vw;flex-wrap:wrap}.item{padding:.45em .75em;border-radius:9px;background:#edf4fc;font-size:clamp(11px,.82vw,15px);font-weight:700}.layer.product{background:var(--blue);border:none}.layer.product .layer-name{color:#9fd5ff}.layer.product .item{background:rgba(255,255,255,.14);color:white}.layer.control{background:#fff8df}.layer.control .item{background:#ffedaa}
+    .buildpaths{display:grid;grid-template-columns:1fr 1fr;gap:1.4vw;width:100%}.path{background:white;border-radius:24px;padding:1.8vw;border:1px solid var(--line)}.path-head{display:flex;align-items:center;gap:1vw;margin-bottom:1.4vh}.path-icon{width:52px;height:52px;border-radius:15px;background:var(--cyan);display:grid;place-items:center;font-size:26px}.chain{display:flex;align-items:center;gap:.45vw;flex-wrap:wrap}.chain .item{background:var(--cyan)}
+    .evalrow{display:grid;grid-template-columns:repeat(5,1fr);gap:.8vw;width:100%}.eval{background:white;border:1px solid var(--line);border-radius:18px;padding:1.15vw;min-height:180px}.eval .num{font-size:clamp(20px,2vw,34px)}.eval ul{padding-left:1.1em;color:var(--muted);font-size:clamp(12px,.82vw,15px);line-height:1.55}
+    .trace{width:100%;display:grid;grid-template-columns:210px 1fr;gap:1vw}.trace-label{font-weight:800;padding:.9vw}.spans{display:flex;gap:.5vw}.span{height:44px;border-radius:10px;background:var(--cyan2);border-left:5px solid var(--bright);padding:.65em;font-size:clamp(11px,.78vw,14px);font-weight:700}.span.model{width:25%}.span.retrieval{width:18%;background:#e7f6dd;border-color:#61b83e}.span.tool{width:31%;background:#fff0c7;border-color:#e3a800}.span.fallback{width:15%;background:#ffe4df;border-color:var(--coral)}
+    .journey{display:flex;align-items:center;justify-content:space-between;width:100%;position:relative}.journey:before{content:'';position:absolute;left:7%;right:7%;top:36%;height:4px;background:var(--line)}.stop{position:relative;width:17%;text-align:center}.stop .circle{width:78px;height:78px;margin:auto;border-radius:50%;background:white;border:3px solid var(--bright);display:grid;place-items:center;font-size:31px;box-shadow:0 7px 22px rgba(0,108,228,.12)}.stop h3{font-size:clamp(14px,1.15vw,20px);margin-top:.7em}.router{position:absolute;left:8%;right:8%;bottom:-75%;background:var(--blue);color:white;border-radius:15px;padding:.8em;text-align:center;font-weight:700}
+    .takeaways{display:grid;grid-template-columns:repeat(3,1fr);gap:1.3vw;width:100%}.take{padding:1.6vw;background:white;border-radius:22px;border-top:7px solid var(--bright);box-shadow:var(--shadow)}.take .num{color:var(--blue)}
+    .learning-slide .slide-inner{justify-content:center;padding-top:6vh;padding-bottom:7vh}
+    .learning-layout{display:grid;grid-template-columns:112px 1fr;gap:2.2vw;align-items:start;width:100%;max-width:1180px;margin:4.5vh auto 0}
+    .learning-number{font-family:'Manrope',sans-serif;font-size:clamp(72px,8vw,126px);font-weight:800;line-height:.82;color:#c9e6ff}
+    .learning-copy h3{font-size:clamp(28px,2.7vw,46px);margin:0 0 1.1vh;color:var(--blue)}
+    .learning-copy p{font-size:clamp(20px,1.55vw,28px);line-height:1.35;margin:.35em 0;color:var(--muted);max-width:920px}
+    .learning-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:.8vw;margin-top:3.5vh;width:100%;max-width:1180px}
+    .learning-step{padding:1.15vw 1.25vw;min-height:118px;background:#f7f9fc;border-top:5px solid var(--bright);border-radius:0 0 14px 14px}
+    .learning-step:nth-child(2){border-top-color:var(--gold)}.learning-step:nth-child(3){border-top-color:#62b946}.learning-step:nth-child(4){border-top-color:var(--coral)}
+    .learning-step b{display:block;font-family:'Manrope',sans-serif;font-size:clamp(16px,1.25vw,22px);color:var(--ink);margin-bottom:.45em}.learning-step span{display:block;font-size:clamp(13px,1vw,17px);line-height:1.3;color:var(--muted)}
+    .learning-dark{background:#091b33;color:white}.learning-dark h2,.learning-dark h3{color:white}.learning-dark .learning-copy h3{color:var(--gold)}.learning-dark .learning-copy p{color:#c5d5e8}.learning-dark .learning-number{color:#3a6696}.learning-dark .learning-step{background:rgba(255,255,255,.06);border-color:#88d1ff}.learning-dark .learning-step:nth-child(2){border-color:var(--gold)}.learning-dark .learning-step:nth-child(3){border-color:#b9f29b}.learning-dark .learning-step:nth-child(4){border-color:var(--coral)}.learning-dark .learning-step b{color:white}.learning-dark .learning-step span{color:#b8c9de}
+    .learning-quote{width:100%;max-width:1180px;margin:4vh auto 0;padding:1.3vw 1.6vw;border-left:6px solid var(--gold);background:#fff8df;font-family:'Manrope',sans-serif;font-size:clamp(20px,1.65vw,29px);font-weight:700;line-height:1.28;color:var(--ink)}
+    .learning-dark .learning-quote{background:rgba(255,215,106,.12);color:white}
+    .learning-loop{display:grid;grid-template-columns:1fr auto 1fr auto 1fr;align-items:center;gap:.8vw;width:100%;max-width:1180px;margin:4vh auto 0}.learning-loop .loop-step{padding:1.2vw;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.22);border-radius:16px;min-height:130px}.learning-loop .loop-step b{display:block;color:var(--gold);font-family:'Manrope',sans-serif;font-size:clamp(18px,1.35vw,25px);margin-bottom:.45em}.learning-loop .loop-step span{display:block;color:#c5d5e8;font-size:clamp(14px,1.05vw,18px);line-height:1.3}.learning-loop .loop-arrow{font-size:clamp(24px,2.4vw,40px);color:#88d1ff}
+    #abstract-architecture .content{padding:0}
+    #abstract-architecture .progressive-stack{height:67vh}
+    #abstract-architecture .progressive-frame{transform:scale(1.15)}
+    .progressive-stack{position:relative;width:100%;min-width:0;height:60vh;display:grid;place-items:center}
+    .progressive-frame{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;opacity:0;transition:opacity .35s ease;pointer-events:none}
+    .progressive-frame.frame-visible{opacity:1}
+    .frame-dots{display:flex;justify-content:center;gap:8px;margin-top:1vh}.frame-dot{width:8px;height:8px;border-radius:50%;background:var(--line);transition:background .2s}.frame-dot.frame-active{background:var(--bright)}
+    .genai-platform-slide{background:#fff}
+    .genai-platform-slide .slide-inner{width:100%;max-width:none;padding:4vh 2vw 4.5vh}
+    .genai-platform-slide .eyebrow,.genai-platform-slide h2{margin-left:3vw}
+    .genai-platform-slide .content{padding:.5vh 0 0}
+    .genai-platform-slide .progressive-stack{height:68vh}
+    .recommendation-platform-slide{background:#fff}
+    .recommendation-platform-slide .slide-inner{width:100%;max-width:none;padding:5vh 5.2vw 4.5vh}
+    .recommendation-platform-slide .eyebrow,.recommendation-platform-slide h2{transform:translateY(12vh)}
+    .recommendation-platform-slide .content{padding:0}
+    .recommendation-platform-slide .progressive-stack{height:65vh}
+    .arch-base-slide{background:#fff}
+    .arch-base-slide .slide-inner{width:100%;max-width:none;padding:4.5vh 5.2vw 4.5vh}
+    #initial-orchestration-flow .content{flex:1;padding:0;align-items:flex-start}
+    .arch-base-slide .content{padding:1vh 0 0}
+    .arch-base-slide .progressive-stack{height:68vh}
+    .architecture-evolution-slide{background:#fff}
+    .architecture-evolution-slide .slide-inner{width:100%;max-width:none;padding:4.5vh 5.2vw 5vh}
+    .architecture-evolution-layout{flex:1;min-height:0;display:grid;grid-template-columns:1fr;align-items:center;padding-top:1vh}
+    .architecture-evolution-layout img{display:block;width:100%;height:100%;max-height:67vh;object-fit:contain}
+    .architecture-evolution-legend{display:flex;flex-direction:column;gap:3.2vh}
+    .architecture-evolution-item{display:grid;grid-template-columns:48px 1fr;gap:1vw;align-items:start}
+    .architecture-evolution-num{font-family:'Manrope',sans-serif;font-size:clamp(30px,2.8vw,46px);font-weight:800;line-height:1;color:#f33}
+    .architecture-evolution-item h3{font-size:clamp(20px,1.55vw,27px)}
+    .architecture-evolution-item p{font-size:clamp(14px,1vw,18px);margin:.45em 0 0}
+    .ai-registry-slide{background:#fff}
+    .ai-registry-slide .slide-inner{width:100%;max-width:none;padding:5.2vh 5.2vw 5.8vh}
+    .registry-layout{width:100%;display:grid;grid-template-columns:.72fr 1.55fr;gap:4.2vw;align-items:center}
+    .registry-copy{max-width:470px}
+    .registry-copy p{font-size:clamp(19px,1.55vw,27px);margin:1.2em 0 1.5em}
+    .registry-types{display:flex;flex-wrap:wrap;gap:.65vw}
+    .registry-types .pill{background:#eef5fd;color:var(--blue)}
+    .registry-window{background:#fff;border:1px solid #d7e0eb;border-radius:20px;box-shadow:0 24px 65px rgba(16,35,63,.15);overflow:hidden;min-width:0}
+    .registry-tabs{display:flex;gap:.55vw;padding:1.15vw 1.2vw .9vw;border-bottom:1px solid #e4e9f0;align-items:center;white-space:nowrap}
+    .registry-tab{padding:.55em .75em;border-radius:999px;font-size:clamp(10px,.78vw,14px);font-weight:700;color:#44546a}
+    .registry-tab.active{color:#006ce4;background:#edf5ff;outline:2px solid #006ce4;outline-offset:-2px}
+    .registry-count{display:inline-block;margin-left:.4em;padding:.12em .55em;border-radius:999px;background:#006ce4;color:white;font-size:.88em}
+    .registry-body{display:grid;grid-template-columns:35% 65%;min-height:49vh}
+    .registry-filter{padding:1.15vw;border-right:1px solid #e4e9f0;background:#fbfcfe}
+    .registry-label{font-size:clamp(10px,.78vw,14px);font-weight:800;margin-bottom:.45em}
+    .registry-select{border:1px solid #aab6c5;border-radius:7px;padding:.65em .8em;font-size:clamp(11px,.85vw,15px);background:white;margin-bottom:1.2vh}
+    .registry-menu{background:#4f5052;color:#fff;border-radius:10px;padding:.45em 0;box-shadow:0 9px 24px rgba(0,0,0,.24)}
+    .registry-menu div{padding:.25em .9em;font-size:clamp(9px,.68vw,12px);line-height:1.2;color:#f1f2f4}
+    .registry-menu div:first-child{font-weight:800;background:rgba(255,255,255,.12)}
+    .registry-results{min-width:0}
+    .registry-result-head{display:flex;justify-content:space-between;align-items:center;padding:.85vw 1vw;background:#f6f7f9;border-bottom:1px solid #e4e9f0;font-size:clamp(9px,.7vw,12px);font-weight:800;letter-spacing:.1em;color:#586476;text-transform:uppercase}
+    .registry-row{display:flex;justify-content:space-between;align-items:center;gap:1vw;padding:.85vw 1vw;border-bottom:1px solid #e4e9f0;font-size:clamp(10px,.8vw,14px)}
+    .registry-row a{color:#006ce4;text-decoration:none;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    .registry-kind{flex:0 0 auto;padding:.25em .55em;border-radius:5px;background:#f1f3f5;font-size:.86em;color:#344054}
+    .registry-kind.agent{background:#eaf6df;color:#237a2d}
+    .registry-kind.tool{background:#fff2c7;color:#875f00}
+    .genai-gateway-slide{background:#fff}
+    .genai-gateway-slide .slide-inner{width:100%;max-width:none;padding:5.2vh 5.2vw 5.4vh}
+    .genai-gateway-head{display:block}
+    .genai-gateway-head p{max-width:760px;margin:1.1vh 0 0;font-size:clamp(18px,1.35vw,24px);text-align:left}
+    .genai-gateway-slide .content{padding:1.2vh 0 0;justify-content:center}
+    .genai-gateway-slide img{display:block;width:100%;height:100%;max-height:63vh;object-fit:contain}
+    .llm-as-a-judge-slide .genai-gateway-head{width:100%;text-align:center}
+    .llm-as-a-judge-slide h2{margin-inline:auto}
+    .fine-tuning-slide{background:#fff}
+    .fine-tuning-flow{width:100%;max-width:1080px;margin:0 auto;display:grid;grid-template-columns:1fr auto 1.35fr auto 1fr;gap:1.2vw;align-items:center}
+    .fine-tuning-step{min-height:185px;padding:1.6vw;border:1px solid var(--line);border-radius:20px;background:#f7f9fc;display:flex;flex-direction:column;justify-content:center;text-align:center}
+    .fine-tuning-step b{font-family:'Manrope',sans-serif;font-size:clamp(20px,1.65vw,28px)}
+    .tiger-team-slide{background:#fff}
+    .tiger-team-slide .slide-inner{justify-content:center;align-items:center;text-align:center}
+    .tiger-team-slide h2{font-size:clamp(44px,5.6vw,84px)}
+    .tiger-team-slide .content{flex:0;margin-top:12vh}
+    .tiger-team-stat{width:max-content;max-width:100%;margin:0 auto;text-align:center}
+    .tiger-team-number{font-family:'Manrope',sans-serif;font-size:clamp(90px,10vw,160px);font-weight:800;line-height:.78;color:var(--bright)}
+    .tiger-team-label{font-family:'Manrope',sans-serif;font-size:clamp(30px,3vw,48px);font-weight:800;color:var(--ink);margin-top:2vh}
+    .ml-foundation-slide{background:linear-gradient(135deg,#062b68,#006ce4);color:white}
+    .ml-foundation-slide .slide-inner{justify-content:center;align-items:center;text-align:center}
+    .ml-foundation-header{width:max-content;max-width:100%}
+    .ml-foundation-header,.ml-foundation-stat{transform:translateY(4vh)}
+    .ml-foundation-header .eyebrow{text-align:left}
+    .ml-foundation-header h1{text-align:center;white-space:nowrap}
+    .ml-foundation-slide h1{font-size:clamp(44px,5.6vw,84px);max-width:1320px}
+    .ml-foundation-stat{margin-top:6vh;text-align:center}
+    .ml-foundation-number{font-family:'Manrope',sans-serif;font-size:clamp(76px,8vw,130px);font-weight:700;line-height:.85;color:var(--gold)}
+    .ml-foundation-label{font-family:'Manrope',sans-serif;font-size:clamp(25px,2.4vw,40px);font-weight:700;margin-top:2vh;color:white}
+    .ml-platforms-header{margin-left:3vw}
+    .ml-platforms-header .sub{margin-bottom:0}
+    .fine-tuning-step span{margin-top:.65em;color:var(--muted);font-size:clamp(14px,1vw,18px);line-height:1.35}
+    .fine-tuning-step.service{min-height:245px;background:var(--blue);border:none;color:white;box-shadow:var(--shadow)}
+    .fine-tuning-step.service b{color:white;font-size:clamp(24px,2vw,34px)}
+    .fine-tuning-step.service span{color:#cfe6ff}
+    .fine-tuning-step.service .pill{color:var(--blue);background:var(--gold)}
+    .fine-tuning-arrow{font-size:clamp(28px,2.5vw,44px);font-weight:800;color:var(--bright)}
+    .fine-tuning-caption{margin:2.7vh auto 0;text-align:center;font-size:clamp(18px,1.45vw,25px);font-weight:700;color:var(--ink)}
+    .eval-config-slide{background:#fff}
+    .eval-config-slide .slide-inner{width:100%;max-width:none;padding:5.2vh 5.2vw 5.4vh}
+    .eval-config-shell{width:min(1180px,100%);margin:2.5vh auto 0;padding:1.6vw 1.8vw 1.3vw;border:2px solid var(--line);border-radius:22px;background:#f7f9fc}
+    .eval-config-name{font-family:'Manrope',sans-serif;font-size:clamp(20px,1.45vw,26px);font-weight:800;color:var(--blue);margin-bottom:1.4vh}
+    .eval-config-columns{display:grid;grid-template-columns:1.1fr 1.1fr 1fr;gap:1vw}
+    .eval-config-column{padding:1.15vw 1.25vw;background:#fff;border:1px solid var(--line);border-top:5px solid var(--bright);border-radius:14px;min-height:250px}
+    .eval-config-column:nth-child(2){border-top-color:var(--gold)}.eval-config-column:nth-child(3){border-top-color:#62b946}
+    .eval-config-column h3{font-size:clamp(20px,1.55vw,27px);margin-bottom:.8em}
+    .eval-config-column ul{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:.55em}
+    .eval-config-column li{font-size:clamp(15px,1.05vw,19px);line-height:1.28;color:var(--ink)}
+    .eval-config-column li::before{content:'•';color:var(--bright);font-weight:800;margin-right:.45em}
+    .eval-config-footer{margin:1.4vh 0 0;text-align:center;font-size:clamp(17px,1.2vw,22px);font-weight:700;color:var(--muted)}
+    .evalsuite-slide{background:#091b33;color:white}
+    .evalsuite-slide h2,.evalsuite-slide h3{color:white}
+    .evalsuite-slide .sub{color:#b8c9de}
+    .evalsuite-layout{flex:none;display:block;width:min(900px,100%);margin:1.8vh auto 0}
+    .evalsuite-code{padding:2.2vw 2.5vw;background:#06162a;border:1px solid #284565;border-radius:18px;box-shadow:0 18px 40px rgba(0,0,0,.18);font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:clamp(18px,1.35vw,25px);line-height:1.7;color:#e6eef8;white-space:pre-wrap;text-align:left}
+    .evalsuite-code .fn{color:#88d1ff}.evalsuite-code .name{color:#b9f29b}.evalsuite-code .arg{color:#ffd76a}
+    .evalsuite-point{border-left:6px solid var(--gold);padding:1.3vw 1.5vw;background:rgba(255,255,255,.06);font-family:'Manrope',sans-serif;font-size:clamp(22px,1.7vw,31px);font-weight:700}
+    .workflow-dsl-slide{background:#fff}
+    .workflow-dsl-slide .slide-inner{width:100%;max-width:none;padding:5.2vh 5.2vw 5.4vh}
+    .workflow-dsl-layout{flex:1;min-height:0;display:flex;flex-direction:column;justify-content:center;padding:1vh 1vw 2.2vh}
+    .workflow-dsl-canvas{width:100%;height:52vh;display:block}
+    .workflow-dsl-state{width:88%;margin:-.5vh auto 0;padding:.9em 1.4em;border-left:6px solid var(--bright);background:var(--cyan);font-size:clamp(17px,1.3vw,23px);color:var(--ink)}
+    .workflow-dsl-state strong{color:var(--blue)}
+    .workflow-dsl-evidence-slide{background:#fff}
+    .workflow-dsl-evidence-slide .slide-inner{width:100%;max-width:none;padding:5.2vh 5.2vw 5.4vh}
+    .workflow-dsl-evidence{flex:1;min-height:0;display:grid;grid-template-columns:minmax(0,.82fr) minmax(0,1.18fr);gap:2.2vw;align-items:stretch;padding:1.6vh 0 2.6vh}
+    .workflow-dsl-evidence figure{margin:0;min-width:0;display:flex;flex-direction:column;gap:1vh}
+    .workflow-dsl-evidence img{display:block;flex:1;width:100%;height:auto;min-height:0;object-fit:contain;border:1px solid var(--line);border-radius:16px;box-shadow:0 10px 28px rgba(16,35,63,.08)}
+    .workflow-dsl-evidence figure:first-child{align-self:stretch;justify-content:center}
+    .workflow-dsl-evidence figure:first-child img{flex:0 0 auto;width:auto;max-width:78%;max-height:48vh;height:auto;margin:0 auto;object-fit:contain;background:#3f4659}
+    #workflow-dsl .workflow-dsl-evidence figure:nth-child(2){align-items:center;justify-content:center}
+    #workflow-dsl .workflow-dsl-evidence figure:nth-child(2) img{flex:0 0 auto;max-height:60vh;height:auto}
+    .workflow-dsl-evidence figcaption{font-size:clamp(13px,1vw,17px);font-weight:700;color:var(--muted);text-align:center}
+    .workflow-dsl-evidence-caption{margin:0 auto;text-align:center;font-size:clamp(17px,1.3vw,23px);font-weight:700;color:var(--ink)}
+    .workflow-limitations-slide{background:#fff}
+    .workflow-limitations-slide .slide-inner{width:100%;max-width:none;padding:5.2vh 5.2vw 5.4vh}
+    .workflow-limitations-grid{flex:1;min-height:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1.4vw;padding:3.2vh 0 2vh;align-content:center}
+    .workflow-limitation{min-height:220px;padding:2vw 2.2vw;background:#f7f9fc;border:1px solid var(--line);border-top:6px solid var(--bright);border-radius:20px;display:flex;flex-direction:column;justify-content:center}
+    .workflow-limitation:nth-child(2){border-top-color:#ffb000}.workflow-limitation:nth-child(3){border-top-color:#7b61c8}.workflow-limitation:nth-child(4){border-top-color:#ff6b57}
+    .workflow-limitation .num{font-size:clamp(30px,2.6vw,44px);margin-bottom:.45em}
+    .workflow-limitation h3{font-size:clamp(23px,2vw,32px)}
+    .current-architecture-slide .slide-inner{padding:4.2vh 3.8vw 4.4vh}
+    .current-architecture-slide .content{padding-top:.5vh}
+    .current-architecture-slide img{max-height:100vh}
+    .chatgpt-patterns-slide{background:#fff}
+    .chatgpt-patterns-slide .slide-inner{width:100%;max-width:none;padding:5.2vh 5.2vw 5.4vh;justify-content:center}
+    .chatgpt-patterns-slide .eyebrow,.chatgpt-patterns-slide h2{width:min(1080px,100%);margin-left:auto;margin-right:auto;text-align:left}
+    .chatgpt-patterns-grid{flex:none;width:min(1080px,100%);margin:5vh auto 0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1.5vw;padding:0}
+    .chatgpt-pattern{min-height:0;padding:1.5vw 1.8vw;border:1px solid var(--line);border-radius:18px;background:#f7f9fc;display:flex;flex-direction:column;justify-content:center}
+    .chatgpt-pattern:first-child{border-top:7px solid var(--bright)}
+    .chatgpt-pattern:last-child{border-top:7px solid var(--coral)}
+    .chatgpt-pattern .num{font-size:clamp(26px,2.2vw,38px);margin-bottom:.35em}
+    .chatgpt-pattern h3{font-size:clamp(21px,1.75vw,30px)}
+    .chatgpt-pattern p{font-size:clamp(16px,1.25vw,22px);margin:.7em 0 0}
+    .chatgpt-question{margin:0 auto;padding:1em 1.4em;border-left:6px solid var(--gold);background:#fff8df;font-family:'Manrope',sans-serif;font-size:clamp(19px,1.45vw,26px);font-weight:700;color:var(--ink);text-align:center;max-width:1100px}
+    .ambition-slide{background:#fff}
+    .ambition-slide .slide-inner{width:100%;max-width:none;padding:6vh 5.2vw 5.4vh;justify-content:center}
+    .ambition-slide .eyebrow,.ambition-slide h2{width:min(1160px,100%);margin-left:auto;margin-right:auto;text-align:left}
+    .ambition-list{width:min(1160px,100%);margin:4.5vh auto 0;display:flex;flex-direction:column;gap:2.2vh}
+    .ambition-item{display:grid;grid-template-columns:20px 1fr;gap:1.1vw;align-items:start}
+    .ambition-item::before{content:'★';font-size:clamp(18px,1.35vw,24px);font-weight:700;color:var(--gold);line-height:1.25}
+    .ambition-item strong{font-family:'Manrope',sans-serif;font-size:clamp(24px,2vw,34px);line-height:1.15}
+    .ambition-item span{display:block;margin-top:.45em;font-size:clamp(18px,1.35vw,25px);line-height:1.25;color:var(--muted)}
+    .inhouse-llm-slide{background:#fff}
+    .inhouse-llm-slide .slide-inner{width:100%;max-width:none;padding:5.2vh 5.2vw 5.4vh}
+    .inhouse-llm-slide .sub{margin-top:1.2vh}
+    .inhouse-llm-grid{flex:1;min-height:0;display:grid;grid-template-columns:1.25fr 1fr 1fr;gap:1.5vw;align-items:center;width:min(1180px,100%);margin:2.5vh auto 0}
+    .inhouse-llm-section{padding:1.8vw 1.9vw;border-top:6px solid var(--bright);background:#f7f9fc;border-radius:0 18px 18px 18px;min-height:280px}
+    .inhouse-llm-section:nth-child(2){border-top-color:var(--gold)}
+    .inhouse-llm-section:nth-child(3){border-top-color:#62b946}
+    .inhouse-llm-section h3{font-size:clamp(22px,1.7vw,29px);margin-bottom:1.1em}
+    .inhouse-llm-section ul{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:.7em}
+    .inhouse-llm-section li{font-size:clamp(17px,1.25vw,22px);line-height:1.25;color:var(--ink)}
+    .inhouse-llm-section li::before{content:'•';color:var(--bright);font-weight:800;margin-right:.55em}
+    .agent-evolution-slide{background:#091b33;color:white}
+    .agent-evolution-slide h2,.agent-evolution-slide h3{color:white}
+    .agent-evolution-slide .sub{color:#b8c9de}
+    .agent-types{width:100%;display:grid;grid-template-columns:repeat(4,1fr);gap:1.4vw;align-items:stretch}
+    .agent-type{padding:1.6vw 1.45vw;border-top:6px solid #5d708b;background:rgba(255,255,255,.045);min-height:340px;display:flex;flex-direction:column}
+    .agent-type.planning{border-color:#88d1ff}
+    .agent-type.react{border-color:var(--gold)}
+    .agent-type.function{border-color:#b9f29b}
+    .agent-type h3{font-size:clamp(21px,1.65vw,29px)}
+    .agent-type p{font-size:clamp(14px,1vw,18px);color:#b8c9de;margin:.55em 0 1.25em;min-height:3.1em}
+    .agent-loop{margin-top:auto;display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:.5vw;padding:1.2em .8em;background:#06162a;border-radius:15px;text-align:center}
+    .agent-loop span{padding:.5em .65em;border-radius:8px;background:rgba(255,255,255,.11);font-size:clamp(12px,.88vw,16px);font-weight:700}
+    .agent-loop b{color:#8fd0ff;font-size:clamp(18px,1.4vw,25px)}
+    .agent-loop-note{margin-top:1.1em;text-align:center;font-size:clamp(12px,.9vw,16px);font-weight:700;color:#8fa4be}
+    .agent-type.react .agent-loop-note{color:var(--gold)}
+    .agent-type.function .agent-loop-note{color:#b9f29b}
+    .agent-capability-slide{background:#fff}
+    .agent-capability-grid{width:100%;display:grid;grid-template-columns:repeat(2,1fr)}
+    .agent-capability{position:relative;min-height:215px;padding:2vw 3vw 2vw 5.8vw;display:flex;flex-direction:column;justify-content:center}
+    .agent-capability:nth-child(odd){border-right:2px solid var(--line)}
+    .agent-capability:nth-child(-n+2){border-bottom:2px solid var(--line)}
+    .agent-capability .num{position:absolute;left:1.2vw;top:50%;transform:translateY(-50%);font-size:clamp(42px,4vw,68px);color:#c9e6ff}
+    .agent-capability h3{font-size:clamp(24px,2vw,34px)}
+    .agent-capability p{font-size:clamp(15px,1.1vw,20px);margin:.55em 0 0;max-width:580px}
+    .agent-capability-image-slide{background:#fff}
+    .agent-capability-image-slide .slide-inner{width:100%;max-width:none;padding:4.5vh 5.2vw 5.5vh}
+    .agent-capability-image-slide .content{padding:0;justify-content:center}
+    .agent-capability-image-slide .progressive-stack{height:72vh}
+    .agent-capability-image-slide img{display:block;width:100%;height:100%;max-height:72vh;object-fit:contain}
+    .agent-serving-slide .slide-inner{justify-content:center;padding-top:6vh;padding-bottom:7vh}
+    .agent-serving-slide .sub{max-width:1120px;margin-top:1.6vh;color:#d9ebff}
+    .agent-serving-grid{display:grid;grid-template-columns:repeat(3,1fr);width:100%;margin-top:5.5vh;border-top:1px solid rgba(255,255,255,.3);border-bottom:1px solid rgba(255,255,255,.3)}
+    .agent-serving-point{padding:3.2vh 2.2vw 3.5vh}
+    .agent-serving-point:first-child{padding-left:0}
+    .agent-serving-point+ .agent-serving-point{border-left:1px solid rgba(255,255,255,.3)}
+    .agent-serving-point h3{color:var(--gold);font-size:clamp(22px,1.8vw,31px)}
+    .agent-serving-point p{color:#d9ebff;font-size:clamp(16px,1.15vw,20px);margin:.75em 0 0;max-width:390px}
+    .agent-serving-integrations{margin-top:4.2vh;font-size:clamp(16px,1.2vw,21px);line-height:1.45;color:#bcd8f5}
+    .agent-serving-integrations strong{color:white}
+    .agent-serving-architecture-slide{background:#fff}
+    .agent-serving-architecture-slide .slide-inner{width:100%;max-width:none;padding:4.5vh 5.2vw 5vh}
+    .agent-serving-architecture-slide .content{padding:.8vh 0 1vh;justify-content:center}
+    .agent-serving-architecture-slide img{display:block;width:100%;height:100%;max-height:68vh;object-fit:contain}
+    .shared-agent-platform-slide .slide-inner{justify-content:center;padding-top:6vh;padding-bottom:7vh}
+    .shared-agent-platform-slide .sub{max-width:1050px;margin-top:2vh;color:#d9ebff}
+    .shared-platform-needs{display:grid;grid-template-columns:1fr 1fr;column-gap:5vw;row-gap:3.5vh;width:100%;margin-top:6vh}
+    .shared-platform-need{padding-left:1.5vw;border-left:5px solid #88d1ff}
+    .shared-platform-need h3{color:var(--gold);font-size:clamp(22px,1.8vw,31px)}
+    .shared-platform-need p{color:#d9ebff;font-size:clamp(16px,1.15vw,20px);margin:.55em 0 0;max-width:530px}
+    .infra-chip-slide .slide-inner{justify-content:center;align-items:center;text-align:center;padding-top:7vh;padding-bottom:8vh}
+    .infra-chip-slide h2{max-width:1250px;font-size:clamp(40px,4.5vw,70px)}
+    .infra-chip-cloud{display:flex;flex-wrap:wrap;align-items:center;gap:1.8vh 1vw;width:100%;max-width:1230px;margin-top:6vh}
+    .infra-chip{padding:.72em 1.05em;border:1px solid var(--cyan2);border-radius:999px;background:var(--cyan);color:var(--blue);font-family:'Manrope',sans-serif;font-size:clamp(16px,1.15vw,21px);font-weight:700;white-space:nowrap}
+    .mcp-protocol-slide{background:#fff}
+    .mcp-protocol-map{width:100%;display:grid;grid-template-columns:1.05fr .55fr 1.05fr .75fr;gap:1.4vw;align-items:center}
+    .mcp-boundary{min-height:260px;border:2px solid var(--line);border-radius:24px;padding:1.6vw;background:#f7f9fc;display:flex;flex-direction:column;justify-content:center;text-align:center}
+    .mcp-boundary.server{background:#eef8dc;border-color:#c9df84}
+    .mcp-boundary h3{font-size:clamp(24px,2vw,34px)}
+    .mcp-boundary p{font-size:clamp(14px,1vw,18px);margin:.55em 0 1.1em}
+    .mcp-inner{padding:1em;border-radius:14px;background:var(--blue);color:white;font-family:'Manrope',sans-serif;font-size:clamp(18px,1.35vw,24px);font-weight:700}
+    .mcp-connection{text-align:center;color:var(--bright);font-family:'Manrope',sans-serif;font-weight:800}
+    .mcp-connection .mark{font-size:clamp(44px,4.6vw,76px);line-height:1}
+    .mcp-connection span{display:block;margin-top:.5em;font-size:clamp(13px,.95vw,17px);color:var(--muted)}
+    .mcp-primitives{display:flex;flex-direction:column;gap:1.1vh}
+    .mcp-primitive{padding:1em 1.1em;border-left:6px solid var(--bright);background:#f1f6fc;border-radius:0 12px 12px 0;font-family:'Manrope',sans-serif;font-size:clamp(17px,1.3vw,23px);font-weight:700}
+    .mcp-caption{margin:3vh auto 0;text-align:center;font-size:clamp(18px,1.4vw,24px);font-weight:700;color:var(--ink)}
+    .aitp-progressive-slide{background:#fff}
+    .aitp-progressive-slide .slide-inner{width:100%;max-width:none;padding:6vh 2vw 4.5vh}
+    .aitp-progressive-slide .eyebrow,.aitp-progressive-slide h2{margin-left:3vw}
+    .aitp-progressive-slide .content{padding:.5vh 0 0}
+    .aitp-progressive-slide .progressive-stack{height:68vh}
+    .controls{position:fixed;right:18px;top:16px;z-index:20;display:flex;gap:6px;opacity:.18;transition:.2s}.controls:hover{opacity:1}.controls button{border:0;border-radius:9px;background:#061a34;color:white;padding:8px 11px;cursor:pointer}
+    .progress{position:fixed;left:0;bottom:0;height:5px;background:var(--bright);z-index:30;transition:width .25s}
+    :root{--notes-width:min(440px,36vw)}
+    .deck{transition:width .25s ease}
+    .deck.notes-open{width:calc(100% - var(--notes-width))}
+    .slide{width:100%;min-width:0;max-width:100%}
+    .slide-inner{width:100%;min-width:0;max-width:100%}
+    .deck.notes-open .slide-inner{width:100%;max-width:100%;padding-left:clamp(18px,4vw,66px);padding-right:clamp(18px,4vw,66px)}
+    .deck.notes-open h1,.deck.notes-open h2,.deck.notes-open h3{max-width:100%;white-space:normal}
+    .deck.notes-open img,.deck.notes-open svg,.deck.notes-open canvas{max-width:100%}
+    .notes-panel{display:none;position:fixed;right:0;top:0;bottom:0;width:var(--notes-width);z-index:40;background:#061a34;color:white;padding:clamp(24px,3vw,48px) clamp(20px,2.4vw,36px);box-shadow:-14px 0 38px rgba(0,0,0,.2);overflow:auto}.notes-panel.show{display:block}.notes-panel h3{color:white;font-size:clamp(22px,1.7vw,30px);margin-bottom:.8em}.notes-panel p{color:#c6d6e8;font-size:clamp(15px,1.05vw,18px);line-height:1.55}.notes-panel ul{margin:1em 0 0;padding-left:1.25em;color:#c6d6e8;font-size:clamp(15px,1.05vw,18px);line-height:1.45}.notes-panel li{padding-left:.25em;margin:.55em 0}.notes-panel strong{color:#88d1ff}.notes{display:none}
+    #started-building-agents .slide-inner,#democratizing-custom-agents .slide-inner{align-items:center;text-align:center}
+    #started-building-agents .slide-inner>div:first-child{width:100%}
+    #started-building-agents h1,#democratizing-custom-agents h1{text-align:center}
+    #agent-serving-runtime .slide-inner{align-items:center;text-align:center}
+    #code-first-iteration .slide-inner{align-items:center;text-align:center}
+    #evaluations-section .slide-inner{align-items:center;text-align:center}
+    #workflow-dsl-reflection .slide-inner{align-items:center;text-align:center}
+    .overview{display:none;position:fixed;inset:0;z-index:50;background:#07182e;padding:24px;overflow:auto;grid-template-columns:repeat(4,1fr);gap:16px}.overview.show{display:grid}.thumb{height:180px;background:white;border-radius:12px;padding:14px;cursor:pointer;overflow:hidden;color:var(--ink)}.thumb b{font-family:Manrope}.thumb span{display:block;color:var(--muted);font-size:12px;margin-top:8px}
+@media(max-width:800px){:root{--notes-width:min(100vw,360px)}.deck.notes-open{width:calc(100% - var(--notes-width))}.slide-inner{padding:4vh 4vw 6vh}.g3,.g4,.evalrow{grid-template-columns:repeat(2,1fr)}.flow{flex-wrap:wrap}.arrow{display:none}.layer{grid-template-columns:120px 1fr}.timeline{grid-template-columns:repeat(2,1fr)}.timeline:before{display:none}.content{overflow:auto}.pressure{grid-template-columns:1fr}.pressure .col{display:grid;grid-template-columns:1fr 1fr}.registry-layout{grid-template-columns:1fr;gap:2vh}.registry-copy{max-width:none}.registry-body{min-height:42vh}.registry-tabs{overflow:hidden}.fine-tuning-flow{grid-template-columns:1fr}.fine-tuning-arrow{display:none}.fine-tuning-step,.fine-tuning-step.service{min-height:110px}.agent-types{grid-template-columns:repeat(2,1fr)}.agent-type{min-height:270px}.agent-capability-grid{grid-template-columns:1fr}.agent-capability{min-height:150px;border-right:0!important;border-bottom:1px solid var(--line)!important}.agent-serving-grid,.shared-platform-needs{grid-template-columns:1fr;margin-top:3vh}.agent-serving-point,.agent-serving-point:first-child{padding:1.6vh 0}.agent-serving-point+ .agent-serving-point{border-left:0;border-top:1px solid rgba(255,255,255,.3)}.mcp-protocol-map{grid-template-columns:1fr}.mcp-connection{transform:rotate(90deg)}.mcp-boundary{min-height:160px}.mcp-primitives{display:grid;grid-template-columns:repeat(3,1fr)}.overview.show{grid-template-columns:repeat(2,1fr)}}
+    @media print{html,body{overflow:visible;background:white}.deck{height:auto}.slide{position:relative;display:flex!important;width:13.333in;height:7.5in;page-break-after:always}.controls,.progress,.notes-panel,.overview{display:none!important}.progressive-frame{opacity:0!important}.progressive-frame:last-child{opacity:1!important}}
+  </style>
+</head>
+<body>
+<div class="deck" id="deck">
+
+<section class="slide blue active" data-title="Title">
+  <div class="slide-inner" style="justify-content:center;align-items:center;text-align:center;padding-top:7vh;padding-bottom:8vh">
+    <div style="text-align:center;max-width:1100px;margin:auto">
+      <h1 style="font-size:clamp(52px,6.4vw,96px);line-height:1.02;color:white">Booking.com's <br><span style="color:#ffd76a">Agentic Ecosystem</span></h1>
+      <p class="sub" style="color:#d0e8ff;margin:2.2vh auto 0;text-align:center;font-size:clamp(22px,2.2vw,36px)">A builder's perspective on the journey</p>
+    </div>
+    <div class="notes"><p>This talk recaps the evolution of GenAI ecosystem at Booking since 2023.</p></div>
+  </div>
+</section>
+
+
+
+<section class="slide dark" data-title="Rewinding to 2023" id="rewinding-to-2023">
+  <div class="slide-inner" style="justify-content:center;align-items:center;text-align:center">
+    <div class="eyebrow">The journey begins</div>
+    <h1>Let's rewind to <span style="color:var(--gold)"> 2023.</span></h1>
+    <div class="notes"><p>Let’s rewind the clock to 2023. ChatGPT had already shown the world what conversational AI could feel like.</p></div>
+  </div>
+</section>
+
+<section class="slide dark" data-title="March 2023: Conversation became an API">
+  <div class="slide-inner" style="justify-content:center;align-items:center;text-align:center">
+    <div class="eyebrow">The pivotal moment</div>
+    <h1>Conversation became <span style="color:var(--gold)">an API.</span></h1>
+    <div class="source">Source: <a href="https://openai.com/index/introducing-chatgpt-and-whisper-apis/">OpenAI — Introducing ChatGPT and Whisper APIs</a></div>
+    <div class="notes"><p>But the pivotal moment was when OpenAI released the ChatGPT API. Conversation became a capability we could embed inside our own products.</p></div>
+  </div>
+</section>
+
+
+<section class="slide" data-title="What could this mean for travel?" id="travel-question">
+  <div class="topline"></div>
+  <div class="slide-inner" style="justify-content:center;align-items:center;text-align:center">
+    <div class="eyebrow" style="margin-bottom:2.2vh">The question</div>
+    <h1 style="max-width:1240px">We started asking, <br> <span style="color:var(--bright)">what could it mean for</span> <span style="color: var(--coral);">travel</span>?</h1>
+    <div class="notes"><p>We started asking what we could build with it. </p></div>
+  </div>
+</section>
+
+<section class="slide chatgpt-patterns-slide" data-title="Two ways the industry used ChatGPT" id="chatgpt-patterns">
+  <div class="topline"></div>
+  <div class="slide-inner" style="justify-content:center">
+    <div class="eyebrow">The industry response</div>
+    <h2 style="font-size:clamp(44px,5.6vw,84px)">Two industry patterns</h2>
+    <div class="chatgpt-patterns-grid">
+      <article class="chatgpt-pattern">
+        <h3>Extend ChatGPT with Plugins</h3>
+      </article>
+      <article class="chatgpt-pattern">
+        <h3>Embed ChatGPT in a website</h3>
+      </article>
+    </div>
+    <div class="notes"><p>As the industry adopted ChatGPT, two patterns became common.</p><p>Some companies built plugins that extended ChatGPT with access to their services. Others embedded a ChatGPT-style assistant inside their own website.</p></div>
+  </div>
+</section>
+
+<section class="slide ambition-slide" data-title="Our ambition" id="our-ambition">
+  <div class="topline"></div>
+  <div class="slide-inner" style="justify-content:center;align-items:center;text-align:center">
+    <div class="eyebrow" style="text-align:center">Our product ambition</div>
+    <h2 style="width:100%;max-width:none;text-align:center;font-size:clamp(44px,5.6vw,84px);white-space:nowrap">A <span style="color: var(--bright);">deeper experience </span>beyond chat</h2>
+    <p class="sub" style="max-width:950px;margin-top:2.5vh;text-align:center">Travel-specific, personalized, and grounded in Booking.com content.</p>
+    <div class="notes">
+      <p>But we wanted to offer travellers something more useful than a general-purpose chat experience</p>
+      <p>Something that is optimized & personalized for travel-domain using rich content and user context already available to Booking.com.</p></div>
+  </div>
+</section>
+
+<section class="slide blue" data-title="Why we started with Discovery" id="bold-leadership-decision">
+  <div class="slide-inner" style="justify-content:center;align-items:center;text-align:center">
+    <div class="eyebrow">The first use case</div>
+    <h1 style="max-width:1320px">We picked <span style="color: var(--gold);">Discovery.</span></h1>
+    <p class="sub" style="max-width:980px;margin-top:2.5vh;text-align:center;color:#d0e8ff">A low-regret surface with high strategic upside and customer value.</p>
+    <div class="notes"><p>We chose the discovery use case to trial GenAI because it offered a low-regret entry point with high strategic upside and clear customer value.</p>
+      <p>That gave us a practical way to learn in production with a real customer-facing GenAI product.</p></div>
+  </div>
+</section>
+
+<section class="slide" data-title="The status quo" id="status-quo-search">
+  <div class="topline"></div>
+  <div class="slide-inner" style="justify-content:center;align-items:center;text-align:center">
+    <div class="eyebrow" style="margin-bottom:2.2vh">The status quo</div>
+    <h1 style="max-width:1180px">Travellers translated <span style="color:var(--coral);">intent</span> into <span style="color:var(--bright)">search filters</span>.</h1>
+    <div style="margin-top:4vh;font-family:'Manrope',sans-serif;font-size:clamp(18px,1.6vw,28px);font-weight:700;letter-spacing:.04em;color:var(--muted)">Destination&nbsp;&nbsp;·&nbsp;&nbsp;Dates&nbsp;&nbsp;·&nbsp;&nbsp;Filters</div>
+    <div class="notes">
+      <p>Conventional search required travellers to translate the trip they had in mind into structured inputs: a destination, fixed dates and a set of filters.</p>
+    </div>
+  </div>
+</section>
+
+<section class="slide" data-title="The product opportunity">
+  <div class="topline"></div>
+  <div class="slide-inner" style="justify-content:center;align-items:center;text-align:center">
+    <div class="eyebrow" style="margin-bottom:2.2vh">The product opportunity</div>
+    <h1 style="max-width:1150px">But ... what if travellers could <span style="color:var(--coral)">describe their trip</span>?</h1>
+    <div class="notes"><p>But what if we could let Travellers simply describe the trip they imagined in natural language and the product assisted them to explore relevant destinations and properties?</p></div>
+  </div>
+</section>
+
+<section class="slide blue" data-title="Introducing AI Trip Planner" id="introducing-aitp">
+  <div class="slide-inner" style="justify-content:center">
+    <div class="eyebrow">The First Product</div>
+    <h1 style="max-width:1320px">Booking.com’s <span style="color:var(--gold)">AI Trip Planner</span></h1>
+    <div class="source">Source: <a href="https://openai.com/index/booking-com/" target="_blank" rel="noopener noreferrer">Booking.com and OpenAI personalize travel at scale</a></div>
+    <div class="notes">
+      <p>That question led us to AI Trip Planner - Booking.com’s conversational travel discovery product. </p>
+      <p>It allowed travellers to describe the trip they had in mind in natural language, explore relevant destinations and properties, and continue into the familiar booking journey.</p></div>
+  </div>
+</section>
+
+<section class="slide aitp-progressive-slide" data-title="AI Trip Planner: journey" id="aitp-journey">
+  <div class="topline"></div>
+  <div class="slide-inner">
+    <div class="eyebrow">Product moment · User flow</div>
+    <h2>AI Trip Planner </h2>
+    <div class="content">
+      <div class="progressive-stack" data-frame="0">
+        <img class="progressive-frame frame-visible frame-active" src="assets/aitp/aitp1.png" alt="AI Trip Planner entry-point promotion">
+        <img class="progressive-frame" src="assets/aitp/aitp2.png" alt="AI Trip Planner entry point on the Booking.com home screen">
+        <img class="progressive-frame" src="assets/aitp/aitp3.png" alt="Entry point leading into the AI Trip Planner conversational interface">
+        <img class="progressive-frame" src="assets/aitp/aitp4.png" alt="AI Trip Planner destination recommendations">
+        <img class="progressive-frame" src="assets/aitp/aitp5.png" alt="AI Trip Planner property recommendations">
+        <img class="progressive-frame" src="assets/aitp/aitp6.png" alt="Booking.com property page reached from AI Trip Planner">
+      </div>
+    </div>
+    <div class="frame-dots" aria-hidden="true"><span class="frame-dot frame-active"></span><span class="frame-dot"></span><span class="frame-dot"></span><span class="frame-dot"></span><span class="frame-dot"></span><span class="frame-dot"></span></div>
+    <div class="source">Sources: <a href="https://news.booking.com/bookingcom-launches-new-ai-trip-planner-to-enhance-travel-planning-experience/">Booking.com newsroom</a></div>
+    <div class="notes"><p>AI Trip Planner is basically a chatbot that you can launch from various entrypoints (pages/screens).</p>
+      <p>You can have a conversation with it (describe the trip and state your preferences) and get back visual recommendations as seen here for destinations / properties. </p>
+      <p>From there, you could get into the conventional booking funnel.</p>
+    </div>
+  </div>
+</section>
+
+<section class="slide dark" data-title="A complementary path" id="complementary-path">
+  <div class="slide-inner" style="justify-content:center;align-items:center;text-align:center">
+    <div class="eyebrow" style="margin-bottom:2.2vh">The product goal</div>
+    <h1 style="max-width:1320px"><span style="color:var(--coral)">Not to chat </span> but to<br></b><span style="color:var(--gold)">help travellers move forward</span></h1>
+    <p class="sub" style="max-width:980px;margin-top:2.5vh;color:#b8c9de">Expand the top of the funnel</p>
+    <div class="notes"><p>The goal was to expand the top of the funnel to create a complementary path and help travellers move from open-ended inspiration to the conventional Booking.com funnel.</p></div>
+  </div>
+</section>
+
+<section class="slide ml-foundation-slide" data-title="We were not starting from zero" id="ml-foundation">
+  <div class="slide-inner">
+    <div class="ml-foundation-header">
+      <div class="eyebrow">The foundation</div>
+      <h1>We were not starting from <span style="color:var(--gold)">zero.</span></h1>
+    </div>
+    <p class="sub" style="max-width:950px;margin:6vh auto 0;text-align:center;color:#d0e8ff">~20 years of ML expertise</p>
+    <div class="notes"><p>We weren’t starting from zero. We already had nearly 20 years of experience building and operating machine-learning systems at scale..</p>
+    </div>
+  </div>
+</section>
+
+
+<section class="slide blue" data-title="We had built assistants before" id="booking-assistant-summary">
+  <div class="slide-inner" style="justify-content:center;align-items:center;text-align:center">
+    <div class="eyebrow" style="margin-bottom:2.2vh">Before the GenAI wave</div>
+    <h1 style="max-width:1320px">We had built <span style="color:var(--gold)">AI chatbots</span> <span style="color:var(--coral)">before.</span></h1>
+    <p class="sub" style="max-width:980px;margin-top:2.5vh;color:#d9ebff">Booking Assistant · 2017</p>
+    <div class="source">Source: <a href="https://news.booking.com/en/bookingcom-expands-global-access-to-booking-assistant/" target="_blank" rel="noopener noreferrer">Booking.com expands global access to Booking Assistant</a></div>
+    <div class="notes"><p>Before the GenAI wave, Booking.com had already built an in-house customer support assistant for understanding and answering stay-related questions using NLP.</p></div>
+  </div>
+</section>
+
+<section class="slide genai-gateway-slide" data-title="Existing domain-specific ML platforms" id="existing-ml-platforms">
+  <div class="topline"></div>
+  <div class="slide-inner" style="display:grid;align-content:center;grid-auto-rows:max-content">
+    <div class="ml-platforms-header" style="transform:translateY(-2.5vh)">
+      <div class="eyebrow">The foundation</div>
+      <h2>And, we had mature ML Platforms</h2>
+    </div>
+    <div class="content" style="flex:0;padding-top:0;justify-content:center">
+      <img src="assets/ml-platform.png" alt="Existing domain-specific ML platforms for content intelligence, ranking, recommendations and value intelligence" style="display:block;width:100%;height:auto;max-height:48vh;object-fit:contain">
+    </div>
+    <div class="source">Sources: <a href="https://medium.com/booking-com-development/the-engineering-behind-booking-coms-ranking-platform-a-system-overview-2fb222003ca6" target="_blank" rel="noopener noreferrer">Ranking Platform</a>; <a href="https://medium.com/booking-com-development/unlocking-the-power-of-customization-how-our-enrichment-system-transforms-recommendation-data-e71832fc4ef4" target="_blank" rel="noopener noreferrer">Recommendation Platform</a>; <a href="https://medium.com/booking-product/from-ideation-to-production-in-3-steps-66b379a2cbe4" target="_blank" rel="noopener noreferrer">Content Intelligence Platform</a></div>
+    <div class="notes">
+      <p>Over the years, we had built several domain-specific ML platforms such as ranking, recommendations, content intelligence and value intelligence on top of shared ML infrastructure. </p>
+      <p>Note: <em>There are links below if you want to explore those platforms in detail. </em></p>
+      <p>So when GenAI arrived, we already had a strong foundation of infrastructure, expertise and reusable capabilities. </p>
+      <p>Out of these, the Recommendation Platform is worth callling out because it powered the first GenAI use-case (the AI Trip Planner). </p>
+  </div>
+</section>
+
+<section class="slide recommendation-platform-slide" data-title="Recommendation use cases" id="recommendation-platform-use-cases">
+  <div class="topline"></div>
+  <div class="slide-inner">
+    <div class="eyebrow">The recommendation platform</div>
+    <h2>Recommendation in action</h2>
+    <div class="content">
+      <div class="progressive-stack" data-frame="0">
+        <img class="progressive-frame frame-visible frame-active" src="assets/recommendation-platform/recp1.png" alt="Recommendation platform use cases, first reveal">
+        <!-- <img class="progressive-frame" src="assets/recommendation-platform/recp2.png" alt="Recommendation platform use cases, second reveal"> -->
+        <!-- <img class="progressive-frame" src="assets/recommendation-platform/recp3.png" alt="Recommendation platform use cases, third reveal"> -->
+        <img class="progressive-frame" src="assets/recommendation-platform/recp4.png" alt="Recommendation platform use cases, fourth reveal">
+        <img class="progressive-frame" src="assets/recommendation-platform/recp5.png" alt="Recommendation platform use cases, fifth reveal">
+        <img class="progressive-frame" src="assets/recommendation-platform/recp6.png" alt="Recommendation platform use cases, complete view">
+      </div>
+    </div>
+    <div class="frame-dots" aria-hidden="true"><span class="frame-dot frame-active"></span><span class="frame-dot"></span><span class="frame-dot"></span><span class="frame-dot"></span><span class="frame-dot"></span><span class="frame-dot"></span></div>
+    <div class="notes">
+      <p>You may have seen this platform in action through Booking.com's recommendation carousels which suggest where to go, where to stay, what to do and how to get there. </p>
+    </div>
+  </div>
+</section>
+
+<section class="slide dark" data-title="The 2023 reality" id="genai-2023-challenges">
+  <div class="slide-inner" style="justify-content:center">
+    <div style="transform:translateY(1vh)">
+      <div class="eyebrow">The 2023 reality</div>
+      <h1 style="max-width:1280px">Building at the frontier came with <span style="color:var(--coral)">real constraints.</span></h1>
+      <div class="content" style="flex:0;margin-top:5vh;padding:0;align-items:center">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:5vh 5vw;width:100%">
+          <div style="border-left:5px solid #b9f29b;padding-left:1.5vw;font-family:'Manrope',sans-serif;font-size:clamp(25px,2.4vw,40px);font-weight:700;line-height:1.15"><span style="color:#b9f29b">Hallucinations</span><br>were a daily reality</div>
+          <div style="border-left:5px solid #b9f29b;padding-left:1.5vw;font-family:'Manrope',sans-serif;font-size:clamp(25px,2.4vw,40px);font-weight:700;line-height:1.15"><span style="color:#b9f29b">Tool calling</span><br>was unavailable</div>
+          <div style="border-left:5px solid #b9f29b;padding-left:1.5vw;font-family:'Manrope',sans-serif;font-size:clamp(25px,2.4vw,40px);font-weight:700;line-height:1.15"><span style="color:#b9f29b">Structured outputs</span><br>were unreliable</div>
+          <div style="border-left:5px solid #b9f29b;padding-left:1.5vw;font-family:'Manrope',sans-serif;font-size:clamp(25px,2.4vw,40px);font-weight:700;line-height:1.15"><span style="color:#b9f29b">Agent patterns</span><br>did not exist yet</div>
+        </div>
+      </div>
+    </div>
+    <div class="source">Sources: <a href="https://openai.com/index/function-calling-and-other-api-updates/" target="_blank" rel="noopener noreferrer">Function calling</a>; <a href="https://openai.com/index/introducing-structured-outputs-in-the-api/" target="_blank" rel="noopener noreferrer">Structured Outputs</a></div>
+    <div class="notes">
+      <p>Even with all this experience building with generative AI in 2023 was still frontier engineering. And it came with its own challenges. </p>
+      <p>Hallucinations were a daily reality</p>
+      <p>Tool calling was unavailable</p>
+      <p>Structure Outputs were unreliable</p>
+      <p>Agent Patterns did not exist yet</p>
+    </div>
+  </div>
+</section>
+
+<section class="slide arch-base-slide" data-title="The first orchestration flow" id="initial-orchestration-flow">
+  <div class="topline"></div>
+  <div class="slide-inner">
+    <div class="eyebrow">The initial architecture · 2023</div>
+    <h2>AI Trip Planner's flow</h2>
+    <div class="content" style="padding:.5vh 0 0;justify-content:center">
+      <div class="progressive-stack" data-frame="0">
+        <img class="progressive-frame frame-visible frame-active" src="assets/flow/flow1.png" alt="AI Trip Planner flow, step 1">
+        <img class="progressive-frame" src="assets/flow/flow2.png" alt="AI Trip Planner flow, step 2">
+        <img class="progressive-frame" src="assets/flow/flow3.png" alt="AI Trip Planner flow, step 3">
+        <img class="progressive-frame" src="assets/flow/flow4.png" alt="AI Trip Planner flow, step 4">
+        <img class="progressive-frame" src="assets/flow/flow5.png" alt="AI Trip Planner flow, step 5">
+        <img class="progressive-frame" src="assets/flow/flow6.png" alt="AI Trip Planner flow, step 6">
+        <img class="progressive-frame" src="assets/flow/flow7.png" alt="AI Trip Planner flow, step 7">
+        <img class="progressive-frame" src="assets/flow/flow8.png" alt="AI Trip Planner flow, step 8">
+        <img class="progressive-frame" src="assets/flow/flow9.png" alt="AI Trip Planner flow, step 9">
+        <img class="progressive-frame" src="assets/flow/flow10.png" alt="AI Trip Planner flow, step 10">
+        <img class="progressive-frame" src="assets/flow/flow11.png" alt="AI Trip Planner flow, step 11">
+      </div>
+    </div>
+    <div class="frame-dots" aria-hidden="true"><span class="frame-dot frame-active"></span><span class="frame-dot"></span><span class="frame-dot"></span><span class="frame-dot"></span><span class="frame-dot"></span><span class="frame-dot"></span><span class="frame-dot"></span><span class="frame-dot"></span><span class="frame-dot"></span><span class="frame-dot"></span><span class="frame-dot"></span></div>
+    <div class="notes"><p>
+
+But this is how we managed it. 
+<br><br>
+At the center was the Recommendation Platform and we extended that platform to handle Dialog Management to keep track of conversation history. 
+<br><br>
+When a user sent a message, we first detected the language using a local FastText model. At the time, we only supported English. We then ran moderation checks for things like PII, inappropriate content, prompt attacks, etc.
+<br><br>
+Once the message passed moderation, we classified the user’s intent across a set of known topics, such as hotels, destinations, attractions, flights and cars. Some topics were not supported yet, so we returned a canned response. For more general questions, we used an LLM to generate an answer.
+<br><br>
+For recommendation-related conversations, we used a judge to decide whether we had enough information to search. If we were missing key details, an ‘Ask’ step generated the next question for the user, and the conversation continued.
+<br><br>
+Once the judge determined that we had enough information, an entity-extraction step converted the conversation into structured JSON. We then normalized that structure into the format expected by the Recommendation Platform.
+<br><br>
+The Recommendation Platform returned the cards used in the carousels we saw earlier. Finally, another LLM summarized those recommendations, generating the supporting text that appeared alongside the carousel cards on UI.
+    </p></div>
+  </div>
+</section>
+
+
+<section class="slide tiger-team-slide" data-title="A temporary tiger team" id="aitp-eight-weeks">
+  <div class="topline"></div>
+  <div class="slide-inner">
+    <div class="eyebrow">The operating model</div>
+    <h2>A temporary <span style="color:var(--coral)">tiger team</span></h2>
+    <div class="content">
+      <div class="tiger-team-stat">
+        <div class="tiger-team-number">8</div>
+        <div class="tiger-team-label">weeks</div>
+      </div>
+    </div>
+    <div class="source">Source: <a href="https://medium.com/booking-product/8-weeks-to-innovation-lessons-from-building-booking-coms-ai-trip-planner-94adbf138748" target="_blank" rel="noopener noreferrer">Booking Product — “8 Weeks to Innovation”</a></div>
+    <div class="notes"><p>
+      And we built all of that within 8 weeks by assembling a temporary cross-functional team of experts. </p>
+<p>If you’re interested in how we did it, one of our product managers has written a blog post reflecting on the journey roughly a year after the product launched.
+      </p>
+    </div>
+  </div>
+</section>
+
+<section class="slide arch-base-slide" data-title="The initial GenAI architecture" id="initial-genai-architecture">
+  <div class="topline"></div>
+  <div class="slide-inner">
+    <div class="eyebrow">GenAI architecture · 2023</div>
+    <h2>The intial architecture</h2>
+    <div class="content" style="padding:.5vh 0 0;justify-content:center">
+      <div class="progressive-stack" data-frame="0">
+        <img class="progressive-frame frame-visible frame-active" src="assets/arch/0.png" alt="Initial GenAI architecture, step 0">
+        <img class="progressive-frame" src="assets/arch/1.png" alt="Initial GenAI architecture, step 1">
+        <img class="progressive-frame" src="assets/arch/2.png" alt="Initial GenAI architecture, step 2">
+        <img class="progressive-frame" src="assets/arch/3.png" alt="Initial GenAI architecture, step 3">
+        <img class="progressive-frame" src="assets/arch/4.png" alt="Initial GenAI architecture, step 4">
+        <img class="progressive-frame" src="assets/arch/5.png" alt="Initial GenAI architecture, step 5">
+        <img class="progressive-frame" src="assets/arch/6.png" alt="Initial GenAI architecture, step 6">
+        <img class="progressive-frame" src="assets/arch/7.png" alt="Initial GenAI architecture, step 7">
+        <img class="progressive-frame" src="assets/arch/8.png" alt="Initial GenAI architecture, step 8">
+        <img class="progressive-frame" src="assets/arch/9.png" alt="Initial GenAI architecture, step 9">
+        <img class="progressive-frame" src="assets/arch/10.png" alt="Initial GenAI architecture, step 10">
+      </div>
+    </div>
+    <div class="frame-dots" aria-hidden="true"><span class="frame-dot frame-active"></span><span class="frame-dot"></span><span class="frame-dot"></span><span class="frame-dot"></span><span class="frame-dot"></span><span class="frame-dot"></span><span class="frame-dot"></span><span class="frame-dot"></span><span class="frame-dot"></span><span class="frame-dot"></span></div>
+    <div class="notes"><p>
+      And this is what the initial architecture looked like. 
+<br><br>
+At the centre was the existing Recommendations Platform. We extended it with conversation orchestration capabilities. It had persistence for dialog management.
+<br><br>
+The platform was wired up to the frontend via a bunch of gateways and microfrontends. 
+<br><br>
+At the bottom was the OpenAI API. To connect to it, we introduced a thin OpenAI Proxy that acted as an anti-corruption layer, preventing OpenAI-specific types and concepts from leaking into Booking.com’s services.
+<br><br>
+The proxy also provided a shared interface for cross-cutting capabilities such as centralized monitoring, credential management, billing, and enforcing legal and geographical constraints.
+<br><br>
+It logged requests and responses to an Amazon S3 bucket with an expiration policy, which enabled offline security scans.
+<br><br>
+The purple LLM components from the previous slide were implemented by ML scientists as LangChain blocks in a shared Python library. The library connected to the OpenAI Proxy, and the individual steps were exposed as HTTP endpoints to the services above.
+<br><br>
+This setup allowed the cross-functional team to iterate faster
+    </p></div>
+  </div>
+</section>
+
+<section class="slide architecture-evolution-slide" data-title="Three layers of architectural evolution" id="architecture-evolution-layers">
+  <div class="topline"></div>
+  <div class="slide-inner">
+    <div class="eyebrow">How the architecture evolved</div>
+    <h2>Three layers of evolution</h2>
+    <div class="architecture-evolution-layout">
+      <div class="progressive-stack" data-frame="0" style="height:67vh">
+        <img class="progressive-frame frame-visible frame-active" src="assets/evol/0.png" alt="Architecture evolution, step 0">
+        <img class="progressive-frame" src="assets/evol/1.png" alt="Architecture evolution, step 1">
+        <img class="progressive-frame" src="assets/evol/2.png" alt="Architecture evolution, step 2">
+        <img class="progressive-frame" src="assets/evol/3.png" alt="Architecture evolution, step 3">
+      </div>
+    </div>
+    <div class="frame-dots" aria-hidden="true"><span class="frame-dot frame-active"></span><span class="frame-dot"></span><span class="frame-dot"></span><span class="frame-dot"></span></div>
+    <div class="notes">
+      <p>
+        As the no of usecases grew, we needed new capabilities, and the architecture evolved with them. 
+<br><br>
+        Let's look at how that happened across the three layers
+<br><br>
+1. LLM access and safety: 
+This layer controlled model access & safety checks
+<br><br>
+2. Shared GenAI capabilities:
+This layer gave product teams reusable services and libraries
+<br><br>
+3. Product Orchestration: 
+This layer connected the Genai experience to existing Booking.com capabilities
+      </p>
+    </div>
+  </div>
+</section>
+
+
+<section class="slide arch-base-slide" data-title="Layer 1: LLM access and safety" id="architecture-layer-1">
+  <div class="topline"></div>
+  <div class="slide-inner">
+    <div class="eyebrow">Architectural evolution</div>
+    <h2>Layer 1 evolution</h2>
+    <p class="sub">LLM access and safety</p>
+    <div class="content" style="padding:.5vh 0 0;justify-content:center">
+      <img src="assets/layer1.png" alt="The first layer of architectural evolution: LLM access and safety" style="width:100%;max-width:100%;max-height:68vh;object-fit:contain">
+    </div>
+    <div class="notes"><p>The first layer focused on controlled access to language models and the safety checks around them.</p></div>
+  </div>
+</section>
+
+<section class="slide dark" data-title="Accuracy became a priority" id="accuracy-became-a-priority">
+  <div class="slide-inner" style="justify-content:center;align-items:center;text-align:center">
+    <div class="eyebrow">The next challenge</div>
+    <h1 style="text-align:center;white-space:nowrap"><span style="color:var(--gold)">Model accuracy</span> became a priority.</h1>
+    <p class="sub" style="max-width:900px;margin-top:2.5vh;text-align:center;color:#b8c9de">As the product matured, accuracy became an important concern.</p>
+    <div class="notes"><p>As the product matured, model accuracy became an important concern.</p></div>
+  </div>
+</section>
+
+<section class="slide arch-base-slide" data-title="Fine-tuning models" id="aitp-fine-tuning">
+  <div class="topline"></div>
+    <div class="slide-inner">
+    <div class="eyebrow">The model-building foundation</div>
+    <h2>We started fine-tuning models</h2>
+    <p class="sub">To improve accuracy, latency and cost efficiency</p>
+    <div class="content" style="padding:.5vh 0 0;justify-content:center">
+      <div class="progressive-stack" data-frame="0">
+        <img class="progressive-frame frame-visible frame-active" src="assets/aitp/aitp-finetune.png" alt="AI Trip Planner flow with fine-tuned model components across language detection, moderation, intent classification and recommendation">
+      </div>
+    </div>
+    <div class="notes">
+      <p>
+We started fine-tuning models to better adapt them to Booking.com’s domain. 
+For example, our intent classification accuracy was 80% with chatgpt and in-context learning but were were able to push that to 90% with our own fine-tuned model.
+<br><br>
+The orange blocks show the first set of models we fine-tuned. Apart from improving accuracy, this also helped with reducing cost and latency. 
+      </p>
+      <p>To optimize our fine-tuning setup, we developed a generic LLM training framework that supported various open-source LLMs.</p>
+      <p>It supported training methods ranging from full-parameter fine-tuning to LoRA and QLoRA, as well as post-training techniques such as Direct Preference Optimization.</p>
+      <p>The framework also supported distributed multi-GPU training and reusable training pipelines, so teams could apply the same foundation across different models and tasks.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="slide genai-gateway-slide" data-title="GenAI Gateway" id="genai-gateway">
+  <div class="topline"></div>
+  <div class="slide-inner">
+    <div class="eyebrow">The shared inference layer</div>
+    <div class="genai-gateway-head">
+      <h2>GenAI Gateway</h2>
+      <p>An unified interface for 3rd-party and in-house models</p>
+    </div>
+    <div class="content">
+      <div class="progressive-stack" data-frame="0" style="height:63vh">
+        <img class="progressive-frame frame-visible frame-active" src="assets/genai-gw/1.png" alt="GenAI Gateway evolution, step 1">
+        <img class="progressive-frame" src="assets/genai-gw/2.png" alt="GenAI Gateway evolution, step 2">
+        <img class="progressive-frame" src="assets/genai-gw/3.png" alt="GenAI Gateway evolution, step 3">
+        <img class="progressive-frame" src="assets/genai-gw/4.png" alt="GenAI Gateway evolution, step 4">
+        <img class="progressive-frame" src="assets/genai-gw/5.png" alt="GenAI Gateway evolution, step 5">
+        <img class="progressive-frame" src="assets/genai-gw/6.png" alt="GenAI Gateway evolution, step 6">
+        <img class="progressive-frame" src="assets/genai-gw/7.png" alt="GenAI Gateway evolution, step 7">
+        <img class="progressive-frame" src="assets/genai-gw/8.png" alt="GenAI Gateway evolution, step 8">
+        <img class="progressive-frame" src="assets/genai-gw/9.png" alt="GenAI Gateway evolution, step 9">
+      </div>
+    </div>
+    <div class="frame-dots" aria-hidden="true"><span class="frame-dot frame-active"></span><span class="frame-dot"></span><span class="frame-dot"></span><span class="frame-dot"></span><span class="frame-dot"></span><span class="frame-dot"></span><span class="frame-dot"></span></div>
+    <div class="notes">
+      <p>
+        As we started building our own fine-tuned models and experimenting with other foundational models, we replaced  the OpenAI Proxy with a robust GenAI Gateway. 
+<br> <br>
+It provided a single governed way to call LLMs both the foundational models and Booking's own fine-tuned open-source models.
+<br> <br>
+It handled all the cross-cutting needs like model routing, rate limiting, cost tracking, security, observability, content moderation, PII redaction, etc. 
+<br> <br>
+It also had access to AI registry. 
+<br> <br>
+After AI Trip Planner went to production, we began running experiments with different model versions & prompt variants. 
+<br> <br>
+And as the portfolio grew, we needed a system of records to help with governance, discoverability and re-use.
+That's where AI registry came in.
+<br> <br>
+The AI Registry acts as a catalog for our AI assets, tracking things like versions, ownership and lineage. We started with models and prompts, but it has since then expanded to include agents, workflows, tools and even applications. 
+      </p>
+    </div>
+  </div>
+</section>
+
+<section class="slide arch-base-slide" data-title="Layer 2: Shared GenAI capabilities" id="architecture-layer-2">
+  <div class="topline"></div>
+  <div class="slide-inner">
+    <div class="eyebrow">Architectural evolution</div>
+    <h2>Layer 2 evolution</h2>
+    <p class="sub">Shared GenAI capabilities</p>
+    <div class="content" style="padding:.5vh 0 0;justify-content:center">
+      <img src="assets/layer2.png" alt="The second layer of architectural evolution: shared GenAI capabilities" style="width:100%;max-width:100%;max-height:68vh;object-fit:contain">
+    </div>
+    <div class="notes"><p>The second layer brought shared GenAI capabilities that product teams could reuse across different use cases.</p></div>
+  </div>
+</section>
+
+<section class="slide blue" data-title="We started building agents" id="started-building-agents">
+  <div class="slide-inner" style="justify-content:center">
+    <div style="max-width:1180px">
+      <div class="eyebrow">The next abstraction</div>
+      <h1>We started building <span style="color:var(--gold)">agents</span></h1>
+    </div>
+    <div class="notes"><p>Once we had these foundational systems were in place, we started building agents. That introduced a new architectural question: how should the model use tools, and who should control the loop?</p></div>
+  </div>
+</section>
+
+<section class="slide genai-gateway-slide" data-title="MCP Toolbox Server" id="mcp-toolbox-server">
+  <div class="topline"></div>
+  <div class="slide-inner">
+    <div class="genai-gateway-head">
+      <div class="eyebrow">The tool access layer</div>
+      <h2>Connecting Agents to Tools</h2>
+      <p class="sub">A governed access layer</p>
+    </div>
+    <div class="content" style="padding-top:2.2vh">
+      <img src="assets/agent-catalog/mcp-toolbox.png" alt="GenAI Service and GenAI Library connect to the GenAI Gateway for model access and to the MCP Toolbox Server for internal and external tools and resources" style="max-height:60vh">
+    </div>
+    <div class="notes"><p>To build agents, we needed a consistent way to discover and use tools.</p>
+      <p>So, we introduced an MCP layer that exposed all approved internal and external tools through a single interface.</p>
+      <p>The platform centralized routing, access control and governance, so each product team did not need to rebuild those integrations independently.</p>
+    </div>
+  </div>
+</section>
+
+<section class="slide blue" data-title="Democratizing custom agents" id="democratizing-custom-agents">
+  <div class="slide-inner" style="justify-content:center">
+    <div class="eyebrow">Democratizing AI</div>
+    <h1 style="max-width:1200px">Enable everyone to <span style="color:var(--gold)">build with AI</span></h1>
+    <div class="notes">
+      <p>We wanted teams across Booking.com to be able to quickly turn their domain knowledge into an agent. </p>
+      <p>Our ambition was to make custom agent development available beyond a small group of specialists.</p>
+    </div>
+  </div>
+</section>
+
+<section class="slide dark" data-title="Two paths to democratizing AI" id="democratizing-ai-paths">
+  <div class="slide-inner" style="justify-content:center;align-items:center;text-align:center;gap:5vh">
+    <div style="width:100%;max-width:1150px;text-align:left">
+      <div class="eyebrow">Democratizing AI</div>
+      <h1 style="font-size:clamp(44px,5.6vw,84px)">Two routes to <span style="color:var(--gold)">build AI agents</span></h1>
+    </div>
+    <div class="content" style="flex:0 0 auto;width:100%;max-width:1150px;padding:0;align-items:center">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:4vw;width:100%">
+        <div style="border-top:6px solid var(--gold);padding-top:1.4vw">
+          <h3 style="color:white">Reusable agents</h3>
+          <p>Configure and deploy quickly.</p>
+        </div>
+        <div style="border-top:6px solid #88d1ff;padding-top:1.4vw">
+          <h3 style="color:white">Deep customization</h3>
+          <p>Build and deploy end to end.</p>
+        </div>
+      </div>
+    </div>
+    <div class="notes"><p>To democratize AI, we took a two-pronged approach: reusable general-purpose agents for speed, and deep customization for teams that needed full control.</p></div>
+  </div>
+</section>
+
+<section class="slide agent-capability-image-slide" data-title="Broad agent capabilities" id="agent-catalog-capabilities">
+  <div class="topline"></div>
+  <div class="slide-inner">
+    <div class="eyebrow">General-purpose Agents</div>
+    <h2>The Agent Catalog</h2>
+    <div class="content">
+      <div class="progressive-stack" data-frame="0">
+        <img class="progressive-frame frame-visible frame-active" src="assets/catalog/0.png" alt="Agent Catalog capabilities, step 0">
+        <img class="progressive-frame" src="assets/catalog/1.png" alt="Agent Catalog capabilities, step 1">
+        <img class="progressive-frame" src="assets/catalog/2.png" alt="Agent Catalog capabilities, step 2">
+        <img class="progressive-frame" src="assets/catalog/3.png" alt="Agent Catalog capabilities, step 3">
+        <img class="progressive-frame" src="assets/catalog/4.png" alt="Agent Catalog capabilities, step 4">
+        <img class="progressive-frame" src="assets/catalog/5.png" alt="Agent Catalog capabilities, step 5">
+        <img class="progressive-frame" src="assets/catalog/6.png" alt="Agent Catalog capabilities, step 6">
+        <img class="progressive-frame" src="assets/catalog/7.png" alt="Agent Catalog capabilities, step 7">
+        <img class="progressive-frame" src="assets/catalog/8.png" alt="Agent Catalog capabilities, step 8">
+      </div>
+    </div>
+    <div class="frame-dots" aria-hidden="true"><span class="frame-dot frame-active"></span><span class="frame-dot"></span><span class="frame-dot"></span><span class="frame-dot"></span><span class="frame-dot"></span><span class="frame-dot"></span><span class="frame-dot"></span><span class="frame-dot"></span><span class="frame-dot"></span></div>
+    <div class="source">Sources: <a href="https://booking.ai/building-a-genai-agent-for-partner-guest-messaging-f54afb72e6cf" target="_blank" rel="noopener noreferrer">Partner-Guest Messaging agent</a>; <a href="https://booking.ai/named-entity-classification-d14d857cb0d5" target="_blank" rel="noopener noreferrer">Named Entity Classification</a>; <a href="https://venturebeat.com/technology/booking-coms-agent-strategy-disciplined-modular-and-already-delivering-2" target="_blank" rel="noopener noreferrer">Booking.com’s agent strategy</a>; <a href="https://news.booking.com/bookingcom-debuts-agentic-ai-innovations-adding-to-its-robust-suite-of-genai-tools-for-customers/" target="_blank" rel="noopener noreferrer">Agentic AI innovations</a></div>
+    <div class="notes">
+      <p>We built a broad set of reusable language capabilities (agents) for product teams.</p>
+      <p>These included intent detection, entity extraction, moderation, language detection, summarization, text generation, PII masking and context-grounded question answering. </p>
+      <p>The product teams configured these pre-built agents for their own usecases.</p>
+    </div>
+  </div>
+</section>
+
+<section class="slide genai-gateway-slide" data-title="Flow Builder" id="flow-builder-moved">
+  <div class="topline"></div>
+  <div class="slide-inner">
+    <div class="genai-gateway-head">
+      <div class="eyebrow">Flow Builder</div>
+      <h2>AI Studio</h2>
+      <p class="sub">Prototype, test and deploy agents in a visual manner</p>
+    </div>
+    <div class="content" style="padding-top:1.5vh">
+      <img src="assets/flow-builder.png" alt="AI Studio Flow Builder showing a property question answering agent assembled from inputs, prompts, message history, MCP tools and an agent output" style="width:auto;height:auto;max-width:100%;max-height:64vh;border-radius:18px;box-shadow:0 16px 40px rgba(16,35,63,.22)">
+    </div>
+    <div class="notes"><p>We also built AI Studio, based on Langflow, to help teams build and configure custom agents visually.</p><p>It connected to other systems so teams could discover and reuse existing models, tools and capabilities instead of starting from scratch.</p></div>
+  </div>
+</section>
+
+<section class="slide genai-platform-slide" data-title="GenAI use cases" id="genai-platform">
+  <div class="topline"></div>
+  <div class="slide-inner">
+    <div class="eyebrow">The portfolio expands</div>
+    <h2>GenAI use cases</h2>
+    <div class="content" style="padding:1vh 0">
+      <div class="progressive-stack" data-frame="0">
+        <img class="progressive-frame frame-visible frame-active" src="assets/genai-platform/genai1.png" alt="Trip Planning GenAI use case">
+        <img class="progressive-frame" src="assets/genai-platform/genai2.png" alt="Trip Planning and Smart Filters GenAI use cases">
+        <img class="progressive-frame" src="assets/genai-platform/genai3.png" alt="Trip Planning, Smart Filters and Review Summaries GenAI use cases">
+        <img class="progressive-frame" src="assets/genai-platform/genai4.png" alt="GenAI use cases including Property Q and A">
+        <img class="progressive-frame" src="assets/genai-platform/genai5.png" alt="GenAI use cases including Post-Booking Support">
+        <img class="progressive-frame" src="assets/genai-platform/genai6.png" alt="Complete portfolio of GenAI use cases">
+      </div>
+    </div>
+    <div class="frame-dots" aria-hidden="true"><span class="frame-dot frame-active"></span><span class="frame-dot"></span><span class="frame-dot"></span><span class="frame-dot"></span><span class="frame-dot"></span><span class="frame-dot"></span></div>
+    <div class="source">Sources: <a href="https://news.booking.com/bookingcom-launches-new-ai-trip-planner-to-enhance-travel-planning-experience/" target="_blank" rel="noopener noreferrer">AI Trip Planner</a>; <a href="https://news.booking.com/bookingcom-enhances-travel-planning-with-new-ai-powered-features--for-easier-smarter-decisions/" target="_blank" rel="noopener noreferrer">AI-powered features</a>; <a href="https://news.booking.com/bookingcom-debuts-agentic-ai-innovations-adding-to-its-robust-suite-of-genai-tools-for-customers/" target="_blank" rel="noopener noreferrer">Agentic AI innovations</a>; <a href="https://openai.com/index/booking-com/" target="_blank" rel="noopener noreferrer">Booking.com and OpenAI</a></div>
+    <div class="notes"><p>
+      We also started to see a surge in the number of GenAI use cases. Some of the public facing ones are
+    </p>
+      <ul>
+        <li><strong>AI Trip Planner:</strong> Helps travellers describe their trip in natural language and discover relevant destinations and properties.</li>
+        <li><strong>Smart Filters:</strong> Help travellers narrow down properties by converting natural-language descriptions into the most relevant filters.</li>
+        <li><strong>Review Summaries:</strong> Help travellers quickly understand what guests liked and disliked about a property by summarizing large volumes of reviews.</li>
+        <li><strong>Property Q&amp;A:</strong> Let travellers ask natural-language questions about a property and get answers grounded in its available information.</li>
+        <li><strong>Trip Support:</strong> Provides conversational support throughout the trip, helping travellers resolve post-booking questions and issues.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="slide infra-chip-slide" data-title="Repeated infrastructure problems" id="repeated-agent-infrastructure">
+  <div class="slide-inner">
+    <div class="eyebrow">The platform need</div>
+    <h2>We wanted <span style="color: var(--bright);">deep customization</span> <br> without  <span style="color:var(--coral)">redundant effort</span>.</h2>
+    <div class="notes"><p>For deep customization, we did not want teams to repeatedly solve packaging, scaling, versioning, authorisation, observability, etc on their own.</p>
+      <p>We also needed one consistent way for the rest of the organisation to discover and invoke every deployed agent.</p></div>
+  </div>
+</section>
+
+<section class="slide blue" data-title="Agent Serving Platform" id="agent-serving-runtime">
+  <div class="slide-inner" style="justify-content:center">
+    <div class="eyebrow">Managed Agent runtime</div>
+    <h1 style="max-width:1200px">Agent Serving <span style="color:var(--gold)">Platform</span></h1>
+    <p class="sub">Run <strong style="color:var(--gold)">custom Python agents</strong></p>
+    <div class="notes"><p>We build a managed runtime where teams can deploy their custom python agents.</p></div>
+  </div>
+</section>
+
+
+<section class="slide agent-serving-architecture-slide" data-title="Agent Serving architecture" id="agent-serving-architecture">
+  <div class="topline"></div>
+  <div class="slide-inner">
+    <div class="eyebrow">The shared agent runtime</div>
+    <h2>Agent Serving Platform</h2>
+    <p class="sub">A platform to build and run agents </p>
+    <div class="content">
+      <div class="progressive-stack" data-frame="0" style="height:68vh">
+        <img class="progressive-frame frame-visible frame-active" src="assets/agent-serving/0.png" alt="Agent Serving architecture, step 0">
+        <img class="progressive-frame" src="assets/agent-serving/1.png" alt="Agent Serving architecture, step 1">
+        <img class="progressive-frame" src="assets/agent-serving/2.png" alt="Agent Serving architecture, step 2">
+        <img class="progressive-frame" src="assets/agent-serving/3.png" alt="Agent Serving architecture, step 3">
+        <img class="progressive-frame" src="assets/agent-serving/4.png" alt="Agent Serving architecture, step 4">
+        <img class="progressive-frame" src="assets/agent-serving/5.png" alt="Agent Serving architecture, step 5">
+        <img class="progressive-frame" src="assets/agent-serving/6.png" alt="Agent Serving architecture, step 6">
+        <img class="progressive-frame" src="assets/agent-serving/7.png" alt="Agent Serving architecture, step 7">
+        <img class="progressive-frame" src="assets/agent-serving/8.png" alt="Agent Serving architecture, step 8">
+        <img class="progressive-frame" src="assets/agent-serving/9.png" alt="Agent Serving architecture, step 9">
+        <img class="progressive-frame" src="assets/agent-serving/10.png" alt="Agent Serving architecture, step 10">
+        <img class="progressive-frame" src="assets/agent-serving/11.png" alt="Agent Serving architecture, step 11">
+        <img class="progressive-frame" src="assets/agent-serving/12.png" alt="Agent Serving architecture, step 12">
+        <img class="progressive-frame" src="assets/agent-serving/13.png" alt="Agent Serving architecture, step 13">
+      </div>
+    </div>
+    <div class="frame-dots" aria-hidden="true"><span class="frame-dot frame-active"></span><span class="frame-dot"></span><span class="frame-dot"></span><span class="frame-dot"></span><span class="frame-dot"></span><span class="frame-dot"></span><span class="frame-dot"></span><span class="frame-dot"></span><span class="frame-dot"></span><span class="frame-dot"></span><span class="frame-dot"></span><span class="frame-dot"></span><span class="frame-dot"></span></div>
+    <div class="notes"><p>We built a shared agent runtime where teams could deploy custom agents. It took care of the horizontal concerns around packaging, containerization, deployment, scaling, runtime isolation and security.</p>
+      <p>It also connected to the systems we saw earlier: the GenAI Gateway for model access, the Toolbox Platform, the AI Registry and observability.</p>
+      <p>We created an SDK for building and deploying custom agents. It provided an abstraction over open-source agent SDKs, together with connectivity to Booking.com systems.</p>
+      <p>The platform also included reusable general-purpose agents that teams could customize through configuration. For teams that needed deeper customization, it provided an opinionated framework for building agents according to internal standards.</p>
+      <p>Traditional software systems could access these agents through a client SDK. Requests flowed through a gateway that handled cross-cutting concerns such as routing and traffic management.</p>
+      <p>Finally, the platform supported the A2A protocol, allowing agents to discover and call one another.</p>
+    </div>
+  </div>
+</section>
+
+
+<section class="slide genai-gateway-slide" data-title="Supporting services" id="supporting-services">
+  <div class="topline"></div>
+  <div class="slide-inner">
+    <div class="genai-gateway-head">
+      <div class="eyebrow">The shared platform</div>
+      <h2>Other foundational systems</h2>
+    <p class="sub">Supporting services behind reliable agent execution </p>
+    </div>
+    <div class="content" style="padding-top:1.2vh">
+      <div class="progressive-stack" data-frame="0" style="height:64vh">
+        <img class="progressive-frame frame-visible frame-active" src="assets/support/0.png" alt="Supporting services, step 0">
+        <img class="progressive-frame" src="assets/support/1.png" alt="Supporting services, step 1">
+        <img class="progressive-frame" src="assets/support/2.png" alt="Supporting services, step 2">
+      </div>
+    </div>
+    <div class="frame-dots" aria-hidden="true"><span class="frame-dot frame-active"></span><span class="frame-dot"></span><span class="frame-dot"></span></div>
+    <div class="notes"><p>We also built a few platform services to support reliable agent execution.</p>
+      <p>First, short-term memory helped agents maintain ephemeral context. It acted like a scratchpad or working memory, allowing them to remember information across interactions.</p>
+      <p>Second, the Embedding Service abstracted the generation, storage and retrieval of embeddings.</p>
+      <p>Finally, the RAG service provided configuration-based Retrieval-Augmented Generation out of the box.</p>
+    </div>
+  </div>
+</section>
+
+<section class="slide dark" data-title="Evaluations" id="evaluations-section">
+  <div class="slide-inner" style="justify-content:center">
+    <div class="eyebrow">The next platform concern</div>
+    <h1>Evaluations</h1>
+    <p class="sub">Ensuring reliability in a probabilistic world</p>
+    <div class="notes"><p>Since agents are probabilistic, we wanted a systematic way to test and improve their behaviour and reliability.</p><p>That brings us to evaluations.</p></div>
+  </div>
+</section>
+
+
+<section class="slide genai-gateway-slide llm-as-a-judge-slide" data-title="Using a LLM to judge the output of another LLM" id="llm-as-a-judge">
+  <div class="topline"></div>
+  <div class="slide-inner" style="justify-content:center;align-items:center;text-align:center">
+    <div class="genai-gateway-head" style="width:100%;text-align:center">
+      <div class="eyebrow">LLM as a judge</div>
+      <h2 style="margin-inline:auto;text-align:center">Using <span style="color:var(--gold)">an LLM to judge</span> the output of another LLM</h2>
+    </div>
+    <div class="source">Reference: <a href="https://www.confident-ai.com/blog/why-llm-as-a-judge-is-the-best-llm-evaluation-method" target="_blank" rel="noopener noreferrer">Confident AI — Why LLM-as-a-Judge Is the Best LLM Evaluation Method</a></div>
+    <div class="notes"><p>Traditional software tests are not sufficient because agent responses are open-ended and there is no single correct answer.</p><p>So, we used one LLM to evaluate the output of another LLM.</p></div>
+  </div>
+</section>
+
+<section class="slide genai-gateway-slide" data-title="Defining quality with a rubric and a judge" id="evaluation-design">
+  <div class="topline"></div>
+  <div class="slide-inner">
+    <div class="genai-gateway-head">
+      <div class="eyebrow">Evaluation design</div>
+      <h2>The building blocks of evaluation</h2>
+    </div>
+    <div class="content" style="padding-top:1.2vh">
+      <img src="assets/eval0.png" alt="Evaluation design using a rubric or metric definition and a judge model" style="width:auto;height:auto;max-width:100%;max-height:64vh">
+    </div>
+    <div class="notes"><p>We defined evaluation criteria such as relevance, accuracy, completeness and tone, then trained a judge LLM to score each response against those criteria.</p></div>
+  </div>
+</section>
+
+<section class="slide genai-gateway-slide" data-title="The evaluation stack" id="evaluation-stack">
+  <div class="topline"></div>
+  <div class="slide-inner">
+    <div class="genai-gateway-head">
+      <div class="eyebrow">Evaluations</div>
+      <h2>The evaluation stack</h2>
+    </div>
+    <div class="content" style="padding-top:1.2vh">
+      <div class="progressive-stack" data-frame="0" style="height:65vh">
+        <img class="progressive-frame frame-visible frame-active" src="assets/eval-suite/0.png" alt="Evaluation suite, step 0">
+        <img class="progressive-frame" src="assets/eval-suite/1.png" alt="Evaluation suite, step 1">
+        <img class="progressive-frame" src="assets/eval-suite/2.png" alt="Evaluation suite, step 2">
+        <img class="progressive-frame" src="assets/eval-suite/3.png" alt="Evaluation suite, step 3">
+        <img class="progressive-frame" src="assets/eval-suite/4.png" alt="Evaluation suite, step 4">
+        <img class="progressive-frame" src="assets/eval-suite/5.png" alt="Evaluation suite, step 5">
+      </div>
+    </div>
+    <div class="frame-dots" aria-hidden="true"><span class="frame-dot frame-active"></span><span class="frame-dot"></span><span class="frame-dot"></span><span class="frame-dot"></span><span class="frame-dot"></span><span class="frame-dot"></span></div>
+    <div class="notes"><p>To build and evaluate judge LLMs, we needed reliable golden datasets. So, we created a centralized repository of internal and external benchmark datasets, with automatic refreshes as new data became available.</p>
+      <p>When a dataset was too small, we used a synthetic data generator to augment it. To help teams create custom judges for their use cases, we built a self-serve framework and provided a curated library of reusable judges for common evaluation needs.</p>
+      <p>As the number of available LLMs grew, we needed a consistent way to compare them. We built an automated evaluation framework that continuously tested both commercial and in-house models, then reported their performance in a dashboard. This allowed teams to select models based on data.</p>
+      <p>We also made it easier for teams to orchestrate evaluations through a shared evaluation framework.</p>
+    </div>
+  </div>
+</section>
+
+
+<section class="slide genai-gateway-slide" data-title="Online and Offline evaluation" id="ai-product-lifecycle">
+  <div class="topline"></div>
+  <div class="slide-inner">
+    <div class="genai-gateway-head">
+      <div class="eyebrow">The Dual Loop</div>
+    <h2>Offline and online evaluation</h2>
+    <p class="sub">Benchmark before launch and monitor after release</p>
+    </div>
+    <div class="content" style="padding-top:1.2vh">
+      <div class="progressive-stack" data-frame="0" style="height:64vh">
+        <img class="progressive-frame frame-visible frame-active" src="assets/dual/0.png" alt="Offline and online evaluation, step 0">
+        <img class="progressive-frame" src="assets/dual/1.png" alt="Offline and online evaluation, step 1">
+        <img class="progressive-frame" src="assets/dual/2.png" alt="Offline and online evaluation, step 2">
+      </div>
+    </div>
+    <div class="frame-dots" aria-hidden="true"><span class="frame-dot frame-active"></span><span class="frame-dot"></span><span class="frame-dot"></span></div>
+    <div class="source">Sources: <a href="https://booking.ai/llm-evaluation-practical-tips-at-booking-com-1b038a0d6662" target="_blank" rel="noopener noreferrer">LLM Evaluation: Practical Tips at Booking.com</a>; <a href="https://openai.com/index/evals-drive-next-chapter-of-ai/" target="_blank" rel="noopener noreferrer">OpenAI: Evals drive the next chapter of AI</a></div>
+    <div class="notes"><p>Evaluation happens in two connected loops.</p>
+      <p>At the bottom is the familiar product lifecycle.</p>
+      <p>The inner loop happens before anything ships. Teams write a prompt or build agents, run evaluations, review the quality of the output and refine the application until it meets the required standard. When it meets the bar, it is tested and deployed.</p>
+      <p>The outer loop starts after launch. Teams monitor quality in production and watch for drift. When behaviour changes or quality drops, they update the prompt or configuration, evaluate the change and ship a new version.</p>
+      <p>This means evaluation becomes part of both building and operating the product.</p>
+    </div>
+  </div>
+</section>
+
+<section class="slide genai-gateway-slide" data-title="Evaluation Harness" id="evaluation-harness">
+  <div class="topline"></div>
+  <div class="slide-inner">
+    <div class="genai-gateway-head">
+      <div class="eyebrow">Evaluations</div>
+    <h2>The evaluation harness</h2>
+    <p class="sub">Automating evalutions at scale</p>
+    </div>
+    <div class="content" style="padding-top:1.2vh">
+      <div class="progressive-stack" data-frame="0" style="height:64vh">
+        <img class="progressive-frame frame-visible frame-active" src="assets/eval-harness/0.png" alt="Evaluation harness, step 0">
+        <img class="progressive-frame" src="assets/eval-harness/1.png" alt="Evaluation harness, step 1">
+        <img class="progressive-frame" src="assets/eval-harness/2.png" alt="Evaluation harness, step 2">
+        <img class="progressive-frame" src="assets/eval-harness/3.png" alt="Evaluation harness, step 3">
+        <img class="progressive-frame" src="assets/eval-harness/4.png" alt="Evaluation harness, step 4">
+        <img class="progressive-frame" src="assets/eval-harness/5.png" alt="Evaluation harness, step 5">
+        <img class="progressive-frame" src="assets/eval-harness/6.png" alt="Evaluation harness, step 6">
+        <img class="progressive-frame" src="assets/eval-harness/7.png" alt="Evaluation harness, step 7">
+        <img class="progressive-frame" src="assets/eval-harness/8.png" alt="Evaluation harness, step 8">
+        <img class="progressive-frame" src="assets/eval-harness/9.png" alt="Evaluation harness, step 9">
+        <img class="progressive-frame" src="assets/eval-harness/10.png" alt="Evaluation harness, step 10">
+      </div>
+    </div>
+    <div class="frame-dots" aria-hidden="true"><span class="frame-dot frame-active"></span><span class="frame-dot"></span><span class="frame-dot"></span><span class="frame-dot"></span><span class="frame-dot"></span><span class="frame-dot"></span><span class="frame-dot"></span><span class="frame-dot"></span><span class="frame-dot"></span><span class="frame-dot"></span><span class="frame-dot"></span></div>
+    <div class="source">Sources: <a href="https://booking.ai/ai-agent-evaluation-82e781439d97" target="_blank" rel="noopener noreferrer">AI Agent Evaluation</a>; <a href="https://booking.ai/llm-evaluation-practical-tips-at-booking-com-1b038a0d6662" target="_blank" rel="noopener noreferrer">LLM Evaluation: Practical Tips at Booking.com</a></div>
+    <div class="notes"><p>There are two phases to running an automated evaluation: preparation and execution.</p>
+      <p>During preparation, the team defines the metrics, chooses the dataset and selects a judge from the catalog. If no suitable judge exists, they build one using the Judge Factory. They then record these choices in an evaluation configuration.</p>
+      <p>During execution, the runtime loads the configuration and dataset, then invokes the candidate LLM or agent. If the output is already available from a production trace, this inference step is skipped. The judge LLM then scores the output, and the results are analyzed and reported so the team can decide what to improve next.</p>
+    </div>
+  </div>
+</section>
+
+<section class="slide arch-base-slide" data-title="Layer 3: Product orchestration" id="architecture-layer-3">
+  <div class="topline"></div>
+  <div class="slide-inner">
+    <div class="eyebrow">Architectural evolution</div>
+    <h2>Layer 3 evolution</h2>
+    <p class="sub">Product orchestration</p>
+    <div class="content" style="padding:.5vh 0 0;justify-content:center">
+      <img src="assets/layer3.png" alt="The third layer of architectural evolution: product orchestration" style="width:100%;max-width:100%;max-height:68vh;object-fit:contain">
+    </div>
+    <div class="notes"><p>The third layer connected GenAI experiences to Booking.com capabilities and product-specific workflows.</p></div>
+  </div>
+</section>
+
+<section class="slide genai-gateway-slide" data-title="A dedicated GenAI orchestrator" id="dedicated-genai-orchestrator">
+  <div class="topline"></div>
+  <div class="slide-inner">
+    <div class="genai-gateway-head">
+      <div class="eyebrow">The orchestration layer</div>
+      <h2>A dedicated GenAI Orchestrator</h2>
+      <p class="sub">Product logic moved into a specialized workflows</p>
+    </div>
+    <div class="content" style="padding-top:1.2vh">
+      <div class="progressive-stack" data-frame="0" style="height:63vh">
+        <img class="progressive-frame frame-visible frame-active" src="assets/genai-orch/0.png" alt="GenAI orchestrator architecture, step 0">
+        <img class="progressive-frame" src="assets/genai-orch/1.png" alt="GenAI orchestrator architecture, step 1">
+      </div>
+    </div>
+    <div class="frame-dots" aria-hidden="true"><span class="frame-dot frame-active"></span><span class="frame-dot"></span></div>
+    <div class="notes"><p>As the architecture evolved, we moved conversation and dialog management into its own dedicated system.</p>
+      <p>We learned that running AI in production involves much more than calling a model. Multiple components need to work together to handle failures, fallbacks and experimentation reliably.</p>
+      <p>We called these coordinated sequences of steps workflows, and the engine that executed them the GenAI Orchestrator.</p>
+    </div>
+  </div>
+</section>
+
+<section class="slide workflow-dsl-slide" data-title="Workflow DSL" id="workflow-dsl">
+  <div class="topline"></div>
+  <div class="slide-inner">
+    <div class="eyebrow">Workflows</div>
+    <h2>Orchestration as configuration</h2>
+    <p class="sub">A custom DSL to define GenAI workflows as directed graphs</p>
+    <div class="workflow-dsl-evidence" style="grid-template-columns:1fr">
+      <figure>
+        <img src="assets/orch/workflow-json.png" alt="JSON workflow definition for a property question agent, including its schema, name, description, graph nodes and edges, and input and output information">
+      </figure>
+      <figure>
+      </figure>
+    </div>
+    <div class="notes"><p>The first workflows were written in a custom DSL, essentially a machine-readable directed graph.</p>
+      <p>Each node represented an operation, such as calling an LLM, invoking an agent or running a tool. The edges defined the sequence and conditional logic between those operations, while shared state preserved data and context across the graph.</p>
+      <p>Teams could author and iterate on these workflows through AI Studio, which made product experimentation and refinement much faster.</p>
+    </div>
+  </div>
+</section>
+
+
+<section class="slide dark" data-title="It worked, but it was not perfect" id="workflow-dsl-reflection">
+  <div class="slide-inner" style="justify-content:center">
+    <div class="eyebrow">Orchestration as Configuration</div>
+    <h2 style="max-width:1050px">It worked, but it was <span style="color:var(--coral)">not perfect</span></h2>
+    <ul style="width:100%;max-width:900px;margin:2vh 0 0;padding-left:1.2em;text-align:left;font-size:clamp(20px,1.8vw,30px);line-height:1.4;color:#b8c9de">
+      <li>Weak typing</li>
+      <li>Unsafe I/O mappings</li>
+      <li>Execution engine constraints</li>
+      <li>Limited debuggability and observability</li>
+    </ul>
+  </div>
+</section>
+
+
+<section class="slide dark" data-title="Code-first iteration" id="code-first-iteration">
+  <div class="slide-inner" style="justify-content:center">
+    <div class="eyebrow">The next iteration</div>
+    <h2 style="max-width:1120px">So, we optimized it further with <br> a <span style="color: var(--gold)">code-first</span> approach</h2>
+  </div>
+</section>
+
+<section class="slide genai-gateway-slide" data-title="Polyglot code-first approach" id="polyglot-code-first">
+  <div class="topline"></div>
+  <div class="slide-inner">
+    <div class="genai-gateway-head">
+      <div class="eyebrow">The orchestration SDK</div>
+      <h2>Polyglot code-first approach</h2>
+      <p class="sub">Using a shared intermediate representation</p>
+    </div>
+    <div class="content" style="padding-top:1.2vh">
+      <div class="progressive-stack" data-frame="0" style="height:64vh">
+        <img class="progressive-frame frame-visible frame-active" src="assets/sdk/1.png" alt="Polyglot orchestration SDK, step 1">
+        <img class="progressive-frame" src="assets/sdk/2.png" alt="Polyglot orchestration SDK, step 2">
+        <img class="progressive-frame" src="assets/sdk/3.png" alt="Polyglot orchestration SDK, step 3">
+        <img class="progressive-frame" src="assets/sdk/4.png" alt="Polyglot orchestration SDK, step 4">
+        <img class="progressive-frame" src="assets/sdk/5.png" alt="Polyglot orchestration SDK, step 5">
+        <img class="progressive-frame" src="assets/sdk/6.png" alt="Polyglot orchestration SDK, step 6">
+        <img class="progressive-frame" src="assets/sdk/7.png" alt="Polyglot orchestration SDK, step 7">
+        <img class="progressive-frame" src="assets/sdk/8.png" alt="Polyglot orchestration SDK, step 8">
+        <img class="progressive-frame" src="assets/sdk/9.png" alt="Polyglot orchestration SDK, step 9">
+        <img class="progressive-frame" src="assets/sdk/10.png" alt="Polyglot orchestration SDK, step 10">
+      </div>
+    </div>
+    <div class="frame-dots" aria-hidden="true"><span class="frame-dot frame-active"></span><span class="frame-dot"></span><span class="frame-dot"></span><span class="frame-dot"></span><span class="frame-dot"></span><span class="frame-dot"></span><span class="frame-dot"></span><span class="frame-dot"></span><span class="frame-dot"></span><span class="frame-dot"></span></div>
+    <div class="notes"><p>The code-first approach allowed teams to create workflows using SDKs in Java and Python.</p>
+      <p>The SDKs generated a shared intermediate representation that supported downstream capabilities such as workflow execution, registration, visualization and OpenAPI specification generation.</p>
+      <p>We also built a graph transpiler that could read and translate legacy workflow configurations into the same intermediate representation.</p>
+    </div>
+  </div>
+</section>
+
+<section class="slide genai-gateway-slide" data-title="Workflow Orchestration Platform" id="workflow-orchestration-platform">
+  <div class="topline"></div>
+  <div class="slide-inner">
+    <div class="genai-gateway-head">
+      <div class="eyebrow">The platform evolution</div>
+      <h2>Workflow Orchestration Platform</h2>
+      <p class="sub">Moving towards self-service</p>
+    </div>
+    <div class="content" style="padding-top:1.2vh">
+      <div class="progressive-stack" data-frame="0" style="height:64vh">
+        <img class="progressive-frame frame-visible frame-active" src="assets/orch-platform/0.png" alt="Workflow orchestration platform, step 0">
+        <img class="progressive-frame" src="assets/orch-platform/1.png" alt="Workflow orchestration platform, step 1">
+        <img class="progressive-frame" src="assets/orch-platform/2.png" alt="Workflow orchestration platform, step 2">
+        <img class="progressive-frame" src="assets/orch-platform/3.png" alt="Workflow orchestration platform, step 3">
+        <img class="progressive-frame" src="assets/orch-platform/4.png" alt="Workflow orchestration platform, step 4">
+      </div>
+    </div>
+    <div class="frame-dots" aria-hidden="true"><span class="frame-dot frame-active"></span><span class="frame-dot"></span><span class="frame-dot"></span><span class="frame-dot"></span><span class="frame-dot"></span></div>
+    <div class="notes"><p>Next, we evolved the single GenAI Orchestrator into a full-fledged orchestration platform to enable self-service.</p>
+      <p>Teams could build and deploy their workflows on a shared orchestrator instance or spin up a dedicated orchestrator instance when they needed better isolation and control.</p>
+    </div>
+  </div>
+</section>
+
+<section class="slide genai-gateway-slide" data-title="A Conceptual View" id="abstract-architecture">
+  <div class="topline"></div>
+  <div class="slide-inner">
+    <div class="genai-gateway-head">
+      <div class="eyebrow">The ecosystem today</div>
+      <h2>Recap: A conceptual view</h2>
+    </div>
+    <div class="content" style="padding-top:1.2vh;justify-content:center">
+      <div class="progressive-stack" data-frame="0" style="height:63vh">
+        <img class="progressive-frame frame-visible frame-active" src="assets/arch-concept/1.jpg" alt="Conceptual architecture, model access and safety">
+        <img class="progressive-frame" src="assets/arch-concept/2.jpg" alt="Conceptual architecture, agentic runtime and shared GenAI capabilities">
+        <img class="progressive-frame" src="assets/arch-concept/3.jpg" alt="Conceptual architecture, foundational systems">
+        <img class="progressive-frame" src="assets/arch-concept/4.jpg" alt="Conceptual architecture, product orchestration">
+        <img class="progressive-frame" src="assets/arch-concept/5.jpg" alt="Conceptual architecture, customer-facing products">
+        <img class="progressive-frame" src="assets/arch-concept/6.jpg" alt="Conceptual architecture, evaluation stack">
+      </div>
+    </div>
+    <div class="frame-dots" aria-hidden="true"><span class="frame-dot frame-active"></span><span class="frame-dot"></span><span class="frame-dot"></span><span class="frame-dot"></span><span class="frame-dot"></span><span class="frame-dot"></span></div>
+    <div class="notes"><p>This is a conceptual view of the ecosystem, rather than a deployment topology.</p>
+      <p>Customer-facing products sit above product orchestration, shared agentic capabilities, and governed model access. Evaluation and foundational systems support the stack across layers.</p></div>
+  </div>
+</section>
+
+<section class="slide dark" data-title="What we learned" id="what-we-learned">
+  <div class="slide-inner" style="justify-content:center;align-items:center;text-align:center">
+    <div class="eyebrow">The takeaways</div>
+    <h1>What we learned</h1>
+    <p class="sub" style="max-width:900px;margin-top:2.5vh;text-align:center;color:#b8c9de">Three lessons from building the ecosystem.</p>
+  </div>
+</section>
+
+<section class="slide learning-slide" data-title="Learning 1: Product first" id="learning-product-first">
+  <div class="topline"></div>
+  <div class="slide-inner" style="justify-content:center;align-items:center;text-align:center">
+    <div class="eyebrow">What we learned</div>
+    <h2>Start with the product, not the platform</h2>
+    <p class="sub" style="text-align:center;margin-top:2vh">Build first. Learn. Generalize what repeats.</p>
+    <div class="notes"><p>The ecosystem did not begin with a platform blueprint. Product work revealed which capabilities were worth generalizing. AI Trip Planner was the first learning vehicle, and later products made those capabilities reusable.</p></div>
+  </div>
+</section>
+
+<section class="slide learning-slide" data-title="Learning 2: Models need systems" id="learning-models-need-systems">
+  <div class="slide-inner" style="justify-content:center;align-items:center;text-align:center">
+    <div class="eyebrow">What we learned</div>
+    <h2>Limit autonomy to what you can validate</h2>
+    <p class="sub" style="text-align:center;margin-top:2vh;color:var(--muted)">Reliable AI needs bounded workflows</p>
+    <div class="notes"><p>The LLM was never the whole product. In the first Trip Planner, it translated free-form intent into structured calls to existing recommendation and UI systems. Later products showed that grounding quality and the availability of reliable domain context often determine the quality of the experience.</p></div>
+  </div>
+</section>
+
+<section class="slide learning-slide" data-title="Learning 3: Production is a loop" id="learning-production-loop">
+  <div class="slide-inner" style="justify-content:center;align-items:center;text-align:center">
+    <div class="eyebrow">What we learned</div>
+    <h2>Evaluate before and after launch</h2>
+    <p class="sub" style="text-align:center;margin-top:2vh;color:var(--muted)">Build evaluation into the product loop.</p>
+    <div class="notes"><p>Evaluation belongs in both the inner build loop and the outer production loop. Teams refine the system before launch, then monitor quality and drift after launch. That feedback shapes both the next product iteration and the next platform capability.</p></div>
+  </div>
+</section>
+
+<section class="slide" data-title="About me">
+  <div class="topline"></div>
+  <div class="slide-inner" style="justify-content:center">
+    <div style="display:flex;flex-direction:column;align-items:center;gap:1vh;margin:auto;text-align:center">
+      <img src="assets/headshot.jpg" alt="Jabez Eliezer Manuel"
+        style="width:clamp(130px,10vw,190px);height:clamp(130px,10vw,190px);border-radius:50%;object-fit:cover;box-shadow:0 12px 40px rgba(80,80,80,.28);margin-bottom:1vh">
+      <h2 style="font-size:clamp(30px,3.2vw,52px);margin-bottom:.15em"><span style="color:var(--blue)">Jabez Eliezer</span> Manuel</h2>
+      <p style="font-size:clamp(17px,1.5vw,26px);color:var(--muted);font-weight:700;margin:0">Principal Engineer @ Booking.com</p>
+
+      <div style="display:flex;justify-content:center;gap:clamp(36px,5vw,80px);margin-top:2vh">
+        <div style="display:flex;flex-direction:column;align-items:center;gap:.6vh">
+          <img src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=https://jazemzer.github.io/qcon-ai-evolution.pdf"
+            alt="Slides QR" style="width:clamp(110px,11vw,180px);height:clamp(110px,11vw,180px);border-radius:10px;border:3px solid var(--line);box-shadow:0 8px 24px rgba(0,0,0,.14)">
+          <a href="https://jazemzer.github.io/qcon-ai-evolution.pdf" target="_blank" rel="noopener noreferrer"
+            style="font-size:clamp(12px,1vw,16px);font-weight:700;color:var(--muted);text-decoration:underline;text-underline-offset:.25em">Download Slides PDF</a>
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:center;gap:.6vh">
+          <img src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=https://www.linkedin.com/in/jabez-eliezer-8971431b/"
+            alt="LinkedIn QR" style="width:clamp(110px,11vw,180px);height:clamp(110px,11vw,180px);border-radius:10px;border:3px solid var(--line);box-shadow:0 8px 24px rgba(0,0,0,.14)">
+          <a href="https://www.linkedin.com/in/jabez-eliezer-8971431b/" target="_blank" rel="noopener noreferrer"
+            style="font-size:clamp(12px,1vw,16px);font-weight:700;color:var(--muted);text-decoration:underline;text-underline-offset:.25em">LinkedIn</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+</div>
+<div class="controls"><button onclick="go(-1)" aria-label="Previous slide">←</button><button onclick="go(1)" aria-label="Next slide">→</button><button onclick="toggleNotes()" aria-label="Toggle speaker notes">N</button><button onclick="toggleOverview()" aria-label="Overview">O</button></div>
+<div class="progress" id="progress"></div><aside class="notes-panel" id="notesPanel"><h3>Speaker notes</h3><div id="notesText"></div></aside><div class="overview" id="overview"></div>
+<script>
+  const slides=[...document.querySelectorAll('.slide')]; let current=0;
+  slides.forEach((s,i)=>{const n=document.createElement('div');n.className='slide-no';n.textContent=`${String(i+1).padStart(2,'0')} / ${slides.length}`;s.querySelector('.slide-inner').appendChild(n)});
+  function framesFor(slide){return [...slide.querySelectorAll('.progressive-frame')]}
+  function setFrame(slide,index){const frames=framesFor(slide);if(!frames.length)return;const next=Math.max(0,Math.min(frames.length-1,index));frames.forEach((f,i)=>{f.classList.toggle('frame-visible',i<=next);f.classList.toggle('frame-active',i===next)});slide.querySelectorAll('.frame-dot').forEach((dot,i)=>dot.classList.toggle('frame-active',i===next));slide.querySelector('.progressive-stack').dataset.frame=String(next)}
+  function show(i,framePosition='start'){current=Math.max(0,Math.min(slides.length-1,i));slides.forEach((s,j)=>s.classList.toggle('active',j===current));const frames=framesFor(slides[current]);if(frames.length)setFrame(slides[current],framePosition==='end'?frames.length-1:0);document.getElementById('progress').style.width=`${(current+1)/slides.length*100}%`;location.hash=`${current+1}`;updateNotes()}
+  function go(d){const slide=slides[current],frames=framesFor(slide);if(frames.length){const frame=Number(slide.querySelector('.progressive-stack').dataset.frame||0);if(d>0&&frame<frames.length-1){setFrame(slide,frame+1);return}if(d<0&&frame>0){setFrame(slide,frame-1);return}}const target=Math.max(0,Math.min(slides.length-1,current+d));if(target!==current)show(target,d<0?'end':'start')}
+  function jumpFrame(d){const frames=framesFor(slides[current]);if(!frames.length){go(d);return}setFrame(slides[current],d>0?frames.length-1:0)}
+  function updateNotes(){const n=slides[current].querySelector('.notes');const content=n?n.innerHTML:'<p>No notes for this slide.</p>';document.getElementById('notesText').innerHTML=content}
+  function syncNotesLayout(){const panel=document.getElementById('notesPanel');const open=panel.classList.contains('show');const slideWidth=open?`${innerWidth-panel.getBoundingClientRect().width}px`:'';slides.forEach(slide=>{slide.style.width=slideWidth;slide.style.right=open?'0px':''})}
+  function toggleNotes(){const panel=document.getElementById('notesPanel');const open=panel.classList.toggle('show');document.getElementById('deck').classList.toggle('notes-open',open);syncNotesLayout();updateNotes()}
+  function toggleOverview(){document.getElementById('overview').classList.toggle('show')}
+  const ov=document.getElementById('overview'); slides.forEach((s,i)=>{const t=document.createElement('div');t.className='thumb';t.innerHTML=`<b>${String(i+1).padStart(2,'0')} · ${s.dataset.title||'Slide'}</b><span>${(s.querySelector('h1,h2')?.textContent||'').trim()}</span>`;t.onclick=()=>{show(i);toggleOverview()};ov.appendChild(t)});
+  document.addEventListener('keydown',e=>{if(e.shiftKey&&e.key==='ArrowRight'){e.preventDefault();jumpFrame(1)}else if(e.shiftKey&&e.key==='ArrowLeft'){e.preventDefault();jumpFrame(-1)}else if(['ArrowRight','ArrowDown','PageDown',' '].includes(e.key)){e.preventDefault();go(1)}else if(['ArrowLeft','ArrowUp','PageUp'].includes(e.key)){e.preventDefault();go(-1)}else if(e.altKey&&e.key.toLowerCase()==='n'){e.preventDefault();toggleNotes()}else if(e.key.toLowerCase()==='n')toggleNotes();else if(e.key.toLowerCase()==='o')toggleOverview();else if(e.key==='Home')show(0);else if(e.key==='End')show(slides.length-1)});
+  document.addEventListener('click',e=>{if(e.target.closest('a,button,.overview,.notes-panel'))return;if(e.clientX>innerWidth*.55)go(1);else go(-1)});
+  window.addEventListener('resize',syncNotesLayout);
+  const fromHash=parseInt(location.hash.slice(1),10);show(Number.isFinite(fromHash)?fromHash-1:0);
+</script>
+</body></html>
