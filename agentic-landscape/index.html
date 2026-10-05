@@ -338,7 +338,7 @@
     .deck.notes-open .slide-inner{width:100%;max-width:100%;padding-left:clamp(18px,4vw,66px);padding-right:clamp(18px,4vw,66px)}
     .deck.notes-open h1,.deck.notes-open h2,.deck.notes-open h3{max-width:100%;white-space:normal}
     .deck.notes-open img,.deck.notes-open svg,.deck.notes-open canvas{max-width:100%}
-    .notes-panel{display:none;position:fixed;right:0;top:0;bottom:0;width:var(--notes-width);z-index:40;background:#061a34;color:white;padding:clamp(24px,3vw,48px) clamp(20px,2.4vw,36px);box-shadow:-14px 0 38px rgba(0,0,0,.2);overflow:auto}.notes-panel.show{display:block}.notes-panel h3{color:white;font-size:clamp(22px,1.7vw,30px);margin-bottom:.8em}.notes-panel p{color:#c6d6e8;font-size:clamp(15px,1.05vw,18px);line-height:1.55}.notes-panel ul{margin:1em 0 0;padding-left:1.25em;color:#c6d6e8;font-size:clamp(15px,1.05vw,18px);line-height:1.45}.notes-panel li{padding-left:.25em;margin:.55em 0}.notes-panel strong{color:#88d1ff}.notes{display:none}
+    .notes-panel{display:none;position:fixed;right:0;top:0;bottom:0;width:var(--notes-width);z-index:40;background:#061a34;color:white;padding:clamp(24px,3vw,48px) clamp(20px,2.4vw,36px);box-shadow:-14px 0 38px rgba(0,0,0,.2);overflow:auto}.notes-panel.show{display:block}.notes-panel-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:.8em}.notes-panel h3{color:white;font-size:clamp(22px,1.7vw,30px);margin:0}.notes-popout{border:1px solid rgba(255,255,255,.28);border-radius:8px;background:rgba(255,255,255,.1);color:white;padding:7px 10px;font:600 12px/1 system-ui,sans-serif;cursor:pointer;white-space:nowrap}.notes-popout:hover{background:rgba(255,255,255,.2)}.notes-panel p{color:#c6d6e8;font-size:clamp(15px,1.05vw,18px);line-height:1.55}.notes-panel ul{margin:1em 0 0;padding-left:1.25em;color:#c6d6e8;font-size:clamp(15px,1.05vw,18px);line-height:1.45}.notes-panel li{padding-left:.25em;margin:.55em 0}.notes-panel strong{color:#88d1ff}.notes{display:none}
     #started-building-agents .slide-inner,#democratizing-custom-agents .slide-inner{align-items:center;text-align:center}
     #started-building-agents .slide-inner>div:first-child{width:100%}
     #started-building-agents h1,#democratizing-custom-agents h1{text-align:center}
@@ -346,9 +346,13 @@
     #code-first-iteration .slide-inner{align-items:center;text-align:center}
     #evaluations-section .slide-inner{align-items:center;text-align:center}
     #workflow-dsl-reflection .slide-inner{align-items:center;text-align:center}
+    #ml-foundation .ml-foundation-header .eyebrow{text-align:center}
+    #accuracy-became-a-priority h1{max-width:100%;white-space:normal}
+    .title-pdf-link{display:inline-block;margin-top:2.4vh;color:#d0e8ff;font-size:clamp(11px,.85vw,15px);font-weight:600;text-decoration:underline;text-underline-offset:.25em;opacity:.9}
     .overview{display:none;position:fixed;inset:0;z-index:50;background:#07182e;padding:24px;overflow:auto;grid-template-columns:repeat(4,1fr);gap:16px}.overview.show{display:grid}.thumb{height:180px;background:white;border-radius:12px;padding:14px;cursor:pointer;overflow:hidden;color:var(--ink)}.thumb b{font-family:Manrope}.thumb span{display:block;color:var(--muted);font-size:12px;margin-top:8px}
 @media(max-width:800px){:root{--notes-width:min(100vw,360px)}.deck.notes-open{width:calc(100% - var(--notes-width))}.slide-inner{padding:4vh 4vw 6vh}.g3,.g4,.evalrow{grid-template-columns:repeat(2,1fr)}.flow{flex-wrap:wrap}.arrow{display:none}.layer{grid-template-columns:120px 1fr}.timeline{grid-template-columns:repeat(2,1fr)}.timeline:before{display:none}.content{overflow:auto}.pressure{grid-template-columns:1fr}.pressure .col{display:grid;grid-template-columns:1fr 1fr}.registry-layout{grid-template-columns:1fr;gap:2vh}.registry-copy{max-width:none}.registry-body{min-height:42vh}.registry-tabs{overflow:hidden}.fine-tuning-flow{grid-template-columns:1fr}.fine-tuning-arrow{display:none}.fine-tuning-step,.fine-tuning-step.service{min-height:110px}.agent-types{grid-template-columns:repeat(2,1fr)}.agent-type{min-height:270px}.agent-capability-grid{grid-template-columns:1fr}.agent-capability{min-height:150px;border-right:0!important;border-bottom:1px solid var(--line)!important}.agent-serving-grid,.shared-platform-needs{grid-template-columns:1fr;margin-top:3vh}.agent-serving-point,.agent-serving-point:first-child{padding:1.6vh 0}.agent-serving-point+ .agent-serving-point{border-left:0;border-top:1px solid rgba(255,255,255,.3)}.mcp-protocol-map{grid-template-columns:1fr}.mcp-connection{transform:rotate(90deg)}.mcp-boundary{min-height:160px}.mcp-primitives{display:grid;grid-template-columns:repeat(3,1fr)}.overview.show{grid-template-columns:repeat(2,1fr)}}
-    @media print{html,body{overflow:visible;background:white}.deck{height:auto}.slide{position:relative;display:flex!important;width:13.333in;height:7.5in;page-break-after:always}.controls,.progress,.notes-panel,.overview{display:none!important}.progressive-frame{opacity:0!important}.progressive-frame:last-child{opacity:1!important}}
+@media(max-width:800px){.tiger-team-slide .eyebrow,.tiger-team-slide h2{transform:translateY(10vh)}.tiger-team-slide .content{flex:1;min-height:0;margin-top:2vh;overflow:visible}}
+    @media print{html,body{overflow:visible;background:white;-webkit-print-color-adjust:exact;print-color-adjust:exact}.deck{height:auto}.slide{position:relative;display:flex!important;width:13.333in;height:7.5in;page-break-after:always;animation:none!important;opacity:1!important;transform:none!important}.controls,.progress,.notes-panel,.overview{display:none!important}.progressive-frame{opacity:0!important}.progressive-frame:last-child{opacity:1!important}}
   </style>
 </head>
 <body>
@@ -359,6 +363,7 @@
     <div style="text-align:center;max-width:1100px;margin:auto">
       <h1 style="font-size:clamp(52px,6.4vw,96px);line-height:1.02;color:white">Booking.com's <br><span style="color:#ffd76a">Agentic Ecosystem</span></h1>
       <p class="sub" style="color:#d0e8ff;margin:2.2vh auto 0;text-align:center;font-size:clamp(22px,2.2vw,36px)">A builder's perspective on the journey</p>
+      <a class="title-pdf-link" href="agentic-landscape.pdf" target="_blank" rel="noopener noreferrer">Download slides as PDF</a>
     </div>
     <div class="notes"><p>This talk recaps the evolution of GenAI ecosystem at Booking since 2023.</p></div>
   </div>
@@ -738,7 +743,7 @@ This layer connected the Genai experience to existing Booking.com capabilities
 <section class="slide dark" data-title="Accuracy became a priority" id="accuracy-became-a-priority">
   <div class="slide-inner" style="justify-content:center;align-items:center;text-align:center">
     <div class="eyebrow">The next challenge</div>
-    <h1 style="text-align:center;white-space:nowrap"><span style="color:var(--gold)">Model accuracy</span> became a priority.</h1>
+    <h1 style="text-align:center"><span style="color:var(--gold)">Model accuracy</span> became a priority.</h1>
     <p class="sub" style="max-width:900px;margin-top:2.5vh;text-align:center;color:#b8c9de">As the product matured, accuracy became an important concern.</p>
     <div class="notes"><p>As the product matured, model accuracy became an important concern.</p></div>
   </div>
@@ -1361,13 +1366,13 @@ The AI Registry acts as a catalog for our AI assets, tracking things like versio
 
       <div style="display:flex;justify-content:center;gap:clamp(36px,5vw,80px);margin-top:2vh">
         <div style="display:flex;flex-direction:column;align-items:center;gap:.6vh">
-          <img src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=https://jazemzer.github.io/qcon-ai-evolution.pdf"
+          <img src="assets/qr-slides.png"
             alt="Slides QR" style="width:clamp(110px,11vw,180px);height:clamp(110px,11vw,180px);border-radius:10px;border:3px solid var(--line);box-shadow:0 8px 24px rgba(0,0,0,.14)">
-          <a href="https://jazemzer.github.io/qcon-ai-evolution.pdf" target="_blank" rel="noopener noreferrer"
-            style="font-size:clamp(12px,1vw,16px);font-weight:700;color:var(--muted);text-decoration:underline;text-underline-offset:.25em">Download Slides PDF</a>
+          <a href="https://jazemzer.github.io/agentic-landscape/index.html" target="_blank" rel="noopener noreferrer"
+            style="font-size:clamp(12px,1vw,16px);font-weight:700;color:var(--muted);text-decoration:underline;text-underline-offset:.25em">Browse Slides</a>
         </div>
         <div style="display:flex;flex-direction:column;align-items:center;gap:.6vh">
-          <img src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=https://www.linkedin.com/in/jabez-eliezer-8971431b/"
+          <img src="assets/qr-linkedin.png"
             alt="LinkedIn QR" style="width:clamp(110px,11vw,180px);height:clamp(110px,11vw,180px);border-radius:10px;border:3px solid var(--line);box-shadow:0 8px 24px rgba(0,0,0,.14)">
           <a href="https://www.linkedin.com/in/jabez-eliezer-8971431b/" target="_blank" rel="noopener noreferrer"
             style="font-size:clamp(12px,1vw,16px);font-weight:700;color:var(--muted);text-decoration:underline;text-underline-offset:.25em">LinkedIn</a>
@@ -1379,21 +1384,23 @@ The AI Registry acts as a catalog for our AI assets, tracking things like versio
 
 </div>
 <div class="controls"><button onclick="go(-1)" aria-label="Previous slide">←</button><button onclick="go(1)" aria-label="Next slide">→</button><button onclick="toggleNotes()" aria-label="Toggle speaker notes">N</button><button onclick="toggleOverview()" aria-label="Overview">O</button></div>
-<div class="progress" id="progress"></div><aside class="notes-panel" id="notesPanel"><h3>Speaker notes</h3><div id="notesText"></div></aside><div class="overview" id="overview"></div>
+<div class="progress" id="progress"></div><aside class="notes-panel" id="notesPanel"><div class="notes-panel-head"><h3>Speaker notes</h3><button class="notes-popout" onclick="popOutNotes()" aria-label="Pop out speaker notes">Pop out ↗</button></div><div id="notesText"></div></aside><div class="overview" id="overview"></div>
 <script>
-  const slides=[...document.querySelectorAll('.slide')]; let current=0;
+  const slides=[...document.querySelectorAll('.slide')]; let current=0; let notesWindow=null;
   slides.forEach((s,i)=>{const n=document.createElement('div');n.className='slide-no';n.textContent=`${String(i+1).padStart(2,'0')} / ${slides.length}`;s.querySelector('.slide-inner').appendChild(n)});
   function framesFor(slide){return [...slide.querySelectorAll('.progressive-frame')]}
   function setFrame(slide,index){const frames=framesFor(slide);if(!frames.length)return;const next=Math.max(0,Math.min(frames.length-1,index));frames.forEach((f,i)=>{f.classList.toggle('frame-visible',i<=next);f.classList.toggle('frame-active',i===next)});slide.querySelectorAll('.frame-dot').forEach((dot,i)=>dot.classList.toggle('frame-active',i===next));slide.querySelector('.progressive-stack').dataset.frame=String(next)}
   function show(i,framePosition='start'){current=Math.max(0,Math.min(slides.length-1,i));slides.forEach((s,j)=>s.classList.toggle('active',j===current));const frames=framesFor(slides[current]);if(frames.length)setFrame(slides[current],framePosition==='end'?frames.length-1:0);document.getElementById('progress').style.width=`${(current+1)/slides.length*100}%`;location.hash=`${current+1}`;updateNotes()}
   function go(d){const slide=slides[current],frames=framesFor(slide);if(frames.length){const frame=Number(slide.querySelector('.progressive-stack').dataset.frame||0);if(d>0&&frame<frames.length-1){setFrame(slide,frame+1);return}if(d<0&&frame>0){setFrame(slide,frame-1);return}}const target=Math.max(0,Math.min(slides.length-1,current+d));if(target!==current)show(target,d<0?'end':'start')}
   function jumpFrame(d){const frames=framesFor(slides[current]);if(!frames.length){go(d);return}setFrame(slides[current],d>0?frames.length-1:0)}
-  function updateNotes(){const n=slides[current].querySelector('.notes');const content=n?n.innerHTML:'<p>No notes for this slide.</p>';document.getElementById('notesText').innerHTML=content}
+  function updateNotes(){const n=slides[current].querySelector('.notes');const content=n?n.innerHTML:'<p>No notes for this slide.</p>';document.getElementById('notesText').innerHTML=content;updatePoppedNotes(content)}
+  function updatePoppedNotes(content){if(!notesWindow||notesWindow.closed)return;try{const slideLabel=notesWindow.document.getElementById('popupSlide'),notes=notesWindow.document.getElementById('popupNotesText');if(!slideLabel||!notes)return;slideLabel.textContent=`${String(current+1).padStart(2,'0')} / ${slides.length} · ${slides[current].dataset.title||'Slide'}`;notes.innerHTML=content}catch(error){notesWindow=null}}
+  function popOutNotes(){const panel=document.getElementById('notesPanel');if(panel.classList.contains('show')){panel.classList.remove('show');document.getElementById('deck').classList.remove('notes-open');syncNotesLayout()}if(!notesWindow||notesWindow.closed){notesWindow=window.open('','speakerNotes','width=520,height=820,resizable=yes,scrollbars=yes');if(!notesWindow)return;notesWindow.document.open();notesWindow.document.write(`<!doctype html><html><head><title>Speaker notes</title><style>html,body{margin:0;min-height:100%;background:#061a34;color:#c6d6e8;font:16px/1.5 system-ui,-apple-system,sans-serif}body{padding:28px}header{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:22px}h1{margin:0;color:white;font-size:20px}h2{margin:0;color:#88d1ff;font-size:14px;font-weight:600}p{margin:0 0 16px}strong{color:#88d1ff}ul{padding-left:22px}li{margin:8px 0}</style></head><body><header><h1>Speaker notes</h1><h2 id="popupSlide"></h2></header><div id="popupNotesText"></div></body></html>`);notesWindow.document.close();notesWindow.addEventListener('beforeunload',()=>{notesWindow=null})}updatePoppedNotes((slides[current].querySelector('.notes')||{}).innerHTML||'<p>No notes for this slide.</p>');notesWindow.focus()}
   function syncNotesLayout(){const panel=document.getElementById('notesPanel');const open=panel.classList.contains('show');const slideWidth=open?`${innerWidth-panel.getBoundingClientRect().width}px`:'';slides.forEach(slide=>{slide.style.width=slideWidth;slide.style.right=open?'0px':''})}
   function toggleNotes(){const panel=document.getElementById('notesPanel');const open=panel.classList.toggle('show');document.getElementById('deck').classList.toggle('notes-open',open);syncNotesLayout();updateNotes()}
   function toggleOverview(){document.getElementById('overview').classList.toggle('show')}
   const ov=document.getElementById('overview'); slides.forEach((s,i)=>{const t=document.createElement('div');t.className='thumb';t.innerHTML=`<b>${String(i+1).padStart(2,'0')} · ${s.dataset.title||'Slide'}</b><span>${(s.querySelector('h1,h2')?.textContent||'').trim()}</span>`;t.onclick=()=>{show(i);toggleOverview()};ov.appendChild(t)});
-  document.addEventListener('keydown',e=>{if(e.shiftKey&&e.key==='ArrowRight'){e.preventDefault();jumpFrame(1)}else if(e.shiftKey&&e.key==='ArrowLeft'){e.preventDefault();jumpFrame(-1)}else if(['ArrowRight','ArrowDown','PageDown',' '].includes(e.key)){e.preventDefault();go(1)}else if(['ArrowLeft','ArrowUp','PageUp'].includes(e.key)){e.preventDefault();go(-1)}else if(e.altKey&&e.key.toLowerCase()==='n'){e.preventDefault();toggleNotes()}else if(e.key.toLowerCase()==='n')toggleNotes();else if(e.key.toLowerCase()==='o')toggleOverview();else if(e.key==='Home')show(0);else if(e.key==='End')show(slides.length-1)});
+  document.addEventListener('keydown',e=>{if(e.shiftKey&&e.key==='ArrowRight'){e.preventDefault();jumpFrame(1)}else if(e.shiftKey&&e.key==='ArrowLeft'){e.preventDefault();jumpFrame(-1)}else if(['ArrowRight','ArrowDown','PageDown',' '].includes(e.key)){e.preventDefault();go(1)}else if(['ArrowLeft','ArrowUp','PageUp'].includes(e.key)){e.preventDefault();go(-1)}else if(e.altKey&&e.key.toLowerCase()==='n'){e.preventDefault();toggleNotes()}else if(e.key.toLowerCase()==='n')toggleNotes();else if(e.key.toLowerCase()==='p')popOutNotes();else if(e.key.toLowerCase()==='o')toggleOverview();else if(e.key==='Home')show(0);else if(e.key==='End')show(slides.length-1)});
   document.addEventListener('click',e=>{if(e.target.closest('a,button,.overview,.notes-panel'))return;if(e.clientX>innerWidth*.55)go(1);else go(-1)});
   window.addEventListener('resize',syncNotesLayout);
   const fromHash=parseInt(location.hash.slice(1),10);show(Number.isFinite(fromHash)?fromHash-1:0);
