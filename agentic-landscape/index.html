@@ -365,7 +365,16 @@
       <p class="sub" style="color:#d0e8ff;margin:2.2vh auto 0;text-align:center;font-size:clamp(22px,2.2vw,36px)">A builder's perspective on the journey</p>
       <a class="title-pdf-link" href="agentic-landscape.pdf" target="_blank" rel="noopener noreferrer">Download slides as PDF</a>
     </div>
-    <div class="notes"><p>This talk recaps the evolution of GenAI ecosystem at Booking since 2023.</p></div>
+    <div class="notes">
+      <p>This talk recaps the evolution of GenAI ecosystem at Booking since 2023.</p>
+      <p><strong>Navigation:</strong> Use ← / → arrow keys
+        <br>
+        Many slides have transitions/fragments that reveal content step-by-step. Use Shift + ← / → to skip transitions.
+        <br>
+        <br>
+        <strong>Speaker Notes:</strong> N toggles speaker notes. P opens notes in a separate window. O opens the slide overview 
+      </p>
+    </div>
   </div>
 </section>
 
@@ -405,7 +414,7 @@
     <h2 style="font-size:clamp(44px,5.6vw,84px)">Two industry patterns</h2>
     <div class="chatgpt-patterns-grid">
       <article class="chatgpt-pattern">
-        <h3>Extend ChatGPT with Plugins</h3>
+        <h3>Extend ChatGPT with plugins</h3>
       </article>
       <article class="chatgpt-pattern">
         <h3>Embed ChatGPT in a website</h3>
@@ -830,11 +839,43 @@ The AI Registry acts as a catalog for our AI assets, tracking things like versio
   </div>
 </section>
 
+
+<section class="slide genai-platform-slide" data-title="GenAI use cases" id="genai-platform">
+  <div class="topline"></div>
+  <div class="slide-inner">
+    <div class="eyebrow">The portfolio expands</div>
+    <h2>GenAI use case explosion</h2>
+    <div class="content" style="padding:1vh 0">
+      <div class="progressive-stack" data-frame="0">
+        <img class="progressive-frame frame-visible frame-active" src="assets/genai-platform/genai1.png" alt="Trip Planning GenAI use case">
+        <img class="progressive-frame" src="assets/genai-platform/genai2.png" alt="Trip Planning and Smart Filters GenAI use cases">
+        <img class="progressive-frame" src="assets/genai-platform/genai3.png" alt="Trip Planning, Smart Filters and Review Summaries GenAI use cases">
+        <img class="progressive-frame" src="assets/genai-platform/genai4.png" alt="GenAI use cases including Property Q and A">
+        <img class="progressive-frame" src="assets/genai-platform/genai5.png" alt="GenAI use cases including Post-Booking Support">
+        <img class="progressive-frame" src="assets/genai-platform/genai6.png" alt="Complete portfolio of GenAI use cases">
+      </div>
+    </div>
+    <div class="frame-dots" aria-hidden="true"><span class="frame-dot frame-active"></span><span class="frame-dot"></span><span class="frame-dot"></span><span class="frame-dot"></span><span class="frame-dot"></span><span class="frame-dot"></span></div>
+    <div class="source">Sources: <a href="https://news.booking.com/bookingcom-launches-new-ai-trip-planner-to-enhance-travel-planning-experience/" target="_blank" rel="noopener noreferrer">AI Trip Planner</a>; <a href="https://news.booking.com/bookingcom-enhances-travel-planning-with-new-ai-powered-features--for-easier-smarter-decisions/" target="_blank" rel="noopener noreferrer">AI-powered features</a>; <a href="https://news.booking.com/bookingcom-debuts-agentic-ai-innovations-adding-to-its-robust-suite-of-genai-tools-for-customers/" target="_blank" rel="noopener noreferrer">Agentic AI innovations</a>; <a href="https://openai.com/index/booking-com/" target="_blank" rel="noopener noreferrer">Booking.com and OpenAI</a></div>
+    <div class="notes"><p>
+      We also started to see a surge in the number of GenAI use cases. Some of the public facing ones are
+    </p>
+      <ul>
+        <li><strong>AI Trip Planner:</strong> Helps travellers describe their trip in natural language and discover relevant destinations and properties.</li>
+        <li><strong>Smart Filters:</strong> Help travellers narrow down properties by converting natural-language descriptions into the most relevant filters.</li>
+        <li><strong>Review Summaries:</strong> Help travellers quickly understand what guests liked and disliked about a property by summarizing large volumes of reviews.</li>
+        <li><strong>Property Q&amp;A:</strong> Let travellers ask natural-language questions about a property and get answers grounded in its available information.</li>
+        <li><strong>Trip Support:</strong> Provides conversational support throughout the trip, helping travellers resolve post-booking questions and issues.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
 <section class="slide blue" data-title="We started building agents" id="started-building-agents">
   <div class="slide-inner" style="justify-content:center">
     <div style="max-width:1180px">
       <div class="eyebrow">The next abstraction</div>
-      <h1>We started building <span style="color:var(--gold)">agents</span></h1>
+      <h1>We started building <span style="color:var(--gold)">agents.</span></h1>
     </div>
     <div class="notes"><p>Once we had these foundational systems were in place, we started building agents. That introduced a new architectural question: how should the model use tools, and who should control the loop?</p></div>
   </div>
@@ -934,42 +975,12 @@ The AI Registry acts as a catalog for our AI assets, tracking things like versio
   </div>
 </section>
 
-<section class="slide genai-platform-slide" data-title="GenAI use cases" id="genai-platform">
-  <div class="topline"></div>
-  <div class="slide-inner">
-    <div class="eyebrow">The portfolio expands</div>
-    <h2>GenAI use cases</h2>
-    <div class="content" style="padding:1vh 0">
-      <div class="progressive-stack" data-frame="0">
-        <img class="progressive-frame frame-visible frame-active" src="assets/genai-platform/genai1.png" alt="Trip Planning GenAI use case">
-        <img class="progressive-frame" src="assets/genai-platform/genai2.png" alt="Trip Planning and Smart Filters GenAI use cases">
-        <img class="progressive-frame" src="assets/genai-platform/genai3.png" alt="Trip Planning, Smart Filters and Review Summaries GenAI use cases">
-        <img class="progressive-frame" src="assets/genai-platform/genai4.png" alt="GenAI use cases including Property Q and A">
-        <img class="progressive-frame" src="assets/genai-platform/genai5.png" alt="GenAI use cases including Post-Booking Support">
-        <img class="progressive-frame" src="assets/genai-platform/genai6.png" alt="Complete portfolio of GenAI use cases">
-      </div>
-    </div>
-    <div class="frame-dots" aria-hidden="true"><span class="frame-dot frame-active"></span><span class="frame-dot"></span><span class="frame-dot"></span><span class="frame-dot"></span><span class="frame-dot"></span><span class="frame-dot"></span></div>
-    <div class="source">Sources: <a href="https://news.booking.com/bookingcom-launches-new-ai-trip-planner-to-enhance-travel-planning-experience/" target="_blank" rel="noopener noreferrer">AI Trip Planner</a>; <a href="https://news.booking.com/bookingcom-enhances-travel-planning-with-new-ai-powered-features--for-easier-smarter-decisions/" target="_blank" rel="noopener noreferrer">AI-powered features</a>; <a href="https://news.booking.com/bookingcom-debuts-agentic-ai-innovations-adding-to-its-robust-suite-of-genai-tools-for-customers/" target="_blank" rel="noopener noreferrer">Agentic AI innovations</a>; <a href="https://openai.com/index/booking-com/" target="_blank" rel="noopener noreferrer">Booking.com and OpenAI</a></div>
-    <div class="notes"><p>
-      We also started to see a surge in the number of GenAI use cases. Some of the public facing ones are
-    </p>
-      <ul>
-        <li><strong>AI Trip Planner:</strong> Helps travellers describe their trip in natural language and discover relevant destinations and properties.</li>
-        <li><strong>Smart Filters:</strong> Help travellers narrow down properties by converting natural-language descriptions into the most relevant filters.</li>
-        <li><strong>Review Summaries:</strong> Help travellers quickly understand what guests liked and disliked about a property by summarizing large volumes of reviews.</li>
-        <li><strong>Property Q&amp;A:</strong> Let travellers ask natural-language questions about a property and get answers grounded in its available information.</li>
-        <li><strong>Trip Support:</strong> Provides conversational support throughout the trip, helping travellers resolve post-booking questions and issues.</li>
-      </ul>
-    </div>
-  </div>
-</section>
-
 <section class="slide infra-chip-slide" data-title="Repeated infrastructure problems" id="repeated-agent-infrastructure">
   <div class="slide-inner">
     <div class="eyebrow">The platform need</div>
-    <h2>We wanted <span style="color: var(--bright);">deep customization</span> <br> without  <span style="color:var(--coral)">redundant effort</span>.</h2>
-    <div class="notes"><p>For deep customization, we did not want teams to repeatedly solve packaging, scaling, versioning, authorisation, observability, etc on their own.</p>
+    <h2>We wanted to allow <span style="color: var(--bright);">deep customization</span> <br> without  <span style="color:var(--coral)">redundant effort</span>.</h2>
+    <div class="notes">
+      <p>For deep customization, we did not want teams to repeatedly solve packaging, scaling, versioning, authorisation, observability, etc on their own.</p>
       <p>We also needed one consistent way for the rest of the organisation to discover and invoke every deployed agent.</p></div>
   </div>
 </section>
@@ -1059,7 +1070,7 @@ The AI Registry acts as a catalog for our AI assets, tracking things like versio
   <div class="slide-inner" style="justify-content:center;align-items:center;text-align:center">
     <div class="genai-gateway-head" style="width:100%;text-align:center">
       <div class="eyebrow">LLM as a judge</div>
-      <h2 style="margin-inline:auto;text-align:center">Using <span style="color:var(--gold)">an LLM to judge</span> the output of another LLM</h2>
+      <h2 style="margin-inline:auto;text-align:center">Using <span style="color:var(--coral)">an LLM to judge</span> the output of another LLM</h2>
     </div>
     <div class="source">Reference: <a href="https://www.confident-ai.com/blog/why-llm-as-a-judge-is-the-best-llm-evaluation-method" target="_blank" rel="noopener noreferrer">Confident AI — Why LLM-as-a-Judge Is the Best LLM Evaluation Method</a></div>
     <div class="notes"><p>Traditional software tests are not sufficient because agent responses are open-ended and there is no single correct answer.</p><p>So, we used one LLM to evaluate the output of another LLM.</p></div>
@@ -1224,7 +1235,7 @@ The AI Registry acts as a catalog for our AI assets, tracking things like versio
 <section class="slide dark" data-title="It worked, but it was not perfect" id="workflow-dsl-reflection">
   <div class="slide-inner" style="justify-content:center">
     <div class="eyebrow">Orchestration as Configuration</div>
-    <h2 style="max-width:1050px">It worked, but it was <span style="color:var(--coral)">not perfect</span></h2>
+    <h2 style="max-width:1050px">It worked, but it was <span style="color:var(--coral)">not perfect.</span></h2>
     <ul style="width:100%;max-width:900px;margin:2vh 0 0;padding-left:1.2em;text-align:left;font-size:clamp(20px,1.8vw,30px);line-height:1.4;color:#b8c9de">
       <li>Weak typing</li>
       <li>Unsafe I/O mappings</li>
@@ -1238,7 +1249,7 @@ The AI Registry acts as a catalog for our AI assets, tracking things like versio
 <section class="slide dark" data-title="Code-first iteration" id="code-first-iteration">
   <div class="slide-inner" style="justify-content:center">
     <div class="eyebrow">The next iteration</div>
-    <h2 style="max-width:1120px">So, we optimized it further with <br> a <span style="color: var(--gold)">code-first</span> approach</h2>
+    <h2 style="max-width:1120px">So, we optimized it further with <br> a <span style="color: var(--gold)">code-first</span> approach.</h2>
   </div>
 </section>
 
@@ -1301,7 +1312,7 @@ The AI Registry acts as a catalog for our AI assets, tracking things like versio
   <div class="slide-inner">
     <div class="genai-gateway-head">
       <div class="eyebrow">The ecosystem today</div>
-      <h2>Recap: A conceptual view</h2>
+      <h2>A high-level recap</h2>
     </div>
     <div class="content" style="padding-top:1.2vh;justify-content:center">
       <div class="progressive-stack" data-frame="0" style="height:63vh">
@@ -1314,8 +1325,8 @@ The AI Registry acts as a catalog for our AI assets, tracking things like versio
       </div>
     </div>
     <div class="frame-dots" aria-hidden="true"><span class="frame-dot frame-active"></span><span class="frame-dot"></span><span class="frame-dot"></span><span class="frame-dot"></span><span class="frame-dot"></span><span class="frame-dot"></span></div>
-    <div class="notes"><p>This is a conceptual view of the ecosystem, rather than a deployment topology.</p>
-      <p>Customer-facing products sit above product orchestration, shared agentic capabilities, and governed model access. Evaluation and foundational systems support the stack across layers.</p></div>
+    <div class="notes"><p>This is a conceptual view of the ecosystem.</p>
+    </div>
   </div>
 </section>
 
@@ -1333,24 +1344,29 @@ The AI Registry acts as a catalog for our AI assets, tracking things like versio
     <div class="eyebrow">What we learned</div>
     <h2>Start with the product, not the platform</h2>
     <p class="sub" style="text-align:center;margin-top:2vh">Build first. Learn. Generalize what repeats.</p>
-    <div class="notes"><p>The ecosystem did not begin with a platform blueprint. Product work revealed which capabilities were worth generalizing. AI Trip Planner was the first learning vehicle, and later products made those capabilities reusable.</p></div>
+    <div class="notes">
+      <p>The ecosystem did not begin with a platform blueprint. Product work revealed which capabilities were worth generalizing. AI Trip Planner was the first learning vehicle, and later products made those capabilities reusable.</p>
+      <p>Build something valuable, learn where the friction is, and generalize only what proves reusable.</p>
+    </div>
   </div>
 </section>
 
 <section class="slide learning-slide" data-title="Learning 2: Models need systems" id="learning-models-need-systems">
   <div class="slide-inner" style="justify-content:center;align-items:center;text-align:center">
     <div class="eyebrow">What we learned</div>
-    <h2>Limit autonomy to what you can validate</h2>
-    <p class="sub" style="text-align:center;margin-top:2vh;color:var(--muted)">Reliable AI needs bounded workflows</p>
-    <div class="notes"><p>The LLM was never the whole product. In the first Trip Planner, it translated free-form intent into structured calls to existing recommendation and UI systems. Later products showed that grounding quality and the availability of reliable domain context often determine the quality of the experience.</p></div>
+    <h2>Reliable AI needs bounded workflows</h2>
+    <p class="sub" style="text-align:center;margin-top:2vh;color:var(--muted)">Limit autonomy to what you can validate</p>
+    <div class="notes"><p>The LLM was never the whole product. In the first Trip Planner, it translated free-form intent into structured calls to existing recommendation and UI systems. </p>
+      <p>The right solution is often a bounded, evaluated workflow - not an unconstrained autonomous agent</p>
+    </div>
   </div>
 </section>
 
 <section class="slide learning-slide" data-title="Learning 3: Production is a loop" id="learning-production-loop">
   <div class="slide-inner" style="justify-content:center;align-items:center;text-align:center">
     <div class="eyebrow">What we learned</div>
-    <h2>Evaluate before and after launch</h2>
-    <p class="sub" style="text-align:center;margin-top:2vh;color:var(--muted)">Build evaluation into the product loop.</p>
+    <h2>Build evaluation into the product loop</h2>
+    <p class="sub" style="text-align:center;margin-top:2vh;color:var(--muted)">Evaluate before and after launch.</p>
     <div class="notes"><p>Evaluation belongs in both the inner build loop and the outer production loop. Teams refine the system before launch, then monitor quality and drift after launch. That feedback shapes both the next product iteration and the next platform capability.</p></div>
   </div>
 </section>
