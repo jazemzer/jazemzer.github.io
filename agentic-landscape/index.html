@@ -428,8 +428,8 @@
   <div class="topline"></div>
   <div class="slide-inner" style="justify-content:center;align-items:center;text-align:center">
     <div class="eyebrow" style="text-align:center">Our product ambition</div>
-    <h2 style="width:100%;max-width:none;text-align:center;font-size:clamp(44px,5.6vw,84px);white-space:nowrap">A <span style="color: var(--bright);">deeper experience </span>beyond chat</h2>
-    <p class="sub" style="max-width:950px;margin-top:2.5vh;text-align:center">Travel-specific, personalized, and grounded in Booking.com content.</p>
+    <h2 style="width:100%;max-width:none;text-align:center;font-size:clamp(44px,5.6vw,84px);white-space:nowrap">A <span style="color: var(--bright);">deeper experience </span>beyond chat.</h2>
+    <p class="sub" style="max-width:950px;margin-top:2.5vh;text-align:center">Travel-specific and personalized using rich Booking.com content.</p>
     <div class="notes">
       <p>But we wanted to offer travellers something more useful than a general-purpose chat experience</p>
       <p>Something that is optimized & personalized for travel-domain using rich content and user context already available to Booking.com.</p></div>
@@ -441,8 +441,9 @@
     <div class="eyebrow">The first use case</div>
     <h1 style="max-width:1320px">We picked <span style="color: var(--gold);">Discovery.</span></h1>
     <p class="sub" style="max-width:980px;margin-top:2.5vh;text-align:center;color:#d0e8ff">A low-regret surface with high strategic upside and customer value.</p>
-    <div class="notes"><p>We chose the discovery use case to trial GenAI because it offered a low-regret entry point with high strategic upside and clear customer value.</p>
-      <p>That gave us a practical way to learn in production with a real customer-facing GenAI product.</p></div>
+    <div class="notes">
+      <p>Building a customer-facing product on an emerging technology carried risks and we wanted to minimize that.</p>
+      <p>We chose the discovery use case to trial GenAI because it offered clear customer value, high strategic upside with enough room to safely learn in production.</p>
   </div>
 </section>
 
@@ -496,6 +497,7 @@
     <div class="frame-dots" aria-hidden="true"><span class="frame-dot frame-active"></span><span class="frame-dot"></span><span class="frame-dot"></span><span class="frame-dot"></span><span class="frame-dot"></span><span class="frame-dot"></span></div>
     <div class="source">Sources: <a href="https://news.booking.com/bookingcom-launches-new-ai-trip-planner-to-enhance-travel-planning-experience/">Booking.com newsroom</a></div>
     <div class="notes"><p>AI Trip Planner is basically a chatbot that you can launch from various entrypoints (pages/screens).</p>
+      <p>It connected conversational discovery with Booking.com's existing recommendation platform</p>
       <p>You can have a conversation with it (describe the trip and state your preferences) and get back visual recommendations as seen here for destinations / properties. </p>
       <p>From there, you could get into the conventional booking funnel.</p>
     </div>
@@ -540,6 +542,7 @@
     <div class="ml-platforms-header" style="transform:translateY(-2.5vh)">
       <div class="eyebrow">The foundation</div>
       <h2>And, we had mature ML Platforms</h2>
+      <p class="sub">Experience building and operating ML at scale</p>
     </div>
     <div class="content" style="flex:0;padding-top:0;justify-content:center">
       <img src="assets/ml-platform.png" alt="Existing domain-specific ML platforms for content intelligence, ranking, recommendations and value intelligence" style="display:block;width:100%;height:auto;max-height:48vh;object-fit:contain">
@@ -640,27 +643,6 @@ The Recommendation Platform returned the cards used in the carousels we saw earl
   </div>
 </section>
 
-
-<section class="slide tiger-team-slide" data-title="A temporary tiger team" id="aitp-eight-weeks">
-  <div class="topline"></div>
-  <div class="slide-inner">
-    <div class="eyebrow">The operating model</div>
-    <h2>A temporary <span style="color:var(--coral)">tiger team</span></h2>
-    <div class="content">
-      <div class="tiger-team-stat">
-        <div class="tiger-team-number">8</div>
-        <div class="tiger-team-label">weeks</div>
-      </div>
-    </div>
-    <div class="source">Source: <a href="https://medium.com/booking-product/8-weeks-to-innovation-lessons-from-building-booking-coms-ai-trip-planner-94adbf138748" target="_blank" rel="noopener noreferrer">Booking Product — “8 Weeks to Innovation”</a></div>
-    <div class="notes"><p>
-      And we built all of that within 8 weeks by assembling a temporary cross-functional team of experts. </p>
-<p>If you’re interested in how we did it, one of our product managers has written a blog post reflecting on the journey roughly a year after the product launched.
-      </p>
-    </div>
-  </div>
-</section>
-
 <section class="slide arch-base-slide" data-title="The initial GenAI architecture" id="initial-genai-architecture">
   <div class="topline"></div>
   <div class="slide-inner">
@@ -699,6 +681,28 @@ The purple LLM components from the previous slide were implemented by ML scienti
 <br><br>
 This setup allowed the cross-functional team to iterate faster
     </p></div>
+  </div>
+</section>
+
+
+<section class="slide tiger-team-slide" data-title="A temporary tiger team" id="aitp-eight-weeks">
+  <div class="topline"></div>
+  <div class="slide-inner">
+    <div class="eyebrow">The operating model</div>
+    <h2>A temporary <span style="color:var(--coral)">tiger team</span></h2>
+    <div class="content">
+      <div class="tiger-team-stat">
+        <div class="tiger-team-number">8</div>
+        <div class="tiger-team-label">weeks</div>
+      </div>
+    </div>
+    <div class="source">Source: <a href="https://medium.com/booking-product/8-weeks-to-innovation-lessons-from-building-booking-coms-ai-trip-planner-94adbf138748" target="_blank" rel="noopener noreferrer">Booking Product — “8 Weeks to Innovation”</a></div>
+    <div class="notes"><p>
+      And we built all of that within 8 weeks by assembling a temporary cross-functional team of experts. </p>
+<p>If you’re interested in how we did it, one of our product managers has written a blog post reflecting on the journey roughly a year after the product launched.
+      </p>
+      <p>This was an important lesson in speed and focus</p>
+    </div>
   </div>
 </section>
 
@@ -820,7 +824,7 @@ After AI Trip Planner went to production, we began running experiments with diff
 And as the portfolio grew, we needed a system of records to help with governance, discoverability and re-use.
 That's where AI registry came in.
 <br> <br>
-The AI Registry acts as a catalog for our AI assets, tracking things like versions, ownership and lineage. We started with models and prompts, but it has since then expanded to include agents, workflows, tools and even applications. 
+The AI Registry acts as a catalog for our AI assets taking care of discovery, ownership, life cycle management and lineage. We started with models and prompts, but it has since then expanded to include agents, workflows, tools and even applications. 
       </p>
     </div>
   </div>
@@ -877,7 +881,8 @@ The AI Registry acts as a catalog for our AI assets, tracking things like versio
       <div class="eyebrow">The next abstraction</div>
       <h1>We started building <span style="color:var(--gold)">agents.</span></h1>
     </div>
-    <div class="notes"><p>Once we had these foundational systems were in place, we started building agents. That introduced a new architectural question: how should the model use tools, and who should control the loop?</p></div>
+    <div class="notes">
+      <p>As the number of use cases grew, we started seeing a common pattern: many of these experiences needed more than a single model call. They needed agents.</p>
   </div>
 </section>
 
@@ -971,14 +976,16 @@ The AI Registry acts as a catalog for our AI assets, tracking things like versio
     <div class="content" style="padding-top:1.5vh">
       <img src="assets/flow-builder.png" alt="AI Studio Flow Builder showing a property question answering agent assembled from inputs, prompts, message history, MCP tools and an agent output" style="width:auto;height:auto;max-width:100%;max-height:64vh;border-radius:18px;box-shadow:0 16px 40px rgba(16,35,63,.22)">
     </div>
-    <div class="notes"><p>We also built AI Studio, based on Langflow, to help teams build and configure custom agents visually.</p><p>It connected to other systems so teams could discover and reuse existing models, tools and capabilities instead of starting from scratch.</p></div>
+    <div class="notes"><p>We also built AI Studio, based on Langflow, to lower the barrier even further for teams to build and configure custom agents.</p>
+      <p>It was a no-code platform that let anyone prototype AI applications through a simple visual interface</p>
+      <p>It connected to other systems and it allowed teams to reuse existing models, tools, etc and moved AI development beyond a small group of experts.</p></div>
   </div>
 </section>
 
 <section class="slide infra-chip-slide" data-title="Repeated infrastructure problems" id="repeated-agent-infrastructure">
   <div class="slide-inner">
     <div class="eyebrow">The platform need</div>
-    <h2>We wanted to allow <span style="color: var(--bright);">deep customization</span> <br> without  <span style="color:var(--coral)">redundant effort</span>.</h2>
+    <h2><span style="color: var(--bright);">Deep customization</span> <br> without  <span style="color:var(--coral)">redundant effort</span></h2>
     <div class="notes">
       <p>For deep customization, we did not want teams to repeatedly solve packaging, scaling, versioning, authorisation, observability, etc on their own.</p>
       <p>We also needed one consistent way for the rest of the organisation to discover and invoke every deployed agent.</p></div>
@@ -1135,7 +1142,7 @@ The AI Registry acts as a catalog for our AI assets, tracking things like versio
     </div>
     <div class="frame-dots" aria-hidden="true"><span class="frame-dot frame-active"></span><span class="frame-dot"></span><span class="frame-dot"></span></div>
     <div class="source">Sources: <a href="https://booking.ai/llm-evaluation-practical-tips-at-booking-com-1b038a0d6662" target="_blank" rel="noopener noreferrer">LLM Evaluation: Practical Tips at Booking.com</a>; <a href="https://openai.com/index/evals-drive-next-chapter-of-ai/" target="_blank" rel="noopener noreferrer">OpenAI: Evals drive the next chapter of AI</a></div>
-    <div class="notes"><p>Evaluation happens in two connected loops.</p>
+    <div class="notes"><p>We embedded evaluation into the product life cycle.</p>
       <p>At the bottom is the familiar product lifecycle.</p>
       <p>The inner loop happens before anything ships. Teams write a prompt or build agents, run evaluations, review the quality of the output and refine the application until it meets the required standard. When it meets the bar, it is tested and deployed.</p>
       <p>The outer loop starts after launch. Teams monitor quality in production and watch for drift. When behaviour changes or quality drops, they update the prompt or configuration, evaluate the change and ship a new version.</p>
@@ -1322,6 +1329,7 @@ The AI Registry acts as a catalog for our AI assets, tracking things like versio
         <img class="progressive-frame" src="assets/arch-concept/4.jpg" alt="Conceptual architecture, product orchestration">
         <img class="progressive-frame" src="assets/arch-concept/5.jpg" alt="Conceptual architecture, customer-facing products">
         <img class="progressive-frame" src="assets/arch-concept/6.jpg" alt="Conceptual architecture, evaluation stack">
+        <img class="progressive-frame" src="assets/arch-concept/7.jpg" alt="Conceptual architecture, evaluation stack">
       </div>
     </div>
     <div class="frame-dots" aria-hidden="true"><span class="frame-dot frame-active"></span><span class="frame-dot"></span><span class="frame-dot"></span><span class="frame-dot"></span><span class="frame-dot"></span><span class="frame-dot"></span></div>
